@@ -1,3 +1,7 @@
+<?php 
+	include("config/connectDatabase.php");
+	include("config/connectServer.php");
+?>
 <!DOCTYPE html>
 <html>
 <head>
