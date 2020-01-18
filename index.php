@@ -67,7 +67,7 @@
 			</li>
 			<li class="nav-item">
 				<a class="nav-link" id="incharge-tab" data-toggle="tab" href="#incharge" role="tab" aria-controls="profile"
-				aria-selected="false">In-charge Dashboard</a>
+				aria-selected="false">In Charge Dashboard</a>
 			</li>
 		</ul>
 		<div class="tab-content" id="dashboardTabContent">
@@ -141,7 +141,7 @@
 							<!-- Card content -->
 							<div class="card-body elegant-color white-text rounded-bottom">
 								<!-- Title -->
-								<h4 class="card-title text-center"> In-charge Dashboard</h4>
+								<h4 class="card-title text-center"> In Charge Dashboard</h4>
 								<hr class="hr-light">
 								<!-- Body -->
 								<div class="container-fluid">

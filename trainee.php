@@ -61,53 +61,56 @@ include("config/connectServer.php");
 </header>
 <div class="container">
 	<main class="mt-5">
-	<div class="table-responsive">
-		<table id="dtTrainees" class="table table-striped table-bordered" cellspacing="0" width="100%">
-			<thead>
-				<tr>
-					<th class="th-sm">Name
-					</th>
-					<th class="th-sm">Position
-					</th>
-					<th class="th-sm">Office
-					</th>
-					<th class="th-sm">Age
-					</th>
-					<th class="th-sm">Start date
-					</th>
-					<th class="th-sm">Salary
-					</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td>Donna Snider</td>
-					<td>Customer Support</td>
-					<td>New York</td>
-					<td>27</td>
-					<td>2011/01/25</td>
-					<td>$112,000</td>
-				</tr>
-			</tbody>
-			<tfoot>
-				<tr>
-					<th>Name
-					</th>
-					<th>Position
-					</th>
-					<th>Office
-					</th>
-					<th>Age
-					</th>
-					<th>Start date
-					</th>
-					<th>Salary
-					</th>
-				</tr>
-			</tfoot>
-		</table>
+		<div class="text-center">
+			<button class="btn btn-primary">Add a Trainee</button>
+		</div>
+		<div class="table-responsive">
+			<table id="dtTrainees" class="table table-striped table-bordered" cellspacing="0" width="100%">
+				<thead>
+					<tr>
+						<th class="th-sm">Name
+						</th>
+						<th class="th-sm">Position
+						</th>
+						<th class="th-sm">Office
+						</th>
+						<th class="th-sm">Age
+						</th>
+						<th class="th-sm">Start date
+						</th>
+						<th class="th-sm">Salary
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Donna Snider</td>
+						<td>Customer Support</td>
+						<td>New York</td>
+						<td>27</td>
+						<td>2011/01/25</td>
+						<td>$112,000</td>
+					</tr>
+				</tbody>
+				<tfoot>
+					<tr>
+						<th>Name
+						</th>
+						<th>Position
+						</th>
+						<th>Office
+						</th>
+						<th>Age
+						</th>
+						<th>Start date
+						</th>
+						<th>Salary
+						</th>
+					</tr>
+				</tfoot>
+			</table>
+		</div>
 	</div>
-</div>
 
 	
 </main>
