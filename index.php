@@ -44,7 +44,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 				<ul class="navbar-nav ml-auto">
 					<li class="nav-item">
 						<span class="navbar-text white-text mr-5">
-							Hello Admin!
+							Hello <?php echo htmlspecialchars($_SESSION["username"]); ?>!
 						</span>
 					</li>
 					<li class="nav-item dropdown">
@@ -54,8 +54,8 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 					</a>
 					<div class="dropdown-menu dropdown-menu-left"
 					aria-labelledby="navbarDropdownMenuLink-333">
-					<a class="dropdown-item" href="#">Change Password</a>
-					<a class="dropdown-item" href="#">Logout</a>
+					<a class="dropdown-item" href="change_password.php">Change Password</a>
+					<a class="dropdown-item" href="logout.php">Logout</a>
 				</div>
 			</li>
 		</ul>
@@ -324,6 +324,8 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 
 	</footer>
 	<!-- Footer -->
+
+	<?php include("change_password_modal.php"); ?>
 
 
 	<script type="text/javascript" src="dist/js/jquery.js"></script>
