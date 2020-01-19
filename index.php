@@ -325,8 +325,6 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 	</footer>
 	<!-- Footer -->
 
-	<?php include("change_password_modal.php"); ?>
-
 
 	<script type="text/javascript" src="dist/js/jquery.js"></script>
 	<script type="text/javascript" src="dist/js/popper.js"></script>
