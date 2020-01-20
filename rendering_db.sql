@@ -3,11 +3,10 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 20, 2020 at 11:08 AM
+-- Generation Time: Jan 20, 2020 at 11:47 AM
 -- Server version: 10.1.38-MariaDB
 -- PHP Version: 7.1.26
 
-SET FOREIGN_KEY_CHECKS=0;
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
 START TRANSACTION;
@@ -64,7 +63,7 @@ CREATE TABLE IF NOT EXISTS `department_tb` (
   `department_id` int(11) NOT NULL,
   `username` varchar(100) NOT NULL,
   `password` varchar(100) NOT NULL,
-  `department` varchar(100) NOT NULL,
+  `department_name` varchar(100) NOT NULL,
   PRIMARY KEY (`department_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -86,17 +85,19 @@ TRUNCATE TABLE `department_tb`;
 CREATE TABLE IF NOT EXISTS `render_tb` (
   `render_id` int(11) NOT NULL AUTO_INCREMENT,
   `trainee_id` int(11) NOT NULL,
-  `render_code` varchar(5) NOT NULL,
-  `summary` int(11) NOT NULL,
-  `levitical` int(11) NOT NULL,
+  `rules_id` int(11) NOT NULL,
+  `render_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`render_id`),
-  KEY `trainee_id` (`trainee_id`)
+  KEY `trainee_id` (`trainee_id`),
+  KEY `rules_id` (`rules_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- RELATIONSHIPS FOR TABLE `render_tb`:
 --   `trainee_id`
 --       `trainee_tb` -> `trainee_id`
+--   `rules_id`
+--       `rules_tb` -> `rule_id`
 --
 
 --
@@ -111,7 +112,7 @@ TRUNCATE TABLE `render_tb`;
 --
 
 CREATE TABLE IF NOT EXISTS `rules_tb` (
-  `rules_id` int(11) NOT NULL,
+  `rule_id` int(11) NOT NULL AUTO_INCREMENT,
   `department_id` int(11) NOT NULL,
   `offense_code` varchar(50) NOT NULL,
   `offense_type` varchar(100) NOT NULL,
@@ -120,14 +121,14 @@ CREATE TABLE IF NOT EXISTS `rules_tb` (
   `summaries` int(11) NOT NULL,
   `words` int(11) NOT NULL,
   `levitical_service` int(11) NOT NULL,
-  PRIMARY KEY (`rules_id`),
+  PRIMARY KEY (`rule_id`),
   KEY `department_id` (`department_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- RELATIONSHIPS FOR TABLE `rules_tb`:
 --   `department_id`
---       `trainee_tb` -> `department_id`
+--       `department_tb` -> `department_id`
 --
 
 --
@@ -142,19 +143,21 @@ TRUNCATE TABLE `rules_tb`;
 --
 
 CREATE TABLE IF NOT EXISTS `trainee_tb` (
-  `trainee_id` int(11) NOT NULL AUTO_INCREMENT,
-  `department_id` int(11) NOT NULL,
+  `trainee_id` int(11) NOT NULL,
   `first_name` varchar(100) NOT NULL,
   `last_name` varchar(100) NOT NULL,
-  `ft` int(1) NOT NULL,
-  PRIMARY KEY (`trainee_id`),
-  KEY `department_id` (`department_id`)
+  `id_name` varchar(100) NOT NULL,
+  `gender` varchar(10) NOT NULL,
+  `class` varchar(10) NOT NULL,
+  `class_group` varchar(10) NOT NULL,
+  `room` varchar(10) NOT NULL,
+  `team` varchar(10) NOT NULL,
+  `status` varchar(100) NOT NULL,
+  PRIMARY KEY (`trainee_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- RELATIONSHIPS FOR TABLE `trainee_tb`:
---   `department_id`
---       `department_tb` -> `department_id`
 --
 
 --
@@ -170,20 +173,14 @@ TRUNCATE TABLE `trainee_tb`;
 -- Constraints for table `render_tb`
 --
 ALTER TABLE `render_tb`
-  ADD CONSTRAINT `render_tb_ibfk_1` FOREIGN KEY (`trainee_id`) REFERENCES `trainee_tb` (`trainee_id`);
+  ADD CONSTRAINT `render_tb_ibfk_1` FOREIGN KEY (`trainee_id`) REFERENCES `trainee_tb` (`trainee_id`),
+  ADD CONSTRAINT `render_tb_ibfk_2` FOREIGN KEY (`rules_id`) REFERENCES `rules_tb` (`rule_id`);
 
 --
 -- Constraints for table `rules_tb`
 --
 ALTER TABLE `rules_tb`
-  ADD CONSTRAINT `rules_tb_ibfk_1` FOREIGN KEY (`department_id`) REFERENCES `trainee_tb` (`department_id`);
-
---
--- Constraints for table `trainee_tb`
---
-ALTER TABLE `trainee_tb`
-  ADD CONSTRAINT `trainee_tb_ibfk_1` FOREIGN KEY (`department_id`) REFERENCES `department_tb` (`department_id`);
-SET FOREIGN_KEY_CHECKS=1;
+  ADD CONSTRAINT `rules_tb_ibfk_1` FOREIGN KEY (`department_id`) REFERENCES `department_tb` (`department_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
