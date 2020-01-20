@@ -6,7 +6,7 @@
 			<div class="col-sm-12 col-md-8 col-lg-12">
 				<div class="card text-white bg-dark pt-3 pb-3">
 				  	<div class="card-body text-center">
-				    	<h1 class="card-title display-3" style="font-size: 55.5px;">Departments</h1>
+				    	<h1 class="card-header">Departments</h1>
 				  	</div>
 				</div>
 			</div>
