@@ -1,4 +1,17 @@
 <?php include("header.php"); ?>
+<div class="container-fluid mt-3">
+		<div class="row">
+			<div class="col-md-2"></div>
+			<div class="col-sm-12 col-md-8 col-lg-12">
+				<div class="card text-white bg-dark pt-3 pb-3">
+				  	<div class="card-body text-center">
+				    	<h1 class="card-title display-4">Trainees</h1>
+				  	</div>
+				</div>
+			</div>
+			<div class="col-md-2"></div>
+		</div>
+	</div>
 <div class="container">
 	<main class="mt-5">
 		<div class="text-center">
@@ -31,6 +44,46 @@
 						<td>2011/01/25</td>
 						<td>$112,000</td>
 					</tr>
+					<tr>
+						<td>Donna Snider</td>
+						<td>Customer Support</td>
+						<td>New York</td>
+						<td>27</td>
+						<td>2011/01/25</td>
+						<td>$112,000</td>
+					</tr>
+					<tr>
+						<td>Donna Snider</td>
+						<td>Customer Support</td>
+						<td>New York</td>
+						<td>27</td>
+						<td>2011/01/25</td>
+						<td>$112,000</td>
+					</tr>
+					<tr>
+						<td>Donna Snider</td>
+						<td>Customer Support</td>
+						<td>New York</td>
+						<td>27</td>
+						<td>2011/01/25</td>
+						<td>$112,000</td>
+					</tr>
+					<tr>
+						<td>Donna Snider</td>
+						<td>Customer Support</td>
+						<td>New York</td>
+						<td>27</td>
+						<td>2011/01/25</td>
+						<td>$112,000</td>
+					</tr>
+					<tr>
+						<td>Donna Snider</td>
+						<td>Customer Support</td>
+						<td>New York</td>
+						<td>27</td>
+						<td>2011/01/25</td>
+						<td>$112,000</td>
+					</tr>
 				</tbody>
 				<tfoot>
 					<tr>
@@ -55,12 +108,6 @@
 	
 </main>
 
-<script type="text/javascript" src="dist/js/jquery.js"></script>
-<script type="text/javascript" src="dist/js/popper.js"></script>
-<script type="text/javascript" src="dist/js/bootstrap.js"></script>
-<script type="text/javascript" src="dist/js/mdb.js"></script>
-<!-- MDBootstrap Datatables  -->
-<script type="text/javascript" src="dist/js/addons/datatables.min.js"></script>
-<script type="text/javascript" src="dist/js/other.js"></script>
+<?php include("footer.php"); ?>
 </body>
 </html>
