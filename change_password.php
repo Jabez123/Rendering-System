@@ -64,26 +64,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
 ?>
 
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<meta http-equiv="x-ua-compatible" content="ie=edge">
-	<title></title>
-	<link rel="stylesheet" type="text/css" href="dist/css/all.css">
-	<link rel="stylesheet" type="text/css" href="dist/css/bootstrap.css">
-	<link rel="stylesheet" type="text/css" href="dist/css/mdb.css">
-	<link rel="stylesheet" type="text/css" href="dist/css/style.css">
-</head>
-<body>
-	<header>
-		<nav class="navbar navbar-expand-lg navbar-dark unique-color">
-			<div class="container">
-				<a class="navbar-brand" id="topSection" href="#">Rendering System</a>
-		</div>
-	</nav>
-</header>
+<?php include("header.php") ?>
 
 <main class="mt-5">
 	<div class="container">
@@ -122,11 +103,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 </main>
 
 
-
-<script type="text/javascript" src="dist/js/jquery.js"></script>
-<script type="text/javascript" src="dist/js/popper.js"></script>
-<script type="text/javascript" src="dist/js/bootstrap.js"></script>
-<script type="text/javascript" src="dist/js/mdb.js"></script>
+<?php include("footer.php") ?>
 
 </body>
 </html>
