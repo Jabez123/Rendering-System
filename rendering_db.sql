@@ -3,10 +3,11 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 17, 2020 at 05:40 PM
+-- Generation Time: Jan 20, 2020 at 11:08 AM
 -- Server version: 10.1.38-MariaDB
 -- PHP Version: 7.1.26
 
+SET FOREIGN_KEY_CHECKS=0;
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
 START TRANSACTION;
@@ -30,152 +31,137 @@ USE `rendering_db`;
 -- Table structure for table `admin_tb`
 --
 
-CREATE TABLE `admin_tb` (
-  `admin_id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `admin_tb` (
+  `admin_id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(100) NOT NULL,
-  `password` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `password` varchar(100) NOT NULL,
+  PRIMARY KEY (`admin_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+--
+-- RELATIONSHIPS FOR TABLE `admin_tb`:
+--
 
 --
 -- Truncate table before insert `admin_tb`
 --
 
 TRUNCATE TABLE `admin_tb`;
+--
+-- Dumping data for table `admin_tb`
+--
+
+INSERT INTO `admin_tb` (`admin_id`, `username`, `password`) VALUES
+(1, 'admin', '$2y$10$7oWMcUs3HcaQuEkntHIx6ONUUk9877Oq8uGTjc6xnsfYM8.bcbpsi');
+
 -- --------------------------------------------------------
 
 --
--- Table structure for table `in_charge_tb`
+-- Table structure for table `department_tb`
 --
 
-CREATE TABLE `in_charge_tb` (
-  `in_charge_id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `department_tb` (
+  `department_id` int(11) NOT NULL,
+  `username` varchar(100) NOT NULL,
   `password` varchar(100) NOT NULL,
-  `department` varchar(100) NOT NULL
+  `department` varchar(100) NOT NULL,
+  PRIMARY KEY (`department_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Truncate table before insert `in_charge_tb`
+-- RELATIONSHIPS FOR TABLE `department_tb`:
 --
 
-TRUNCATE TABLE `in_charge_tb`;
 --
--- Dumping data for table `in_charge_tb`
+-- Truncate table before insert `department_tb`
 --
 
-INSERT INTO `in_charge_tb` (`in_charge_id`, `password`, `department`) VALUES
-(1, '12345', 'sample'),
-(2, '12345', 'sample');
-
+TRUNCATE TABLE `department_tb`;
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `render_tb`
 --
 
-CREATE TABLE `render_tb` (
-  `render_id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `render_tb` (
+  `render_id` int(11) NOT NULL AUTO_INCREMENT,
   `trainee_id` int(11) NOT NULL,
   `render_code` varchar(5) NOT NULL,
   `summary` int(11) NOT NULL,
-  `levitical` int(11) NOT NULL
+  `levitical` int(11) NOT NULL,
+  PRIMARY KEY (`render_id`),
+  KEY `trainee_id` (`trainee_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- RELATIONSHIPS FOR TABLE `render_tb`:
+--   `trainee_id`
+--       `trainee_tb` -> `trainee_id`
+--
 
 --
 -- Truncate table before insert `render_tb`
 --
 
 TRUNCATE TABLE `render_tb`;
+-- --------------------------------------------------------
+
 --
--- Dumping data for table `render_tb`
+-- Table structure for table `rules_tb`
 --
 
-INSERT INTO `render_tb` (`render_id`, `trainee_id`, `render_code`, `summary`, `levitical`) VALUES
-(1, 2, 'B1', 0, 0);
+CREATE TABLE IF NOT EXISTS `rules_tb` (
+  `rules_id` int(11) NOT NULL,
+  `department_id` int(11) NOT NULL,
+  `offense_code` varchar(50) NOT NULL,
+  `offense_type` varchar(100) NOT NULL,
+  `offense_description` varchar(500) NOT NULL,
+  `is_grounded` int(11) NOT NULL,
+  `summaries` int(11) NOT NULL,
+  `words` int(11) NOT NULL,
+  `levitical_service` int(11) NOT NULL,
+  PRIMARY KEY (`rules_id`),
+  KEY `department_id` (`department_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- RELATIONSHIPS FOR TABLE `rules_tb`:
+--   `department_id`
+--       `trainee_tb` -> `department_id`
+--
+
+--
+-- Truncate table before insert `rules_tb`
+--
+
+TRUNCATE TABLE `rules_tb`;
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `trainee_tb`
 --
 
-CREATE TABLE `trainee_tb` (
-  `trainee_id` int(11) NOT NULL,
-  `in_charge_id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `trainee_tb` (
+  `trainee_id` int(11) NOT NULL AUTO_INCREMENT,
+  `department_id` int(11) NOT NULL,
   `first_name` varchar(100) NOT NULL,
-  `last_name` varchar(100) NOT NULL
+  `last_name` varchar(100) NOT NULL,
+  `ft` int(1) NOT NULL,
+  PRIMARY KEY (`trainee_id`),
+  KEY `department_id` (`department_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- RELATIONSHIPS FOR TABLE `trainee_tb`:
+--   `department_id`
+--       `department_tb` -> `department_id`
+--
 
 --
 -- Truncate table before insert `trainee_tb`
 --
 
 TRUNCATE TABLE `trainee_tb`;
---
--- Dumping data for table `trainee_tb`
---
-
-INSERT INTO `trainee_tb` (`trainee_id`, `in_charge_id`, `first_name`, `last_name`) VALUES
-(1, 1, 'Sample first name', 'Sample last name'),
-(2, 1, 'Sample 1 name', 'Sample 1 last');
-
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `admin_tb`
---
-ALTER TABLE `admin_tb`
-  ADD PRIMARY KEY (`admin_id`);
-
---
--- Indexes for table `in_charge_tb`
---
-ALTER TABLE `in_charge_tb`
-  ADD PRIMARY KEY (`in_charge_id`);
-
---
--- Indexes for table `render_tb`
---
-ALTER TABLE `render_tb`
-  ADD PRIMARY KEY (`render_id`),
-  ADD KEY `trainee_id` (`trainee_id`);
-
---
--- Indexes for table `trainee_tb`
---
-ALTER TABLE `trainee_tb`
-  ADD PRIMARY KEY (`trainee_id`),
-  ADD KEY `in_charge_id` (`in_charge_id`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `admin_tb`
---
-ALTER TABLE `admin_tb`
-  MODIFY `admin_id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `in_charge_tb`
---
-ALTER TABLE `in_charge_tb`
-  MODIFY `in_charge_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT for table `render_tb`
---
-ALTER TABLE `render_tb`
-  MODIFY `render_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT for table `trainee_tb`
---
-ALTER TABLE `trainee_tb`
-  MODIFY `trainee_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
 --
 -- Constraints for dumped tables
 --
@@ -187,10 +173,17 @@ ALTER TABLE `render_tb`
   ADD CONSTRAINT `render_tb_ibfk_1` FOREIGN KEY (`trainee_id`) REFERENCES `trainee_tb` (`trainee_id`);
 
 --
+-- Constraints for table `rules_tb`
+--
+ALTER TABLE `rules_tb`
+  ADD CONSTRAINT `rules_tb_ibfk_1` FOREIGN KEY (`department_id`) REFERENCES `trainee_tb` (`department_id`);
+
+--
 -- Constraints for table `trainee_tb`
 --
 ALTER TABLE `trainee_tb`
-  ADD CONSTRAINT `trainee_tb_ibfk_1` FOREIGN KEY (`in_charge_id`) REFERENCES `in_charge_tb` (`in_charge_id`);
+  ADD CONSTRAINT `trainee_tb_ibfk_1` FOREIGN KEY (`department_id`) REFERENCES `department_tb` (`department_id`);
+SET FOREIGN_KEY_CHECKS=1;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

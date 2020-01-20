@@ -38,7 +38,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 						<a class="nav-link" href="trainee.php">Trainees</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="#">In Charge</a>
+						<a class="nav-link" href="department.php">Departments</a>
 					</li>
 				</ul>
 				<ul class="navbar-nav ml-auto">
@@ -73,7 +73,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 		</li>
 		<li class="nav-item">
 			<a class="nav-link" id="incharge-tab" data-toggle="tab" href="#incharge" role="tab" aria-controls="profile"
-			aria-selected="false">In Charge Dashboard</a>
+			aria-selected="false">Department Overview</a>
 		</li>
 	</ul>
 	<div class="tab-content" id="dashboardTabContent">
@@ -147,7 +147,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 							<!-- Card content -->
 							<div class="card-body elegant-color white-text rounded-bottom">
 								<!-- Title -->
-								<h4 class="card-title text-center"> In Charge Dashboard</h4>
+								<h4 class="card-title text-center"> Department Overview</h4>
 								<hr class="hr-light">
 								<!-- Body -->
 								<div class="container-fluid">
