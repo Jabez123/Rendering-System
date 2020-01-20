@@ -1,3 +1,13 @@
+<?php 
+	// Include configs
+	require_once("config/connectServer.php");
+	require_once("config/connectDatabase.php");
+
+	$sql = "SELECT * FROM trainee_tb";
+
+	$result = mysqli_query($conn, $sql);
+ ?>
+
 <?php include("header.php"); ?>
 
 <main class="mt-3">
@@ -7,7 +17,7 @@
 			<div class="col-sm-12 col-md-8 col-lg-12">
 				<div class="card text-white bg-dark pt-3 pb-3">
 				  	<div class="card-body text-center">
-				    	<h1 class="card-title display-4">Home</h1>
+				    	<h1 class="card-header">Home</h1>
 				  	</div>
 				</div>
 			</div>
@@ -48,26 +58,89 @@
 								<!-- Body -->
 								<div class="container-fluid mt-5">
 									<div class="row">
-
+										<?php while($row = mysqli_fetch_assoc($result)) {
+											$trainee_id = $row['trainee_id'];
+											$first_name = $row['first_name'];
+											$last_name = $row['last_name'];
+											$id_name = $row['id_name'];
+											$gender = $row['gender'];
+											$class = $row['class'];
+											$class_group = $row['class_group'];
+											$room = $row['room'];
+											$team = $row['team'];
+											$status = $row['status'];
+										 ?>
 										<div class="col-sm-4">
+											<?php 
+												if ($status == "Active") { 
+											?>
 											<!-- Card -->
-											<div class="card mb-4">
+											<div class="card bg-dark mb-4">
+												<div class="card-header ">
+													<h4 class="card-title text-white text-center"><?php echo $gender . " " . $last_name . " " . $first_name; ?></h4>
+												</div>
 												<!--Card content-->
 												<div class="card-body">
-
-													<!--Title-->
-													<h4 class="card-title text-black-50 text-center">Card title</h4>
-													<!--Text-->
-													<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-													<!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
-													<button type="button" class="btn btn-light-blue btn-md">Read more</button>
-
+													  <ul class="list-group list-group-flush">
+													    <li class="list-group-item text-body">ID Name: <?php echo $id_name; ?></li>
+													    <li class="list-group-item text-body">
+													    	<div class="row">
+													    		<div class="col-6">
+													    			Class: <?php echo $class; ?> 
+													    		</div>
+														    	<div class="col-6">
+														    		Group: <?php echo $class_group; ?>
+														    	</div>
+													    	</div>
+													    	
+													    </li>
+													    <li class="list-group-item text-body">Room: <?php echo $room; ?></li>
+													    <li class="list-group-item text-body">Team: <?php echo $team; ?></li>
+													  </ul>
 												</div>
-
+												<div class="card-footer">
+													<a href="trainee.php"><button class="btn btn-block btn-primary">Manage</button></a>
+												</div>
 											</div>
 											<!-- Card -->
-										</div>
+											<?php } 
+												else if ($status == "Inactive") {
+											?>
 
+											<!-- Card -->
+											<div class="card bg-danger mb-4">
+												<div class="card-header ">
+													<h4 class="card-title text-white text-center"><?php echo $gender . " " . $last_name . " " . $first_name; ?></h4>
+												</div>
+												<!--Card content-->
+												<div class="card-body">
+													  <ul class="list-group list-group-flush">
+													    <li class="list-group-item text-body">ID Name: <?php echo $id_name; ?></li>
+													    <li class="list-group-item text-body">
+													    	<div class="row">
+													    		<div class="col-6">
+													    			Class: <?php echo $class; ?> 
+													    		</div>
+														    	<div class="col-6">
+														    		Group: <?php echo $class_group; ?>
+														    	</div>
+													    	</div>
+													    	
+													    </li>
+													    <li class="list-group-item text-body">Room: <?php echo $room; ?></li>
+													    <li class="list-group-item text-body">Team: <?php echo $team; ?></li>
+													  </ul>
+												</div>
+												<div class="card-footer">
+													<a href="trainee.php"><button class="btn btn-block btn-primary">Manage</button></a>
+												</div>
+											</div>
+											<!-- Card -->
+
+										<?php } ?>
+											
+										</div>
+									<?php } ?>
 									</div>
 								</div>
 
