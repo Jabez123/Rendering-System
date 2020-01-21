@@ -4,9 +4,14 @@ require_once("config/connectServer.php");
 require_once("config/connectDatabase.php");
  
 // Define variables and initialize with empty values
-$trainee_id = $_REQUEST['id'];
+/*$previous_trainee_id = $first_name = $last_name = "";
+$id_name = $gender = $class = ""; 
+$class_group = $room = $team = "";
+$status = "";*/
 
-$sql = "SELECT * FROM trainee_tb WHERE trainee_id=$trainee_id";
+$previous_trainee_id = $_REQUEST['id'];
+
+$sql = "SELECT * FROM trainee_tb WHERE trainee_id= $previous_trainee_id";
 
 $result = mysqli_query($conn, $sql);
 
@@ -23,13 +28,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     else{
         // Prepare a select statement
-    	$sql = "SELECT trainee_id FROM trainee_tb WHERE trainee_id = ?";
+    	$sql = "SELECT trainee_id FROM trainee_tb WHERE trainee_id = ? AND trainee_id != ?";
 
     	if($stmt = mysqli_prepare($conn, $sql)){
             // Bind variables to the prepared statement as parameters
-    		mysqli_stmt_bind_param($stmt, "i", $param_trainee_id);
+    		mysqli_stmt_bind_param($stmt, "ii", $param_trainee_id, $param_previous_trainee_id);
 
             // Set parameters
+            $param_previous_trainee_id = $previous_trainee_id;
     		$param_trainee_id = trim($_POST["trainee_id"]);
 
             // Attempt to execute the prepared statement
@@ -101,21 +107,23 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 	empty($gender_error) && empty($class_error) && empty($class_group_error) &&
 	empty($room_error) && empty($team_error) && empty($status_error)) {
         
-        // Prepare an insert statement
-        $sql = "INSERT INTO trainee_tb (
-        trainee_id, first_name, last_name, id_name, 
-        gender, class, class_group, 
-        room, team, status) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        // Prepare an update statement
+        $sql = "UPDATE trainee_tb SET
+    	trainee_id = ?, first_name = ?, last_name = ?, id_name = ?, 
+        gender = ?, class = ?, class_group = ?, 
+        room = ?, team = ?, status = ?
+        WHERE trainee_id = ?";
          
         if($stmt = mysqli_prepare($conn, $sql)) {
             // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "isssssssss", 
+            mysqli_stmt_bind_param($stmt, "isssssssssi", 
             	$param_trainee_id, $param_first_name, $param_last_name, $param_id_name, 
             	$param_gender, $param_class, $param_class_group, 
-            	$param_room, $param_team, $param_status);
+            	$param_room, $param_team, $param_status, $param_previous_trainee_id);
             
             // Set parameters
+            $param_previous_trainee_id = $param_previous_trainee_id;
             $param_trainee_id = trim($_POST["trainee_id"]);
             $param_first_name = trim($_POST["first_name"]);
             $param_last_name = trim($_POST["last_name"]);
@@ -135,7 +143,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 
             else{
                 echo "Something went wrong. Please try again later.";
-                echo "Error: " . mysqli_error($conn);
+                echo "Update Error: " . mysqli_error($conn);
             }
             // Close statement
         mysqli_stmt_close($stmt);
@@ -163,7 +171,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 						Edit Trainee
 					</div>
 					<div class="card-body">
-						<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+						<form action="" method="post">
 						<div class="row">
 							<?php 
 								while($row = mysqli_fetch_assoc($result)) {
@@ -179,7 +187,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 							 ?>
 							<div class="col-md-6">
 								<div class="md-form form-group mt-5 <?php echo (!empty($trainee_id_error)) ? 'has-error' : ''; ?>">
-									<input class="form-control" type="text" name="trainee_id" id="trainee_id" value="<?php echo $trainee_id; ?>">
+									<input class="form-control" type="text" name="trainee_id" id="trainee_id" value="<?php echo $previous_trainee_id; ?>">
 									<label for="trainee_id">Trainee ID</label>
 									<span class="help-block text-danger"><?php echo $trainee_id_error; ?></span>
 								</div>
@@ -254,9 +262,17 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 							</div>
 						</div>
 					<?php } ?>
-							<div class="card-footer text-center">
-								<a href="trainee.php"><button type="button" class="btn btn-secondary">Go Back</button></a>
-								<button type="submit" class="btn btn-primary">Finish</button>
+							<div class="card-footer">
+								<div class="row">
+									<div class="col-md-4 col-lg-4">
+										<button type="submit" class="mt-3 btn btn-block btn-primary">Finish</button>
+									</div>
+									<div class="col-sm-12 col-md-4 col-lg-4">
+									</div>
+									<div class="col-md-4 col-lg-4">
+										<a href="trainee.php"><button type="button" class="mt-3 btn btn-block btn-secondary">Go Back</button></a>
+									</div>
+								</div>
 							</div>
 						</form>
 					</div>
