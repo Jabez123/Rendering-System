@@ -265,7 +265,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 							<div class="card-footer">
 								<div class="row">
 									<div class="col-md-4 col-lg-4">
-										<button type="submit" class="mt-3 btn btn-block btn-primary">Finish</button>
+										<button type="submit" class="mt-3 btn btn-block btn-primary">Save</button>
 									</div>
 									<div class="col-sm-12 col-md-4 col-lg-4">
 									</div>

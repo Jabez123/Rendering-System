@@ -16,89 +16,49 @@
 <div class="container">
 	<main class="mt-5">
 		<div class="text-center">
-			<button class="btn btn-primary">Add a Trainee</button>
+			<a href="add_department.php"><button class="btn btn-default">Add Department</button></a>
 		</div>
 		<div class="table-responsive">
 			<table id="dtTrainees" class="table table-striped table-bordered" cellspacing="0" width="100%">
 				<thead>
 					<tr>
-						<th class="th-sm">Name
+						<th class="th-sm">Action
 						</th>
-						<th class="th-sm">Position
+						<th class="th-sm">Department Name
 						</th>
-						<th class="th-sm">Office
+						<th class="th-sm">Username
 						</th>
-						<th class="th-sm">Age
-						</th>
-						<th class="th-sm">Start date
-						</th>
-						<th class="th-sm">Salary
+						<th class="th-sm">Password
 						</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
+						<td>
+							<div class="row">
+								<div class="col-sm-12 col-md-12 col-lg-6 mb-3">
+									<a href="edit_trainee.php?id=<?php echo $trainee_id; ?>">
+										<button class="btn btn-block btn-primary">Edit</button></a>
+								</div>
+								<div class="col-sm-12 col-md-12 col-lg-6">
+									<button class="btn btn-block btn-danger" data-toggle="modal" data-target="#deleteModal<?php echo $trainee_id ?>">Delete</button>
+								</div>
+							</div>
+						</td>
 						<td>Donna Snider</td>
 						<td>Customer Support</td>
 						<td>New York</td>
-						<td>27</td>
-						<td>2011/01/25</td>
-						<td>$112,000</td>
-					</tr>
-					<tr>
-						<td>Donna Snider</td>
-						<td>Customer Support</td>
-						<td>New York</td>
-						<td>27</td>
-						<td>2011/01/25</td>
-						<td>$112,000</td>
-					</tr>
-					<tr>
-						<td>Donna Snider</td>
-						<td>Customer Support</td>
-						<td>New York</td>
-						<td>27</td>
-						<td>2011/01/25</td>
-						<td>$112,000</td>
-					</tr>
-					<tr>
-						<td>Donna Snider</td>
-						<td>Customer Support</td>
-						<td>New York</td>
-						<td>27</td>
-						<td>2011/01/25</td>
-						<td>$112,000</td>
-					</tr>
-					<tr>
-						<td>Donna Snider</td>
-						<td>Customer Support</td>
-						<td>New York</td>
-						<td>27</td>
-						<td>2011/01/25</td>
-						<td>$112,000</td>
-					</tr>
-					<tr>
-						<td>Donna Snider</td>
-						<td>Customer Support</td>
-						<td>New York</td>
-						<td>27</td>
-						<td>2011/01/25</td>
-						<td>$112,000</td>
 					</tr>
 				</tbody>
 				<tfoot>
 					<tr>
-						<th>Name
+						<th class="th-sm">Action
 						</th>
-						<th>Position
+						<th class="th-sm">Department Name
 						</th>
-						<th>Office
+						<th class="th-sm">Username
 						</th>
-						<th>Age
-						</th>
-						<th>Start date
-						</th>
-						<th>Salary
+						<th class="th-sm">Password
 						</th>
 					</tr>
 				</tfoot>

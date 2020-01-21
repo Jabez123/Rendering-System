@@ -238,8 +238,16 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 							</div>
 						</div>
 							<div class="card-footer text-center">
-								<a href="trainee.php"><button type="button" class="btn btn-secondary">Go Back</button></a>
-								<button type="submit" class="btn btn-primary">Finish</button>
+								<div class="row">
+									<div class="col-md-4 col-lg-4">
+										<button type="submit" class="mt-3 btn btn-block btn-primary">Add</button>
+									</div>
+									<div class="col-sm-12 col-md-4 col-lg-4">
+									</div>
+									<div class="col-md-4 col-lg-4">
+										<a href="trainee.php"><button type="button" class="mt-3 btn btn-block btn-secondary">Go Back</button></a>
+									</div>
+								</div>
 							</div>
 						</form>
 					</div>
