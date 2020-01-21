@@ -91,7 +91,7 @@
 						<td><?php echo $team; ?></td>
 						<td><?php echo $status; ?></td>
 					</tr>
-					<?php include("delete_modal.php"); ?>
+					<?php include("delete_trainee_modal.php"); ?>
 					<?php } ?>
 				</tbody>
 				<tfoot>
