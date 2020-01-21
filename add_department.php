@@ -117,7 +117,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
             
             // Set parameters
             $param_username = trim($_POST["username"]);
-            $param_password = trim($_POST["password"]);
+            $param_password = password_hash($password, PASSWORD_DEFAULT); // Creates a password hash 
             $param_department_name = trim($_POST["department_name"]);
             
             // Attempt to execute the prepared statement
