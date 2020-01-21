@@ -123,7 +123,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
             	$param_room, $param_team, $param_status, $param_previous_trainee_id);
             
             // Set parameters
-            $param_previous_trainee_id = $param_previous_trainee_id;
+            $param_previous_trainee_id = $previous_trainee_id;
             $param_trainee_id = trim($_POST["trainee_id"]);
             $param_first_name = trim($_POST["first_name"]);
             $param_last_name = trim($_POST["last_name"]);
