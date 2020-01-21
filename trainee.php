@@ -24,20 +24,23 @@
 			<div class="col-md-2"></div>
 		</div>
 	</div>
-<div class="container">
+<div class="container-fluid">
 	<main class="mt-5">
 		<div class="text-center">
-			<a href="add_trainee.php"><button class="btn btn-primary">Add a Trainee</button></a>
+			<a href="add_trainee.php"><button class="btn btn-default">Add Trainee</button></a>
+			
 		</div>
 		<div class="table-responsive">
-			<table id="dtTrainees" class="table table-striped table-bordered" cellspacing="0" width="100%">
+			<table id="dtTrainees" class="table table-sm table-striped table-bordered" cellspacing="0" width="100%">
 				<thead>
 					<tr>
+						<th class="th-sm">Action
+						</th>
 						<th class="th-sm">ID
 						</th>
 						<th class="th-sm">Full Name
 						</th>
-						<th class="th-sm">ID NAme
+						<th class="th-sm">ID Name
 						</th>
 						<th class="th-sm">Gender
 						</th>
@@ -67,7 +70,20 @@
 							$status = $row['status'];
 						 ?>
 					<tr>
-						<td><?php echo $trainee_id;; ?></td>
+						<td>
+							<div class="row">
+								<div class="col-sm-12 col-md-12 col-lg-6 mb-3">
+									<a href="edit_trainee.php">
+										<button class="btn btn-block btn-primary">Edit</button></a>
+								</div>
+								<div class="col-sm-12 col-md-12 col-lg-6">
+									<a href="delete_trainee.php">
+										<button class="btn btn-block btn-danger">Delete</button>
+									</a>
+								</div>
+							</div>
+						</td>
+						<td class="font-weight-bold"><?php echo $trainee_id;; ?></td>
 						<td><?php echo $last_name . " " . $first_name; ?></td>
 						<td><?php echo $id_name; ?></td>
 						<td><?php echo $gender; ?></td>
@@ -81,11 +97,13 @@
 				</tbody>
 				<tfoot>
 					<tr>
+						<th class="th-sm">Action
+						</th>
 						<th class="th-sm">ID
 						</th>
 						<th class="th-sm">Full Name
 						</th>
-						<th class="th-sm">ID NAme
+						<th class="th-sm">ID Name
 						</th>
 						<th class="th-sm">Gender
 						</th>
@@ -103,10 +121,8 @@
 				</tfoot>
 			</table>
 		</div>
-	</div>
-
-	
-</main>
+	</main>
+</div>
 
 <?php include("footer.php"); ?>
 </body>
