@@ -84,7 +84,7 @@
 							</div>
 						</td>
 						<td class="font-weight-bold"><?php echo $trainee_id;; ?></td>
-						<td><?php echo $last_name . " " . $first_name; ?></td>
+						<td><?php echo $last_name . ", " . $first_name; ?></td>
 						<td><?php echo $id_name; ?></td>
 						<td><?php echo $gender; ?></td>
 						<td><?php echo $class; ?></td>
