@@ -39,8 +39,7 @@
 
 			<div class="container-fluid" style="margin-top: 80px;">
 				<div class="row">
-					<div class="col-lg-2"></div>
-					<div class="col-sm-12 col-md-12 col-lg-8">
+					<div class="col-sm-12 col-md-12 col-lg-12">
 						<!-- Card Dark -->
 						<div class="card">
 							<!-- Card content -->
@@ -56,7 +55,7 @@
 									<button type="button" class="btn btn-primary">Search</button>
 								</div>
 								<!-- Body -->
-								<div class="container-fluid mt-5">
+								<div class="mt-5">
 									<div class="row">
 										<?php while($row = mysqli_fetch_assoc($result)) {
 											$trainee_id = $row['trainee_id'];
@@ -64,13 +63,19 @@
 											$last_name = $row['last_name'];
 											$id_name = $row['id_name'];
 											$gender = $row['gender'];
+											if ($gender == "Brother") {
+												$gender = "Bro";
+											}
+											else {
+												$gender = "Sis";
+											}
 											$class = $row['class'];
 											$class_group = $row['class_group'];
 											$room = $row['room'];
 											$team = $row['team'];
 											$status = $row['status'];
 										 ?>
-										<div class="col-sm-4">
+										<div class="col-sm-12 col-md-6 col-lg-3">
 											<?php 
 												if ($status == "Active") { 
 											?>
@@ -83,17 +88,8 @@
 												<div class="card-body">
 													  <ul class="list-group list-group-flush">
 													    <li class="list-group-item text-body">ID Name: <?php echo $id_name; ?></li>
-													    <li class="list-group-item text-body">
-													    	<div class="row">
-													    		<div class="col-6">
-													    			Class: <?php echo $class; ?> 
-													    		</div>
-														    	<div class="col-6">
-														    		Group: <?php echo $class_group; ?>
-														    	</div>
-													    	</div>
-													    	
-													    </li>
+													    <li class="list-group-item text-body">Class: <?php echo $class; ?></li>
+													    <li class="list-group-item text-body">Group: <?php echo $class_group; ?></li>
 													    <li class="list-group-item text-body">Room: <?php echo $room; ?></li>
 													    <li class="list-group-item text-body">Team: <?php echo $team; ?></li>
 													  </ul>
@@ -116,17 +112,8 @@
 												<div class="card-body">
 													  <ul class="list-group list-group-flush">
 													    <li class="list-group-item text-body">ID Name: <?php echo $id_name; ?></li>
-													    <li class="list-group-item text-body">
-													    	<div class="row">
-													    		<div class="col-6">
-													    			Class: <?php echo $class; ?> 
-													    		</div>
-														    	<div class="col-6">
-														    		Group: <?php echo $class_group; ?>
-														    	</div>
-													    	</div>
-													    	
-													    </li>
+													    <li class="list-group-item text-body">Class: <?php echo $class; ?></li>
+													    <li class="list-group-item text-body">Group: <?php echo $class_group; ?></li>
 													    <li class="list-group-item text-body">Room: <?php echo $room; ?></li>
 													    <li class="list-group-item text-body">Team: <?php echo $team; ?></li>
 													  </ul>
@@ -143,12 +130,10 @@
 									<?php } ?>
 									</div>
 								</div>
-
 							</div>
 						</div>
 						<!-- Card Dark -->
 					</div>
-					<div class="col-lg-2"></div>
 				</div>
 			</div>
 		</div>
