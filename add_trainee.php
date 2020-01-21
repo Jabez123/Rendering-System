@@ -208,7 +208,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 									  <option value="FT3">FT3</option>
 									  <option value="FT4">FT4</option>
 									</select>
-									<p class="text-danger"><?php echo $gender_error; ?></p>
+									<p class="text-danger"><?php echo $class_error; ?></p>
 								</div>
 
 								<div class="md-form form-group mt-5 <?php echo (!empty($class_group_error)) ? 'has-error' : ''; ?>">
