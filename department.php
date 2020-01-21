@@ -1,5 +1,13 @@
-
 <?php include("header.php"); ?>
+<?php 
+	// Include configs
+	require_once("config/connectServer.php");
+	require_once("config/connectDatabase.php");
+
+	$sql = "SELECT * FROM department_tb";
+
+	$result = mysqli_query($conn, $sql);
+ ?>
 <div class="container-fluid mt-3">
 		<div class="row">
 			<div class="col-md-2"></div>
@@ -33,22 +41,29 @@
 					</tr>
 				</thead>
 				<tbody>
+					<?php while($row = mysqli_fetch_assoc($result)) {
+							$department_id = $row['department_id'];
+							$department_name = $row['department_name'];
+							$username = $row['username'];
+							$password = $row['password'];
+						 ?>
 					<tr>
 						<td>
 							<div class="row">
 								<div class="col-sm-12 col-md-12 col-lg-6 mb-3">
-									<a href="edit_trainee.php?id=<?php echo $trainee_id; ?>">
+									<a href="edit_department.php?id=<?php echo $department_id; ?>">
 										<button class="btn btn-block btn-primary">Edit</button></a>
 								</div>
 								<div class="col-sm-12 col-md-12 col-lg-6">
-									<button class="btn btn-block btn-danger" data-toggle="modal" data-target="#deleteModal<?php echo $trainee_id ?>">Delete</button>
+									<button class="btn btn-block btn-danger" data-toggle="modal" data-target="#deleteModal<?php echo $department_id ?>">Delete</button>
 								</div>
 							</div>
 						</td>
-						<td>Donna Snider</td>
-						<td>Customer Support</td>
-						<td>New York</td>
+						<td><?php echo $department_name; ?></td>
+						<td><?php echo $username; ?></td>
+						<td><?php echo $password; ?></td>
 					</tr>
+					<?php } ?>
 				</tbody>
 				<tfoot>
 					<tr>
@@ -61,6 +76,8 @@
 						<th class="th-sm">Password
 						</th>
 					</tr>
+					<?php include("delete_trainee_modal.php"); ?>
+					
 				</tfoot>
 			</table>
 		</div>
