@@ -7,7 +7,7 @@
 
 	$page_trainee = isset($_GET['page_trainee']) && is_numeric($_GET['page_trainee']) ? $_GET['page_trainee'] : 1;
 
-	$num_results_on_page_trainee = 3;
+	$num_results_on_page_trainee = 8;
 
 	$sql_trainee = "SELECT * FROM trainee_tb LIMIT ?, ?";
 
@@ -23,7 +23,7 @@
 
 	$page_department = isset($_GET['page_department']) && is_numeric($_GET['page_department']) ? $_GET['page_department'] : 1;
 
-	$num_results_on_page_department = 3;
+	$num_results_on_page_department = 8;
 
 	$sql_department = "SELECT * FROM department_tb LIMIT ?, ?";
 
@@ -58,11 +58,12 @@
 			aria-selected="true">Trainees Dashboard</a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" id="department-tab" data-toggle="tab" href="#department" role="tab" aria-controls="profile"
+			<a class="nav-link" id="department-tab" data-toggle="tab" href="#department" role="tab" aria-controls="department"
 			aria-selected="false">Department Overview</a>
 		</li>
 	</ul>
 	<div class="tab-content" id="dashboardTabContent">
+		<!-- Trainees Tab -->
 		<div class="tab-pane fade show active" id="trainees" role="tabpanel" aria-labelledby="trainees-tab">
 
 			<div class="container-fluid" style="margin-top: 80px;">
@@ -84,10 +85,9 @@
 								</div>
 								<!-- Body -->
 								<div class="mt-5">
-									<center>
 										<?php if (ceil($total_pages_trainee / $num_results_on_page_trainee) > 0) { ?>
 											<nav aria-label="Page navigation">
-												<ul class="pagination pg-blue">
+												<ul class="pagination pg-blue justify-content-center">
 													<?php if ($page_trainee > 1) {?>
 												    <li class="page-item ">
 												      <a class="page-link" href="index.php?page_trainee=<?php echo $page_trainee-1 ?>" tabindex="-1">Previous</a>
@@ -143,7 +143,6 @@
 												 </ul>
 											</nav>
 										<?php } ?>
-									</center>
 									<div class="row">
 										<?php if (mysqli_num_rows($result_trainee) > 0) { ?>
 
@@ -235,10 +234,9 @@
 											</div>
 										<?php } ?>
 									</div>
-									<center>
 										<?php if (ceil($total_pages_trainee / $num_results_on_page_trainee) > 0) { ?>
 											<nav aria-label="Page_trainee navigation">
-												<ul class="pagination pg-blue">
+												<ul class="pagination pg-blue justify-content-center">
 													<?php if ($page_trainee > 1) {?>
 												    <li class="page-item ">
 												      <a class="page-link" href="index.php?page_trainee=<?php echo $page_trainee-1 ?>" tabindex="-1">Previous</a>
@@ -294,7 +292,6 @@
 												 </ul>
 											</nav>
 										<?php } ?>
-									</center>
 								</div>
 							</div>
 						</div>
@@ -303,7 +300,9 @@
 				</div>
 			</div>
 		</div>
-		<div class="tab-pane fade show active" id="department" role="tabpanel" aria-labelledby="trainees-tab">
+
+		<!-- Departments Tab -->
+		<div class="tab-pane fade show" id="department" role="tabpanel" aria-labelledby="department-tab">
 
 			<div class="container-fluid" style="margin-top: 80px;">
 				<div class="row">
@@ -324,10 +323,9 @@
 								</div>
 								<!-- Body -->
 								<div class="mt-5">
-									<center>
 										<?php if (ceil($total_pages_department / $num_results_on_page_department) > 0) { ?>
 											<nav aria-label="Page navigation">
-												<ul class="pagination pg-blue">
+												<ul class="pagination pg-blue justify-content-center">
 													<?php if ($page_department > 1) {?>
 														<li class="page-item ">
 															<a class="page-link" href="index.php?page_department=<?php echo $page_department-1 ?>" tabindex="-1">Previous</a>
@@ -383,7 +381,6 @@
 												</ul>
 											</nav>
 										<?php } ?>
-									</center>
 									<div class="row">
 										<?php if (mysqli_num_rows($result_department) > 0) { ?>
 
@@ -429,66 +426,64 @@
 											</div>
 										<?php } ?>
 									</div>
-									<center>
-										<?php if (ceil($total_pages_trainee / $num_results_on_page_trainee) > 0) { ?>
-											<nav aria-label="Page_trainee navigation">
-												<ul class="pagination pg-blue">
-													<?php if ($page_trainee > 1) {?>
-												    <li class="page-item ">
-												      <a class="page-link" href="index.php?page_trainee=<?php echo $page_trainee-1 ?>" tabindex="-1">Previous</a>
-												    </li>
-												    <?php } ?>
-
-												    <?php if ($page_trainee > 3) { ?>
-												    <li class="page-item">
-												    	<a class="page-link" href="index.php?page_trainee=1">1 </a>
-												    </li>
-												    <?php } ?>
-
-												    <?php if ($page_trainee-2 > 0) { ?>
-												    <li class="page-item">
-												      <a class="page-link" href="index.php?page_trainee=<?php echo $page_trainee-2 ?>"><?php echo $page_trainee-2; ?> </a>
-												    </li>
-												    <?php } ?>
-
-												    <?php if ($page_trainee-1 > 0) { ?>
-												    <li class="page-item">
-												    	<a class="page-link" href="index.php?page_trainee=<?php echo $page_trainee-1 ?>"><?php echo $page_trainee-1; ?></a>
-												    </li>
-												    <?php } ?>
-
-												    <li class="page-item active">
-												    	<a class="page-link" href="index.php?page_trainee=<?php echo $page_trainee ?>"><?php echo $page_trainee ?> <span class="sr-only">(current)</span></a>
-												    </li>
-
-												    <?php if ($page_trainee+1 < ceil($total_pages_trainee / $num_results_on_page_trainee)+1) { ?>
-														<li class="page-item">
-															<a class="page-link" href="index.php?page_trainee=<?php echo $page_trainee+1 ?>"><?php echo $page_trainee+1 ?></a>
+										<?php if (ceil($total_pages_department / $num_results_on_page_department) > 0) { ?>
+											<nav aria-label="Page navigation">
+												<ul class="pagination pg-blue justify-content-center">
+													<?php if ($page_department > 1) {?>
+														<li class="page-item ">
+															<a class="page-link" href="index.php?page_department=<?php echo $page_department-1 ?>" tabindex="-1">Previous</a>
 														</li>
 													<?php } ?>
 
-													<?php if ($page_trainee+2 < ceil($total_pages_trainee / $num_results_on_page_trainee)+1) { ?>
+													<?php if ($page_department > 3) { ?>
 														<li class="page-item">
-															<a class="page-link" href="index.php?page_trainee=<?php echo $page_trainee+2 ?>"><?php echo $page_trainee+2 ?></a>
+															<a class="page-link" href="index.php?page_department=1">1 </a>
 														</li>
 													<?php } ?>
 
-													<?php if ($page_trainee < ceil($total_pages_trainee / $num_results_on_page_trainee)-2) { ?>
+													<?php if ($page_department-2 > 0) { ?>
 														<li class="page-item">
-															<a class="page-link" href="index.php?page_trainee=<?php echo ceil($total_pages_trainee/ $num_results_on_page_trainee) ?>"><?php echo ceil($total_pages_trainee/ $num_results_on_page_trainee) ?></a>
+															<a class="page-link" href="index.php?page_department=<?php echo $page_department-2 ?>"><?php echo $page_department-2; ?> </a>
 														</li>
 													<?php } ?>
 
-												    <?php if ($page_trainee < ceil($total_pages_trainee / $num_results_on_page_trainee)) { ?>
+													<?php if ($page_department-1 > 0) { ?>
 														<li class="page-item">
-															<a class="page-link" href="index.php?page_trainee=<?php echo $page_trainee+1 ?>">Next</a>
+															<a class="page-link" href="index.php?page_department=<?php echo $page_department-1 ?>"><?php echo $page_department-1; ?></a>
 														</li>
 													<?php } ?>
 
-												 </ul>
+													<li class="page-item active">
+														<a class="page-link" href="index.php?page_department=<?php echo $page_department ?>"><?php echo $page_department ?> <span class="sr-only">(current)</span></a>
+													</li>
+
+													<?php if ($page_department+1 < ceil($total_pages_department / $num_results_on_page_department)+1) { ?>
+														<li class="page-item">
+															<a class="page-link" href="index.php?page_department=<?php echo $page_department+1 ?>"><?php echo $page_department+1 ?></a>
+														</li>
+													<?php } ?>
+
+													<?php if ($page_department+2 < ceil($total_pages_department / $num_results_on_page_department)+1) { ?>
+														<li class="page-item">
+															<a class="page-link" href="index.php?page_department=<?php echo $page_department+2 ?>"><?php echo $page_department+2 ?></a>
+														</li>
+													<?php } ?>
+
+													<?php if ($page_department < ceil($total_pages_department / $num_results_on_page_department)-2) { ?>
+														<li class="page-item">
+															<a class="page-link" href="index.php?page_department=<?php echo ceil($total_pages_department/ $num_results_on_page_department) ?>"><?php echo ceil($total_pages_department/ $num_results_on_page_department) ?></a>
+														</li>
+													<?php } ?>
+
+													<?php if ($page_department < ceil($total_pages_department / $num_results_on_page_department)) { ?>
+														<li class="page-item">
+															<a class="page-link" href="index.php?page_department=<?php echo $page_department+1 ?>">Next</a>
+														</li>
+													<?php } ?>
+
+												</ul>
 											</nav>
 										<?php } ?>
-									</center>
 								</div>
 							</div>
 						</div>
