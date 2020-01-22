@@ -74,11 +74,11 @@
 						<td>
 							<div class="row">
 								<div class="col-sm-12 col-md-12 col-lg-6 mb-3">
-									<a href="edit_trainee.php?id=<?php echo $trainee_id; ?>">
+									<a href="edit_rule.php?id=<?php echo $rule_id; ?>">
 										<button class="btn btn-block btn-primary">Edit</button></a>
 								</div>
 								<div class="col-sm-12 col-md-12 col-lg-6">
-									<button class="btn btn-block btn-danger" data-toggle="modal" data-target="#deleteModal<?php echo $trainee_id ?>">Delete</button>
+									<button class="btn btn-block btn-danger" data-toggle="modal" data-target="#deleteModal<?php echo $rule_id ?>">Delete</button>
 								</div>
 							</div>
 						</td>
