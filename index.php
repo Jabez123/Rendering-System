@@ -17,7 +17,7 @@
 			<div class="col-sm-12 col-md-8 col-lg-12">
 				<div class="card text-white bg-dark pt-3 pb-3">
 				  	<div class="card-body text-center">
-				    	<h1 class="card-header">Home</h1>
+				    	<h1 class="card-title">Home</h1>
 				  	</div>
 				</div>
 			</div>
@@ -57,7 +57,9 @@
 								<!-- Body -->
 								<div class="mt-5">
 									<div class="row">
-										<?php while($row = mysqli_fetch_assoc($result)) {
+										<?php if (mysqli_num_rows($result) > 0) { ?>
+
+											<?php while($row = mysqli_fetch_assoc($result)) {
 											$trainee_id = $row['trainee_id'];
 											$first_name = $row['first_name'];
 											$last_name = $row['last_name'];
@@ -128,6 +130,22 @@
 											
 										</div>
 									<?php } ?>
+										<?php }
+										else { ?>
+											<div class="col-sm-12">
+												<!-- Card -->
+											<div class="card bg-dark mb-4">
+												<!--Card content-->
+												<div class="card-body">
+													<center>
+														<p class="display-4 mt-3 font-weight-bold">No Data</p>
+														<a href="trainee.php"><button class="btn btn-primary">Go here</button></a>
+													</center>
+												</div>
+											</div>
+											<!-- Card -->
+											</div>
+										<?php } ?>
 									</div>
 								</div>
 							</div>

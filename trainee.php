@@ -17,7 +17,7 @@
 			<div class="col-sm-12 col-md-8 col-lg-12">
 				<div class="card text-white bg-dark pt-3 pb-3">
 				  	<div class="card-body text-center">
-				    	<h1 class="card-header">Trainees</h1>
+				    	<h1 class="card-title">Trainees</h1>
 				  	</div>
 				</div>
 			</div>
