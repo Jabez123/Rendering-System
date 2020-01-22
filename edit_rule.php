@@ -181,7 +181,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 								</div>
 							</div>
 							<div class="col-md-6">
-								<div class="md-form form-group mt-5 <?php echo (!empty($is_grounded)) ? 'has-error' : ''; ?>">
+								<div class="md-form form-group <?php echo (!empty($is_grounded)) ? 'has-error' : ''; ?>">
 									<p class="text-black-50" for="is_grounded">Grounded</p>
 									<input type="hidden" name="is_grounded" value="">
 									<?php if ($is_grounded == "Yes") { ?>
@@ -221,7 +221,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 									<span class="help-block text-danger"><?php echo $levitical_service_error; ?></span>
 								</div>
 							</div>
-						</div>
 						</div>
 							<div class="card-footer text-center">
 								<div class="row">
