@@ -102,7 +102,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 	$sql = "SELECT 
-	department_tb.department_id, department_tb.department_name FROM rules_tb INNER JOIN department_tb ON rules_tb.department_id = department_tb.department_id";
+	department_name FROM department_tb";
 
 	$result = mysqli_query($conn, $sql);
 ?>
