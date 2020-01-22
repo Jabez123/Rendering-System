@@ -42,6 +42,9 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 						<li class="nav-item">
 							<a class="nav-link" href="department.php">Departments</a>
 						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="rules.php">Rules</a>
+						</li>
 					</ul>
 					<ul class="navbar-nav ml-auto">
 						<li class="nav-item">
