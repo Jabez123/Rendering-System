@@ -4,18 +4,18 @@ require_once("config/connectServer.php");
 require_once("config/connectDatabase.php");
  
 // Define variables and initialize with empty values
-$department_name = $offense_code = $offense_type = $offense_description = "";
+$department_id = $offense_code = $offense_type = $offense_description = "";
 $is_grounded = $summaries = $words = $levitical_service = "";
 
-$department_name_error = $offense_code_error = $offense_type_error = $offense_description_error = "";
+$department_id_error = $offense_code_error = $offense_type_error = $offense_description_error = "";
 $is_grounded_error = $summaries_error = $words_error = $levitical_service_error = "";
  
 // Processing form data when form is submitted
 if($_SERVER["REQUEST_METHOD"] == "POST") {
 
 	// Validate department name
-    if(empty(trim($_POST["department_name"]))){
-        $department_name_error = "Please enter a department name.";
+    if(empty(trim($_POST["department_id"]))){
+        $department_id_error = "Please enter a department name.";
     }
  
     // Validate offense code
@@ -54,24 +54,24 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     
     // Check input errors before inserting in database
-    if(empty($department_name_error) && empty($offense_code_error) && empty($offense_type_error) && empty($offense_description_error) && 
+    if(empty($department_id_error) && empty($offense_code_error) && empty($offense_type_error) && empty($offense_description_error) && 
 	empty($is_grounded_error) && empty($summaries_error) && empty($words_error) && empty($levitical_service_error)) {
         
         // Prepare an insert statement
         $sql = "INSERT INTO rules_tb (
-        department_name, offense_code, offense_type, offense_description, 
+        department_id, offense_code, offense_type, offense_description, 
         is_grounded, summaries, words, levitical_service) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
          
         if($stmt = mysqli_prepare($conn, $sql)) {
             // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "sssssiii", 
-            	$param_department_name, $param_offense_code, $param_offense_type, $param_description, 
+            mysqli_stmt_bind_param($stmt, "issssiii", 
+            	$param_department_id, $param_offense_code, $param_offense_type, $param_description, 
             	$param_is_grounded, $param_summaries, $param_words, 
-            	$param_levitical_service, $param_team, $param_status);
+            	$param_levitical_service);
             
             // Set parameters
-            $param_department_name = trim($_POST["department_name"]);
+            $param_department_id = trim($_POST["department_id"]);
             $param_offense_code = trim($_POST["offense_code"]);
             $param_offense_type = trim($_POST["offense_type"]);
             $param_description = trim($_POST["offense_description"]);
@@ -102,7 +102,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 	$sql = "SELECT 
-	department_name FROM department_tb";
+	* FROM department_tb";
 
 	$result = mysqli_query($conn, $sql);
 ?>
@@ -124,9 +124,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 						<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
 						<div class="row">
 							<div class="col-md-6">
-								<div class="md-form form-group mt-5 <?php echo (!empty($department_name_error)) ? 'has-error' : ''; ?>">
-									<p class="text-black-50" for="department_name">Department Name</p>
-									<select name="department_name" id="department_name" class="browser-default custom-select">
+								<div class="md-form form-group mt-5 <?php echo (!empty($department_id_error)) ? 'has-error' : ''; ?>">
+									<p class="text-black-50" for="department_id">Department Name</p>
+									<select name="department_id" id="department_id" class="browser-default custom-select">
 										<option selected>Select Department Name</option>
 										<?php while($row = mysqli_fetch_assoc($result)) {
 											$department_id = $row['department_id'];
@@ -136,7 +136,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 									<?php } ?>
 									</select>
 										
-									<p class="text-danger"><?php echo $department_name_error; ?></p>
+									<p class="text-danger"><?php echo $department_id_error; ?></p>
 								</div>
 								<div class="md-form form-group mt-5 <?php echo (!empty($offense_code_error)) ? 'has-error' : ''; ?>">
 									<input class="form-control" type="text" name="offense_code" id="offense_code">
