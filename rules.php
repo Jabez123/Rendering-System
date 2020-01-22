@@ -91,7 +91,7 @@
 						<td><?php echo $words; ?></td>
 						<td><?php echo $levitical_service; ?></td>
 					</tr>
-					<?php include("delete_trainee_modal.php"); ?>
+					<?php include("delete_rule_modal.php"); ?>
 					<?php } ?>
 				</tbody>
 				<tfoot>
