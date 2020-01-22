@@ -63,6 +63,7 @@
 						<td><?php echo $username; ?></td>
 						<td><?php echo $password; ?></td>
 					</tr>
+					<?php include("delete_department_modal.php"); ?>
 					<?php } ?>
 				</tbody>
 				<tfoot>
@@ -76,7 +77,7 @@
 						<th class="th-sm">Password
 						</th>
 					</tr>
-					<?php include("delete_trainee_modal.php"); ?>
+					
 					
 				</tfoot>
 			</table>
