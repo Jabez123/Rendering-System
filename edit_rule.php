@@ -222,6 +222,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 								</div>
 							</div>
 						</div>
+						</div>
 							<div class="card-footer text-center">
 								<div class="row">
 									<div class="col-md-4 col-lg-4">
@@ -235,7 +236,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 								</div>
 							</div>
 						</form>
-					</div>
 				</div>
 			</div>
 
