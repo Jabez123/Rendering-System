@@ -79,10 +79,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         $class_group_error = "Please enter a class group.";
     }
 
-	// Validate room
-    if(empty(trim($_POST["room"]))){
-        $room_error = "Please enter a room.";
-    }
+	// // Validate room
+ //    if(empty(trim($_POST["room"]))){
+ //        $room_error = "Please enter a room.";
+ //    }
 
 	// Validate team
     if(empty(trim($_POST["team"]))){

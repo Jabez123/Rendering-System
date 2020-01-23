@@ -38,20 +38,20 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         $is_grounded_error = "Please enter is grounded.";
     }
 
-    // Validate summaries
-    if(empty(trim($_POST["summaries"]))){
-        $summaries_error = "Please enter a summaries.";
-    }
+ //    // Validate summaries
+ //    if(empty(trim($_POST["summaries"]))){
+ //        $summaries_error = "Please enter a summaries.";
+ //    }
 
-	// Validate class words   
-    if(empty(trim($_POST["words"]))){
-        $words_error = "Please enter a words.";
-    }
+	// // Validate class words   
+ //    if(empty(trim($_POST["words"]))){
+ //        $words_error = "Please enter a words.";
+ //    }
 
-	// Validate levitical service
-    if(empty(trim($_POST["levitical_service"]))){
-        $levitical_service_error = "Please enter a levitical service.";
-    }
+	// // Validate levitical service
+ //    if(empty(trim($_POST["levitical_service"]))){
+ //        $levitical_service_error = "Please enter a levitical service.";
+ //    }
     
     // Check input errors before inserting in database
     if(empty($department_id_error) && empty($offense_code_error) && empty($offense_type_error) && empty($offense_description_error) && 
