@@ -94,9 +94,9 @@
 							<h1 class="display-4 text-center">Make Render</h1>
 						</div>
 						<div class="card-body">
-							<div class="md-form form-group mt-5 <?php echo (!empty($trainee_id_error)) ? 'has-error' : ''; ?>">
+							<div class="md-form form-group <?php echo (!empty($trainee_id_error)) ? 'has-error' : ''; ?>">
 								<p class="text-black-50" for="trainee_id">Trainee</p>
-								<select name="trainee_id" id="trainee_id" class="browser-default custom-select">
+								<select name="trainee_id" id="trainee_id" class="selectpicker" data-live-search="true" data-width="99%">
 								  	<option selected>Select Trainee</option>
 								  	<?php while($row = mysqli_fetch_assoc($result_trainee)) { 
 								  		$trainee_id = $row['trainee_id'];
@@ -111,7 +111,7 @@
 
 							<div class="md-form form-group mt-5 <?php echo (!empty($rule_id_error)) ? 'has-error' : ''; ?>">
 								<p class="text-black-50" for="rule_id">Offense Code</p>
-								<select name="rule_id" id="rule_id" class="browser-default custom-select">
+								<select name="rule_id" id="rule_id" class="selectpicker" data-live-search="true" data-width="99%">
 								  	<option selected>Select Offense</option>
 								  	<?php while($row = mysqli_fetch_assoc($result_rule)) { 
 								  		$rule_id = $row['rule_id'];
