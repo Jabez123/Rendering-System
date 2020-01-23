@@ -41,9 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate credentials
 	if(empty($username_error) && empty($password_error)) {
         // Prepare a select statement
-		$sql = "SELECT users_tb.user_id, department_tb.username, department_tb.hashed_password FROM users_tb 
-		INNER JOIN department_tb ON users_tb.department_id = department_tb.department_id
-		WHERE department_tb.username = ?";
+		$sql = "SELECT department_id, username, hashed_password FROM department_tb WHERE department_tb.username = ?";
 		if($stmt = mysqli_prepare($conn, $sql)){
             // Bind variables to the prepared statement as parameters
 			mysqli_stmt_bind_param($stmt, "s", $param_username);
