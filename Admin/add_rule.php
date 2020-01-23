@@ -37,11 +37,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         // Prepare an insert statement
         $sql = "INSERT INTO rules_tb (
         department_id, offense_code, offense_type, offense_description) 
-        VALUES (?, ?, ?, ?, ?)";
+        VALUES (?, ?, ?, ?)";
          
         if($stmt = mysqli_prepare($conn, $sql)) {
             // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "issssiii", 
+            mysqli_stmt_bind_param($stmt, "isss", 
             	$param_department_id, $param_offense_code, $param_offense_type, $param_description);
             
             // Set parameters
@@ -71,8 +71,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     mysqli_close($conn);
 }
 
-	$sql = "SELECT 
-	* FROM department_tb";
+	$sql = "SELECT * FROM department_tb";
 
 	$result = mysqli_query($conn, $sql);
 ?>
