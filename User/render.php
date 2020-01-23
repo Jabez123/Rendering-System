@@ -67,6 +67,7 @@
 					<?php while($row = mysqli_fetch_assoc($result)) {
 							$render_id = $row['render_id'];
 							$trainee_id = $row['trainee_id'];
+							$rule_id = $row['rule_id'];
 							$first_name = $row['first_name'];
 							$last_name = $row['last_name'];
 							$render_date = $row['render_date'];
@@ -83,7 +84,7 @@
 						<td>
 							<div class="row">
 								<div class="col-sm-12 col-md-12 col-lg-6 mb-3">
-									<a href="edit_render.php?id=<?php echo $render_id; ?>">
+									<a href="edit_render.php?id_render=<?php echo $render_id; ?>&id_rule=<?php echo $rule_id ?>&id_trainee=<?php echo $trainee_id ?>">
 										<button class="btn btn-block btn-primary">Edit</button></a>
 								</div>
 								<div class="col-sm-12 col-md-12 col-lg-6">
