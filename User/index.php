@@ -86,8 +86,8 @@
 	</div>
 	<div class="container-fluid mt-5">
 		<div class="row">
-			<div class="col-lg-3"></div>
-			<div class="col-sm-12 col-md-12 col-lg-6">
+			<div class="col-lg-2"></div>
+			<div class="col-sm-12 col-md-12 col-lg-8">
 				<div class="card">
 					<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
 						<div class="card-header">
@@ -131,7 +131,7 @@
 					</form>
 				</div>
 			</div>
-			<div class="col-lg-3"></div>
+			<div class="col-lg-2"></div>
 		</div>
 	</div>
 </main>

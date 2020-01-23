@@ -4,10 +4,12 @@
 	require_once("../config/connectServer.php");
 	require_once("../config/connectDatabase.php");
 
-	$sql = "SELECT render_tb.render_id, rules_tb.rule_id, trainee_tb.trainee_id, trainee_tb.first_name, trainee_tb.last_name, department_tb.department_name,
+	$sql = "SELECT render_tb.render_id, rules_tb.rule_id, 
+	trainee_tb.trainee_id, trainee_tb.first_name, trainee_tb.last_name, trainee_tb.id_name,
+	department_tb.department_name,
 	rules_tb.offense_code, rules_tb.offense_type, rules_tb.offense_description,
-	rules_tb.is_grounded, rules_tb.summaries, rules_tb.words, rules_tb.levitical_service
-
+	rules_tb.is_grounded, rules_tb.summaries, rules_tb.words, rules_tb.levitical_service,
+	render_tb.render_date
 	FROM render_tb 
 	INNER JOIN trainee_tb ON trainee_tb.trainee_id = render_tb.trainee_id
 	INNER JOIN rules_tb ON rules_tb.rule_id = render_tb.rule_id
@@ -41,6 +43,8 @@
 						</th>
 						<th class="th-sm">Trainee ID
 						</th>
+						<th class="th-sm">Date
+						</th>
 						<th class="th-sm">Name
 						</th>
 						<th class="th-sm">Offense Code
@@ -65,13 +69,15 @@
 							$trainee_id = $row['trainee_id'];
 							$first_name = $row['first_name'];
 							$last_name = $row['last_name'];
+							$render_date = $row['render_date'];
+							$id_name = $row['id_name'];
 							$offense_code = $row['offense_code'];
 							$offense_type = $row['offense_type'];
 							$offense_description = $row['offense_description'];
 							$is_grounded = $row['is_grounded'];
 							$summaries = $row['summaries'];
 							$words = $row['words'];
-							$levitical_service = $row['levitical_service']
+							$levitical_service = $row['levitical_service'];
 						 ?>
 					<tr>
 						<td>
@@ -81,11 +87,12 @@
 										<button class="btn btn-block btn-primary">Edit</button></a>
 								</div>
 								<div class="col-sm-12 col-md-12 col-lg-6">
-									<button class="btn btn-block btn-danger" data-toggle="modal" data-target="#deleteModal<?php echo $rule_id ?>">Delete</button>
+									<button class="btn btn-block btn-danger" data-toggle="modal" data-target="#deleteModal<?php echo $render_id ?>">Delete</button>
 								</div>
 							</div>
 						</td>
 						<td class="font-weight-bold"><?php echo $trainee_id; ?></td>
+						<td><?php echo $render_date; ?></td>
 						<td><?php echo $last_name; ?>, <?php echo $first_name; ?></td>
 						<td><?php echo $offense_code ?></td>
 						<td><?php echo $offense_type; ?></td>
@@ -95,7 +102,7 @@
 						<td><?php echo $words; ?></td>
 						<td><?php echo $levitical_service; ?></td>
 					</tr>
-					<?php include("delete_rule_modal.php"); ?>
+					<?php include("delete_render_modal.php"); ?>
 					<?php } ?>
 				</tbody>
 				<tfoot>
@@ -103,6 +110,8 @@
 						<th class="th-sm">Action
 						</th>
 						<th class="th-sm">Trainee ID
+						</th>
+						<th class="th-sm">Date
 						</th>
 						<th class="th-sm">Name
 						</th>
