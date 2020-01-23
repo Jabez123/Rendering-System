@@ -146,7 +146,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 							<!-- Default checked -->
 							<div class="custom-control custom-checkbox">
-								<input type="checkbox" class="custom-control-input" id="showPassword">
+								<input type="checkbox" class="custom-control-input" id="showPassword" onclick="myFunction()">
 								<label class="custom-control-label" for="showPassword">Show Password</label>
 							</div>
 
@@ -168,6 +168,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	<script type="text/javascript" src="dist/js/popper.js"></script>
 	<script type="text/javascript" src="dist/js/bootstrap.js"></script>
 	<script type="text/javascript" src="dist/js/mdb.js"></script>
+	<script type="text/javascript" src="dist/js/other.js"></script>
 
 </body>
 </html>
