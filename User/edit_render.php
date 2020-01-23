@@ -53,7 +53,6 @@
 	        WHERE render_id = ?";
 	         
 	        if($stmt = mysqli_prepare($conn, $sql)) {
-	        	echo "Good";
 	            // Bind variables to the prepared statement as parameters
 	            mysqli_stmt_bind_param($stmt, "iiii", 
             	$param_trainee_id, $param_department_id, $param_rule_id, $param_render_id);
