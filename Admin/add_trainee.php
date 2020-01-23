@@ -233,7 +233,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 									  <option value="Active">Active</option>
 									  <option value="Inactive">Inactive</option>
 									</select>
-									<p class="text-danger"><?php echo $gender_error; ?></p>
+									<p class="text-danger"><?php echo $status_error; ?></p>
 								</div>
 							</div>
 						</div>
