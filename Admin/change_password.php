@@ -1,3 +1,5 @@
+<?php include("header.php") ?>
+
 <?php 
 
 // Include configs
@@ -53,6 +55,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 				echo "Oops! Something went wrong. Please try again later.";
 			}
 		}
+		else {
+			echo "Changing Password Error: " . mysqli_error($conn);
+		}
 
         // Close statement
 		mysqli_stmt_close($stmt);
@@ -63,8 +68,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 }
 
 ?>
-
-<?php include("header.php") ?>
 
 <main class="mt-5">
 	<div class="container">
