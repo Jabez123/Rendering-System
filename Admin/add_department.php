@@ -1,17 +1,12 @@
 <?php
 // Include configs
-require_once("config/connectServer.php");
-require_once("config/connectDatabase.php");
+require_once("../config/connectServer.php");
+require_once("../config/connectDatabase.php");
  
 // Define variables and initialize with empty values
+$username = $password = $hashed_password = $confirm_password = $department_name = "";
 
-$previous_department_id = $_REQUEST['id'];
-
-$sql = "SELECT * FROM department_tb WHERE department_id= $previous_department_id";
-
-$result = mysqli_query($conn, $sql);
-
-$username_error = $password_error = $department_name_error = "";
+$username_error = $password_error = $confirm_password_error = $department_name_error =  "";
  
 // Processing form data when form is submitted
 if($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -65,25 +60,34 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         $hashed_password = trim($_POST["password"]);
     }
     
-    // Check input errors before inserting in database
-    if(empty($username_error) && empty($password_error) && empty($department_name_error)) {
-        
+    // Validate confirm password
+    if(empty(trim($_POST["confirm_password"]))){
+        $confirm_password_error = "Please confirm password.";     
+    } 
+    else{
+        $confirm_password = trim($_POST["confirm_password"]);
+        if(empty($password_error) && ($password != $confirm_password)){
+            $confirm_password_error = "Password did not match.";
+        }
+    }
 
-        // Prepare an update statement
-        $sql = "UPDATE department_tb SET
-    	username = ?, password = ?, hashed_password = ?, department_name = ?
-        WHERE department_id = ?";
+    // Check input errors before inserting in database
+    if(empty($username_error) && empty($password_error) && empty($confirm_password_error) && empty($department_name_error)) {
+        
+        // Prepare an insert statement
+        $sql = "INSERT INTO department_tb (
+        username, password, hashed_password, department_name) 
+        VALUES (?, ?, ?, ?)";
          
         if($stmt = mysqli_prepare($conn, $sql)) {
             // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "ssssi", 
-            	$param_username, $param_password, $param_hashed_password, $param_department_name, $param_department_id);
+            mysqli_stmt_bind_param($stmt, "ssss", 
+            	$param_username, $param_password, $param_hashed_password, $param_department_name);
             
             // Set parameters
-            $param_department_id = $previous_department_id;
             $param_username = trim($_POST["username"]);
+            $param_hashed_password = password_hash($hashed_password, PASSWORD_DEFAULT); // Creates a password hash 
             $param_password = trim($_POST["password"]);
-            $param_hashed_password = password_hash($password, PASSWORD_DEFAULT); // Creates a password hash 
             $param_department_name = trim($_POST["department_name"]);
             
             // Attempt to execute the prepared statement
@@ -94,11 +98,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 
             else{
                 echo "Something went wrong. Please try again later.";
-                echo "Updating Error: " . mysqli_error($conn);
+                echo "Error: " . mysqli_error($conn);
             }
             // Close statement
-        mysqli_stmt_close($stmt);
+        	mysqli_stmt_close($stmt);
         }
+
+        
     }
     
     // Close connection
@@ -109,46 +115,42 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <?php include("header.php") ?>
 
-<main class="mt-5">
-	<div class="container">
+<main class="mt-5 mb-5">
+	<div class="container mb-5">
 		<div class="row">
-			<div class="col-md-1"></div>
+			<div class="col-md-2 col-lg-2"></div>
 
-			<div class="col-sm-12 col-md-10 col-lg-12">
+			<div class="col-sm-12 col-md-8 col-lg-8">
 				<div class="card">
 					<div class="card-header h1 text-center">
-						Edit Department
+						Add Department
 					</div>
 					<div class="card-body">
-						<form action="" method="post">
-							<?php 
-								while($row = mysqli_fetch_assoc($result)) {
-									$department_id = $row['department_id'];
-									$department_name = $row['department_name'];
-									$username = $row['username'];
-									$password = $row['password'];
-							 ?>
-							<div class="md-form form-group mt-5 <?php echo (!empty($username_error)) ? 'has-error' : ''; ?>">
-									<input class="form-control" type="text" name="username" id="username" value="<?php echo $username ?>">
+						<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+								<div class="md-form form-group mt-5 <?php echo (!empty($username_error)) ? 'has-error' : ''; ?>">
+									<input class="form-control" type="text" name="username" id="username">
 									<label for="username">Username</label>
 									<span class="help-block text-danger"><?php echo $username_error; ?></span>
 								</div>
 								<div class="md-form form-group mt-5 <?php echo (!empty($password_error)) ? 'has-error' : ''; ?>">
-									<input class="form-control" type="password" name="password" id="password" value="<?php echo $password ?>">
+									<input class="form-control" type="password" name="password" id="password">
 									<label for="password">Password</label>
-									<span class="help-block">Current Password: <?php echo $password; ?></span>
 									<span class="help-block text-danger"><?php echo $password_error; ?></span>
 								</div>
+								<div class="md-form form-group mt-5 <?php echo (!empty($confirm_password_error)) ? 'has-error' : ''; ?>">
+									<input class="form-control" type="password" name="confirm_password" id="confirm_password">
+									<label for="confirm_password">Confirm Password</label>
+									<span class="help-block text-danger"><?php echo $confirm_password_error; ?></span>
+								</div>
 								<div class="md-form form-group mt-5 <?php echo (!empty($department_name_error)) ? 'has-error' : ''; ?>">
-									<input class="form-control" type="text" name="department_name" id="department_name" value="<?php echo $department_name ?>">
+									<input class="form-control" type="text" name="department_name" id="department_name">
 									<label for="department_name">Department Name</label>
 									<span class="help-block text-danger"><?php echo $department_name_error; ?></span>
 								</div>
-							<?php } ?>
 							<div class="card-footer text-center">
 								<div class="row">
 									<div class="col-md-4 col-lg-4">
-										<button type="submit" class="mt-3 btn btn-block btn-primary">Save</button>
+										<button type="submit" class="mt-3 btn btn-block btn-primary">Add</button>
 									</div>
 									<div class="col-sm-12 col-md-4 col-lg-4">
 									</div>
@@ -161,8 +163,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 					</div>
 				</div>
 			</div>
-
-			<div class="col-md-1"></div>
+			<div class="col-md-2 col-lg-2"></div>
 		</div>
 	</div>
 </main>

@@ -1,7 +1,7 @@
 <?php 
 	// Include configs
-require_once("config/connectServer.php");
-require_once("config/connectDatabase.php");
+require_once("../config/connectServer.php");
+require_once("../config/connectDatabase.php");
 
 
 $trainee_id = $_REQUEST['id'];

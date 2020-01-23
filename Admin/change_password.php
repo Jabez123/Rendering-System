@@ -1,8 +1,8 @@
 <?php 
 
 // Include configs
-require_once("config/connectServer.php");
-require_once("config/connectDatabase.php");
+require_once("../config/connectServer.php");
+require_once("../config/connectDatabase.php");
 
 // Define variables and initialize with empty values
 $new_password = $confirm_password = "";

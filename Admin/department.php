@@ -1,8 +1,8 @@
 <?php include("header.php"); ?>
 <?php 
 	// Include configs
-	require_once("config/connectServer.php");
-	require_once("config/connectDatabase.php");
+	require_once("../config/connectServer.php");
+	require_once("../config/connectDatabase.php");
 
 	$sql = "SELECT * FROM department_tb";
 

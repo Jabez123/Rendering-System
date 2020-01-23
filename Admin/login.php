@@ -10,8 +10,8 @@ if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
 }
 
 // Include configs
-require_once("config/connectServer.php");
-require_once("config/connectDatabase.php");
+require_once("../config/connectServer.php");
+require_once("../config/connectDatabase.php");
 
 
 $username = "";
@@ -41,9 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate credentials
 	if(empty($username_error) && empty($password_error)) {
         // Prepare a select statement
-		$sql = "SELECT users_tb.user_id, department_tb.username, department_tb.hashed_password FROM users_tb 
-		INNER JOIN department_tb ON users_tb.department_id = department_tb.department_id
-		WHERE department_tb.username = ?";
+		$sql = "SELECT admin_id, username, password FROM admin_tb WHERE username = ?";
 		if($stmt = mysqli_prepare($conn, $sql)){
             // Bind variables to the prepared statement as parameters
 			mysqli_stmt_bind_param($stmt, "s", $param_username);
@@ -71,7 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 							$_SESSION["username"] = $username;                         
 
                             // Redirect user to index page
-							header("location: User\index.php");
+							header("location: index.php");
 						} else{
                             // Display an error message if password is not valid
 							$password_error = "The password you entered was not valid.";
@@ -105,10 +103,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta http-equiv="x-ua-compatible" content="ie=edge">
 	<title></title>
-	<link rel="stylesheet" type="text/css" href="dist/css/all.css">
-	<link rel="stylesheet" type="text/css" href="dist/css/bootstrap.css">
-	<link rel="stylesheet" type="text/css" href="dist/css/mdb.css">
-	<link rel="stylesheet" type="text/css" href="dist/css/style.css">
+	<link rel="stylesheet" type="text/css" href="../dist/css/all.css">
+	<link rel="stylesheet" type="text/css" href="../dist/css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="../dist/css/mdb.css">
+	<link rel="stylesheet" type="text/css" href="../dist/css/style.css">
 </head>
 <body>
 	<main class="mt-5">
@@ -164,10 +162,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		</div>
 	</main>
 
-	<script type="text/javascript" src="dist/js/jquery.js"></script>
-	<script type="text/javascript" src="dist/js/popper.js"></script>
-	<script type="text/javascript" src="dist/js/bootstrap.js"></script>
-	<script type="text/javascript" src="dist/js/mdb.js"></script>
+	<script type="text/javascript" src="../dist/js/jquery.js"></script>
+	<script type="text/javascript" src="../dist/js/popper.js"></script>
+	<script type="text/javascript" src="../dist/js/bootstrap.js"></script>
+	<script type="text/javascript" src="../dist/js/mdb.js"></script>
 
 </body>
 </html>

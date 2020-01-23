@@ -1,29 +1,29 @@
 <?php 
 	// Include configs
-require_once("config/connectServer.php");
-require_once("config/connectDatabase.php");
+require_once("../config/connectServer.php");
+require_once("../config/connectDatabase.php");
 
 
-$rule_id = $_REQUEST['id'];
+$department_id = $_REQUEST['id'];
 
-echo "From request: " . $rule_id;
+echo "From request: " . $department_id;
 
 // Prepare an update statement
         
-        $sql = "DELETE FROM rules_tb WHERE rule_id = ?";
+        $sql = "DELETE FROM department_tb WHERE department_id = ?";
         if($stmt = mysqli_prepare($conn, $sql)) {
 
             // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "i", $rule_id);
+            mysqli_stmt_bind_param($stmt, "i", $department_id);
             
             // Set parameters
-            $rule_id = $rule_id;
+            $department_id = $department_id;
 
-            echo "From parameter: " . $rule_id;
+            echo "From parameter: " . $department_id;
             // Attempt to execute the prepared statement
             if(mysqli_stmt_execute($stmt)){
                 // Redirect to login page
-                header("location: rules.php");
+                header("location: department.php");
             } 
 
             else{
