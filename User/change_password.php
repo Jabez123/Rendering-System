@@ -1,3 +1,5 @@
+<?php include("header.php") ?>
+
 <?php 
 
 // Include configs
@@ -33,25 +35,31 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     // Check input errors before updating the database
 	if(empty($new_password_error) && empty($confirm_password_error)){
         // Prepare an update statement
-		$sql = "UPDATE admin_tb SET password = ? WHERE admin_id = ?";
+		$sql = "UPDATE department_tb SET hashed_password = ?, password = ? WHERE department_id = ? AND username = ?";
 
 		if($stmt = mysqli_prepare($conn, $sql)){
             // Bind variables to the prepared statement as parameters
-			mysqli_stmt_bind_param($stmt, "si", $param_password, $param_id);
+			mysqli_stmt_bind_param($stmt, "ssis", $param_hashed_password, $param_password, $param_id, $param_username);
 
             // Set parameters
-			$param_password = password_hash($new_password, PASSWORD_DEFAULT);
+			$param_hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+			$param_password = trim($_POST['new_password']);
+			$param_username = $_SESSION['username'];
+
 			$param_id = $_SESSION["id"];
 
             // Attempt to execute the prepared statement
 			if(mysqli_stmt_execute($stmt)){
                 // Password updated successfully. Destroy the session, and redirect to login page
 				session_destroy();
-				header("location: login.php");
+				header("location: ../index.php");
 				exit();
 			} else{
 				echo "Oops! Something went wrong. Please try again later.";
 			}
+		}
+		else {
+		    echo "Changing Password Error: " . mysqli_error($conn);
 		}
 
         // Close statement
@@ -63,8 +71,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 }
 
 ?>
-
-<?php include("header.php") ?>
 
 <main class="mt-5">
 	<div class="container">
