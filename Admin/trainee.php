@@ -28,7 +28,6 @@
 	<main class="mt-5">
 		<div class="text-center">
 			<a href="add_trainee.php"><button class="btn btn-default">Add Trainee</button></a>
-			
 		</div>
 		<div class="table-responsive">
 			<table id="dtTrainees" class="table table-sm table-striped table-bordered" cellspacing="0" width="100%">

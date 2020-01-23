@@ -5,10 +5,8 @@ require_once("../config/connectDatabase.php");
  
 // Define variables and initialize with empty values
 $department_id = $offense_code = $offense_type = $offense_description = "";
-$is_grounded = $summaries = $words = $levitical_service = "";
 
 $department_id_error = $offense_code_error = $offense_type_error = $offense_description_error = "";
-$is_grounded_error = $summaries_error = $words_error = $levitical_service_error = "";
  
 // Processing form data when form is submitted
 if($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -32,53 +30,25 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     if(empty(trim($_POST["offense_description"]))){
         $offense_description_error = "Please enter a offense description.";
     }
-
-    // Validate is grounded
-    if(empty(trim($_POST["is_grounded"]))){
-        $is_grounded_error = "Please enter is grounded.";
-    }
-
- //    // Validate summaries
- //    if(empty(trim($_POST["summaries"]))){
- //        $summaries_error = "Please enter a summaries.";
- //    }
-
-	// // Validate class words   
- //    if(empty(trim($_POST["words"]))){
- //        $words_error = "Please enter a words.";
- //    }
-
-	// // Validate levitical service
- //    if(empty(trim($_POST["levitical_service"]))){
- //        $levitical_service_error = "Please enter a levitical service.";
- //    }
     
     // Check input errors before inserting in database
-    if(empty($department_id_error) && empty($offense_code_error) && empty($offense_type_error) && empty($offense_description_error) && 
-	empty($is_grounded_error) && empty($summaries_error) && empty($words_error) && empty($levitical_service_error)) {
+    if(empty($department_id_error) && empty($offense_code_error) && empty($offense_type_error) && empty($offense_description_error)) {
         
         // Prepare an insert statement
         $sql = "INSERT INTO rules_tb (
-        department_id, offense_code, offense_type, offense_description, 
-        is_grounded, summaries, words, levitical_service) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        department_id, offense_code, offense_type, offense_description) 
+        VALUES (?, ?, ?, ?, ?)";
          
         if($stmt = mysqli_prepare($conn, $sql)) {
             // Bind variables to the prepared statement as parameters
             mysqli_stmt_bind_param($stmt, "issssiii", 
-            	$param_department_id, $param_offense_code, $param_offense_type, $param_description, 
-            	$param_is_grounded, $param_summaries, $param_words, 
-            	$param_levitical_service);
+            	$param_department_id, $param_offense_code, $param_offense_type, $param_description);
             
             // Set parameters
             $param_department_id = trim($_POST["department_id"]);
             $param_offense_code = trim($_POST["offense_code"]);
             $param_offense_type = trim($_POST["offense_type"]);
             $param_description = trim($_POST["offense_description"]);
-            $param_is_grounded = trim($_POST["is_grounded"]);
-            $param_summaries = trim($_POST["summaries"]);
-            $param_words = trim($_POST["words"]);
-            $param_levitical_service = trim($_POST["levitical_service"]);
             
             // Attempt to execute the prepared statement
             if(mysqli_stmt_execute($stmt)){
@@ -113,9 +83,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 <main class="mt-5">
 	<div class="container">
 		<div class="row">
-			<div class="col-md-1"></div>
+			<div class="col-md-2 col-lg-2"></div>
 
-			<div class="col-sm-12 col-md-10 col-lg-12">
+			<div class="col-sm-12 col-md-8 col-lg-8">
 				<div class="card">
 					<div class="card-header h1 text-center">
 						Add Rule
@@ -123,7 +93,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 					<div class="card-body">
 						<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
 						<div class="row">
-							<div class="col-md-6">
+							<div class="col-md-12">
 								<div class="md-form form-group mt-5 <?php echo (!empty($department_id_error)) ? 'has-error' : ''; ?>">
 									<p class="text-black-50" for="department_id">Department Name</p>
 									<select name="department_id" id="department_id" class="browser-default custom-select">
@@ -154,36 +124,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 									<span class="help-block text-danger"><?php echo $offense_description_error; ?></span>
 								</div>
 							</div>
-							<div class="col-md-6">
-								<div class="md-form form-group <?php echo (!empty($is_grounded)) ? 'has-error' : ''; ?>">
-									<p class="text-black-50" for="is_grounded">Grounded</p>
-									<input type="hidden" name="is_grounded" value="">
-									<div class="custom-control custom-radio custom-control-inline" style="margin-left: 20px;">
-									  <input type="radio" class="custom-control-input" id="yes" name="is_grounded" value="Yes">
-									  <label class="custom-control-label" for="yes">Yes</label>
-									</div>
-									<div class="custom-control custom-radio custom-control-inline" style="margin-left: 50px;">
-									   <input type="radio" class="custom-control-input" id="no" name="is_grounded" value="No">
-									  <label class="custom-control-label" for="no">No</label>
-									</div>
-									<p class="text-danger"><?php echo $is_grounded_error; ?></p>
-								</div>
-								<div class="md-form form-group mt-5 <?php echo (!empty($summaries_error)) ? 'has-error' : ''; ?>">
-									<input class="form-control" type="number" name="summaries" id="summaries" min=0>
-									<label for="summaries">Summaries</label>
-									<span class="help-block text-danger"><?php echo $summaries_error; ?></span>
-								</div>
-								<div class="md-form form-group mt-5 <?php echo (!empty($words_error)) ? 'has-error' : ''; ?>">
-									<input class="form-control" type="number" name="words" id="words" min=0>
-									<label for="words">Words</label>
-									<span class="help-block text-danger"><?php echo $words_error; ?></span>
-								</div>
-								<div class="md-form form-group mt-5 <?php echo (!empty($levitical_service_error)) ? 'has-error' : ''; ?>">
-									<input class="form-control" type="number" name="levitical_service" id="levitical_service" min=0>
-									<label for="levitical_service">Levitical Service</label>
-									<span class="help-block text-danger"><?php echo $levitical_service_error; ?></span>
-								</div>
-							</div>
 						</div>
 							<div class="card-footer text-center">
 								<div class="row">
@@ -202,7 +142,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 				</div>
 			</div>
 
-			<div class="col-md-1"></div>
+			<div class="col-md-2 col-lg-2"></div>
 		</div>
 	</div>
 </main>

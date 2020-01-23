@@ -7,8 +7,7 @@
 	$sql = "SELECT 
 	rules_tb.rule_id, department_tb.department_name, 
 	rules_tb.offense_code, rules_tb.offense_type, 
-	rules_tb.offense_description, rules_tb.is_grounded, 
-	rules_tb.summaries, rules_tb.words, rules_tb.levitical_service FROM rules_tb INNER JOIN department_tb ON rules_tb.department_id = department_tb.department_id";
+	rules_tb.offense_description FROM rules_tb INNER JOIN department_tb ON rules_tb.department_id = department_tb.department_id";
 
 	$result = mysqli_query($conn, $sql);
  ?>
@@ -48,14 +47,6 @@
 						</th>
 						<th class="th-sm">Description
 						</th>
-						<th class="th-sm">Grounded
-						</th>
-						<th class="th-sm">Summary
-						</th>
-						<th class="th-sm">Words
-						</th>
-						<th class="th-sm">Levitical Service
-						</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -65,10 +56,6 @@
 							$offense_code = $row['offense_code'];
 							$offense_type = $row['offense_type'];
 							$offense_description = $row['offense_description'];
-							$is_grounded = $row['is_grounded'];
-							$summaries = $row['summaries'];
-							$words = $row['words'];
-							$levitical_service = $row['levitical_service'];
 						 ?>
 					<tr>
 						<td>
@@ -86,10 +73,6 @@
 						<td><?php echo $offense_code ?></td>
 						<td><?php echo $offense_type; ?></td>
 						<td><?php echo $offense_description; ?></td>
-						<td><?php echo $is_grounded; ?></td>
-						<td><?php echo $summaries; ?></td>
-						<td><?php echo $words; ?></td>
-						<td><?php echo $levitical_service; ?></td>
 					</tr>
 					<?php include("delete_rule_modal.php"); ?>
 					<?php } ?>
@@ -105,14 +88,6 @@
 						<th class="th-sm">Offense Type
 						</th>
 						<th class="th-sm">Description
-						</th>
-						<th class="th-sm">Grounded
-						</th>
-						<th class="th-sm">Summary
-						</th>
-						<th class="th-sm">Words
-						</th>
-						<th class="th-sm">Levitical Service
 						</th>
 					</tr>
 				</tfoot>

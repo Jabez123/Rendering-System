@@ -5,38 +5,23 @@
 	require_once("../config/connectServer.php");
 	require_once("../config/connectDatabase.php");
 	$department_id = $_SESSION['id'];
-	$render_id = $_REQUEST['id_render'];
-	$rule_id = $_REQUEST['id_rule'];
-	$trainee_id = $_REQUEST['id_trainee'];
  ?>
 
  <?php 
  	// Define variables and initialize with empty values
-	
+	$render_id = $rule_id = $trainee_id = "";
 
 	$render_id_error = $rule_id_error = $trainee_id_error = $department_id_error = "";
   ?>
 
 <?php 
-	////////////////////////////////////////////
-	$sql_trainee = "SELECT * FROM trainee_tb WHERE trainee_id <> $trainee_id";
+	$sql_trainee = "SELECT * FROM trainee_tb";
 
 	$result_trainee = mysqli_query($conn, $sql_trainee);
 
-	////////////////////////////////////////////
-	$sql_rule = "SELECT * FROM rules_tb WHERE department_id = $department_id AND rule_id <> $rule_id";
+	$sql_rule = "SELECT * FROM rules_tb WHERE department_id = $department_id";
 
 	$result_rule = mysqli_query($conn, $sql_rule);
-
-	///////////////////////////////////////////
-	$sql_selected_trainee = "SELECT * FROM trainee_tb WHERE trainee_id = $trainee_id";
-
-	$result_selected_trainee = mysqli_query($conn, $sql_selected_trainee);
-
-	//////////////////////////////////////////
-	$sql_selected_rule = "SELECT * FROM rules_tb WHERE department_id = $department_id AND rule_id = $rule_id";
-
-	$result_selected_rule = mysqli_query($conn, $sql_selected_rule);
  ?>
 
 <?php 
@@ -47,22 +32,21 @@
 
 		// Check input errors before inserting in database
 	    if(empty($trainee_id_error) && empty($render_id_error) && empty($rule_id_error)) {
+	        
 	        // Prepare an insert statement
-	        $sql = "UPDATE render_tb SET 
-	        trainee_id = ?, department_id = ?, rule_id = ?
-	        WHERE render_id = ?";
+	        $sql = "INSERT INTO render_tb (
+	        trainee_id, department_id, rule_id) 
+	        VALUES (?, ?, ?)";
 	         
 	        if($stmt = mysqli_prepare($conn, $sql)) {
-	        	echo "Good";
 	            // Bind variables to the prepared statement as parameters
-	            mysqli_stmt_bind_param($stmt, "iiii", 
-            	$param_trainee_id, $param_department_id, $param_rule_id, $param_render_id);
+	            mysqli_stmt_bind_param($stmt, "iii", 
+            	$param_trainee_id, $param_department_id, $param_rule_id);
 	            
 	            // Set parameters
 	            $param_trainee_id = trim($_POST["trainee_id"]);
 	            $param_department_id = $department_id;
 	            $param_rule_id = trim($_POST["rule_id"]);
-	            $param_render_id = $render_id;
 	            
 	            // Attempt to execute the prepared statement
 	            if(mysqli_stmt_execute($stmt)){
@@ -103,22 +87,15 @@
 			<div class="col-lg-2"></div>
 			<div class="col-sm-12 col-md-12 col-lg-8">
 				<div class="card">
-					<form action="" method="post">
+					<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
 						<div class="card-header">
-							<h1 class="display-4 text-center">Edit Render</h1>
+							<h1 class="display-4 text-center">Make Render</h1>
 						</div>
 						<div class="card-body">
 							<div class="md-form form-group <?php echo (!empty($trainee_id_error)) ? 'has-error' : ''; ?>">
 								<p class="text-black-50" for="trainee_id">Trainee</p>
 								<select name="trainee_id" id="trainee_id" class="selectpicker" data-live-search="true" data-width="99%">
-								  	<?php while($row = mysqli_fetch_assoc($result_selected_trainee)) { 
-								  		$trainee_id = $row['trainee_id'];
-								  		$first_name = $row['first_name'];
-								  		$last_name = $row['last_name'];
-								  	?>
-								  	<option value="<?php echo $trainee_id ?>" selected><?php echo $last_name; ?>, <?php echo $first_name ?></option>
-								  	<?php } ?>
-
+								  	<option selected>Select Trainee</option>
 								  	<?php while($row = mysqli_fetch_assoc($result_trainee)) { 
 								  		$trainee_id = $row['trainee_id'];
 								  		$first_name = $row['first_name'];
@@ -133,15 +110,7 @@
 							<div class="md-form form-group mt-5 <?php echo (!empty($rule_id_error)) ? 'has-error' : ''; ?>">
 								<p class="text-black-50" for="rule_id">Offense Code</p>
 								<select name="rule_id" id="rule_id" class="selectpicker" data-live-search="true" data-width="99%">
-								  	<?php while($row = mysqli_fetch_assoc($result_selected_rule)) { 
-								  		$rule_id = $row['rule_id'];
-								  		$offense_code = $row['offense_code'];
-								  		$offense_type = $row['offense_type'];
-								  		$offense_description = $row['offense_description'];
-								  	?>
-								  	<option value="<?php echo $rule_id ?>" selected><?php echo $offense_code; ?> - <?php echo $offense_description; ?>: <?php echo $offense_type; ?></option>
-								  	<?php } ?>
-
+								  	<option selected>Select Offense</option>
 								  	<?php while($row = mysqli_fetch_assoc($result_rule)) { 
 								  		$rule_id = $row['rule_id'];
 								  		$offense_code = $row['offense_code'];
@@ -155,15 +124,7 @@
 							</div>
 						</div>
 						<div class="card-footer">
-							<div class="row">
-								<div class="col-md-4">
-									<button type="submit" class="btn btn-block btn-primary">Save</button>
-								</div>
-								<div class="col-sm-12 col-md-4"></div>
-								<div class="col-md-4">
-									<a href="render.php"><button type="button" class="btn btn-block btn-secondary">Go Back</button></a>
-								</div>
-							</div>
+							<button type="submit" class="btn btn-block btn-primary">Submit</button>
 						</div>
 					</form>
 				</div>
