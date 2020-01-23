@@ -4,7 +4,7 @@ session_start();
 
 // Check if the user is logged in, if not then redirect him to login page
 if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
-	header("location: login.php");
+	header("location: index.php");
 	exit;
 }
 ?>
@@ -34,10 +34,10 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 				<div class="collapse navbar-collapse" id="navbarNav">
 					<ul class="navbar-nav">
 						<li class="nav-item">
-							<a class="nav-link" href="index.php">Home</a>
+							<a class="nav-link" href="index.php">Make a Render</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="render.php">Render</a>
+							<a class="nav-link" href="render.php">Renders</a>
 						</li>
 					</ul>
 					<ul class="navbar-nav ml-auto">
