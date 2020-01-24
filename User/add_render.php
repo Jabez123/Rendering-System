@@ -54,7 +54,7 @@
 		INNER JOIN trainee_tb ON trainee_tb.trainee_id = render_tb.trainee_id
 		INNER JOIN rules_tb ON rules_tb.rule_id = render_tb.rule_id
 		INNER JOIN department_tb ON department_tb.department_id = render_tb.department_id 
-		WHERE trainee_tb.trainee_id = $trainee_id AND rules_tb.offense_type = 'MISCELLNEOUS'";
+		WHERE trainee_tb.trainee_id = $trainee_id AND rules_tb.offense_type = 'MISCELLANEOUS'";
 
 		$result_miscellaneous = mysqli_query($conn, $sql_miscellaneous);
 
@@ -93,12 +93,17 @@
 	    		$total_conduct += 1;
 
 	    		if ($total_conduct <= 4) {
+	    			$total_summaries = 0;
+					$total_words = 0;
+					$total_levitical_service = 0;
+					$total_summaries = 1;
+					$total_words += 125;
 
 	    			$conn->autocommit(FALSE);
 
 		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
 		    			summaries, is_grounded, words) 
-		    			VALUES ($trainee_id, $department_id, $rule_id, 1, 0, $total_words + 125)");
+		    			VALUES ($trainee_id, $department_id, $rule_id, $summaries, 0, $total_words)");
 
 		    		$conn->commit();
 
@@ -302,9 +307,7 @@
 
 	    		if ($total_conduct > 19 && $total_words <= 875) {
 	    			$total_conduct = 20;
-	    			if ($total_words >= 875) {
-	    				$total_words = 625;
-	    			}
+	    			$total_words = 750;
 
 	    			$total_summaries++;
 	    			$levitical_service = 0;
@@ -320,7 +323,7 @@
 		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
 		    		summaries, is_grounded, words, levitical_service) 
 		    		VALUES ($trainee_id, $department_id, $rule_id, $total_summaries, 1,
-		    		$total_words + 125, $levitical_service)");
+		    		$total_words, $levitical_service)");
 
 		    		$conn->commit();
 
@@ -330,22 +333,195 @@
 	    		}
 			}
 
-			if ($selected_offense_type == "MISCELLNEOUS") {
+			if ($selected_offense_type == "MISCELLANEOUS") {
 				$total_miscellaneous += 1;
 
 				if ($total_miscellaneous <= 4) {
-					
+					$total_summaries = 0;
+					$total_words = 0;
+					$total_levitical_service = 0;
+					$total_words += 125;
+
 					$conn->autocommit(FALSE);
 
 		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
 		    		summaries, is_grounded, words, levitical_service) 
-		    		VALUES ($trainee_id, $department_id, $rule_id, $total_summaries, 1,
-		    		$total_words + 125, $levitical_service)");
+		    		VALUES ($trainee_id, $department_id, $rule_id,
+		    		$total_summaries, 0, $total_words, $total_levitical_service)");
 
 					$conn->commit();
 
 					$conn->close();
+					header("Location: render.php");
 				}
+
+				if ($total_miscellaneous <= 7) {
+					$total_summaries = 2;
+
+					if ($total_miscellaneous == 5) {
+						$total_summaries = 3;
+					}
+					$total_words += 125;
+
+					$conn->autocommit(FALSE);
+
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
+		    		summaries, is_grounded, words, levitical_service) 
+		    		VALUES ($trainee_id, $department_id, $rule_id,
+		    		$total_summaries, 0, $total_words, $total_levitical_service)");
+
+					$conn->commit();
+
+					$conn->close();
+					header("Location: render.php");
+				}
+
+				if ($total_miscellaneous <= 9 && $total_words <= 875) {
+					if ($total_words >= 875) {
+	    				$total_words = 625;
+	    			}
+	    			$total_words += 125;
+	    			$levitical_service = 1;
+	    			$total_summaries = 3;
+
+	    			$conn->autocommit(FALSE);
+
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
+		    		summaries, is_grounded, words, levitical_service) 
+		    		VALUES ($trainee_id, $department_id, $rule_id,
+		    		$total_summaries, 1, $total_words, $total_levitical_service)");
+
+					$conn->commit();
+
+					$conn->close();
+					header("Location: render.php");
+				}
+
+				if ($total_miscellaneous <= 11 && $total_words <= 875) {
+					if ($total_words >= 875) {
+	    				$total_words = 625;
+	    			}
+	    			$total_words += 125;
+	    			$levitical_service = 2;
+	    			$total_summaries = 3;
+
+	    			$conn->autocommit(FALSE);
+
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
+		    		summaries, is_grounded, words, levitical_service) 
+		    		VALUES ($trainee_id, $department_id, $rule_id,
+		    		$total_summaries, 1, $total_words, $total_levitical_service)");
+
+					$conn->commit();
+
+					$conn->close();
+					header("Location: render.php");
+				}
+
+				if ($total_miscellaneous <= 13 && $total_words <= 875) {
+					if ($total_words >= 875) {
+	    				$total_words = 625;
+	    			}
+	    			$total_words += 125;
+	    			$levitical_service = 3;
+	    			$total_summaries = 3;
+
+	    			$conn->autocommit(FALSE);
+
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
+		    		summaries, is_grounded, words, levitical_service) 
+		    		VALUES ($trainee_id, $department_id, $rule_id,
+		    		$total_summaries, 1, $total_words, $total_levitical_service)");
+
+					$conn->commit();
+
+					$conn->close();
+					header("Location: render.php");
+				}
+
+				if ($total_miscellaneous <= 15 && $total_words <= 875) {
+					if ($total_words >= 875) {
+	    				$total_words = 625;
+	    			}
+	    			$total_words += 125;
+	    			$levitical_service = 4;
+	    			$total_summaries = 3;
+
+	    			$conn->autocommit(FALSE);
+
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
+		    		summaries, is_grounded, words, levitical_service) 
+		    		VALUES ($trainee_id, $department_id, $rule_id,
+		    		$total_summaries, 1, $total_words, $total_levitical_service)");
+
+					$conn->commit();
+
+					$conn->close();
+					header("Location: render.php");
+				}
+
+				if ($total_miscellaneous <= 17 && $total_words <= 875) {
+					if ($total_words >= 875) {
+	    				$total_words = 625;
+	    			}
+	    			$total_words += 125;
+	    			$levitical_service = 5;
+	    			$total_summaries = 3;
+
+	    			$conn->autocommit(FALSE);
+
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
+		    		summaries, is_grounded, words, levitical_service) 
+		    		VALUES ($trainee_id, $department_id, $rule_id,
+		    		$total_summaries, 1, $total_words, $total_levitical_service)");
+
+					$conn->commit();
+
+					$conn->close();
+					header("Location: render.php");
+				}
+
+				if ($total_miscellaneous <= 19 && $total_words <= 875) {
+					if ($total_words >= 875) {
+	    				$total_words = 625;
+	    			}
+	    			$total_words += 125;
+	    			$levitical_service = 6;
+	    			$total_summaries = 3;
+
+	    			$conn->autocommit(FALSE);
+
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
+		    		summaries, is_grounded, words, levitical_service) 
+		    		VALUES ($trainee_id, $department_id, $rule_id,
+		    		$total_summaries, 1, $total_words, $total_levitical_service)");
+
+					$conn->commit();
+
+					$conn->close();
+					header("Location: render.php");
+				}
+
+				if ($total_conduct > 19 && $total_words <= 875) {
+	    			$total_words = 750;
+	    			$levitical_service = 2;
+	    			$total_summaries = 3;
+
+	    			$conn->autocommit(FALSE);
+
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
+		    		summaries, is_grounded, words, levitical_service) 
+		    		VALUES ($trainee_id, $department_id, $rule_id,
+		    		$total_summaries, 1, $total_words, $total_levitical_service)");
+
+					$conn->commit();
+
+					$conn->close();
+					header("Location: render.php");
+				}
+			}
+			else {
+				echo "Error: " . mysqli_error($conn);
 			}
 	        
 	    }
