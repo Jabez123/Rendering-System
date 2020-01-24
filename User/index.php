@@ -9,14 +9,14 @@
 
 	$num_results_on_page_render = 8;
 
-	$sql_render = "SELECT DISTINCT
-	trainee_tb.trainee_id, trainee_tb.first_name, trainee_tb.last_name, 
-	trainee_tb.id_name, trainee_tb.gender, trainee_tb.status, 
-	trainee_tb.class, trainee_tb.class_group, rules_tb.is_grounded
+	$sql_render = "SELECT trainee_tb.trainee_id, rules_tb.rule_id, trainee_tb.last_name, 
+	trainee_tb.first_name, trainee_tb.id_name, trainee_tb.gender, trainee_tb.class_group,
+	rules_tb.offense_code, rules_tb.offense_type, rules_tb.offense_description, 
+	render_tb.render_id, render_tb.render_date, render_tb.summaries, render_tb.is_grounded, render_tb.words, render_tb.levitical_service
 	FROM render_tb 
 	INNER JOIN trainee_tb ON trainee_tb.trainee_id = render_tb.trainee_id
 	INNER JOIN rules_tb ON rules_tb.rule_id = render_tb.rule_id
-	INNER JOIN department_tb ON department_tb.department_id = render_tb.department_id 
+	INNER JOIN department_tb ON department_tb.department_id = render_tb.department_id
 	WHERE trainee_tb.status = 'Active' LIMIT ?, ?";
 
 	if ($stmt_render = $conn->prepare($sql_render)) {
@@ -25,6 +25,9 @@
 		$stmt_render->execute();
 
 		$result_render = $stmt_render->get_result();
+	}
+	else {
+		echo "Error: " . mysqli_Error($conn);
 	}
  ?>
 
@@ -123,95 +126,47 @@
 										<?php } ?>
 									<div class="row">
 										<?php if (mysqli_num_rows($result_render) > 0) { ?>
-
-											<?php while($row = $result_render->fetch_assoc()) {
-											$trainee_id = $row['trainee_id'];
-											$first_name = $row['first_name'];
-											$last_name = $row['last_name'];
-											$gender = $row['gender'];
-											if ($gender == "Brother") {
-												$gender = "Bro";
-											}
-											else {
-												$gender = "Sis";
-											}
-											$class_group = $row['class_group'];
-
-											$is_grounded = $row['is_grounded'];
-
-											$sql_offense = "SELECT rules_tb.offense_code, SUM(rules_tb.summaries) FROM rules_tb
-											INNER JOIN department_tb ON department_tb.department_id = rules_tb.department_id
-											INNER JOIN render_tb ON rules_tb.rule_id = render_tb.rule_id
-											INNER JOIN trainee_tb ON trainee_tb.trainee_id = render_tb.trainee_id
-											WHERE trainee_tb.trainee_id = $trainee_id";
-											if ($stmt_offense = $conn->prepare($sql_offense)) {
-												$stmt_offense->execute();
-
-												$result_offense = $stmt_offense->get_result();
-											}
-										 ?>
-										<div class="col-sm-12 col-md-6 col-lg-3">
 											<?php 
-												if ($is_grounded == "No") { 
-											?>
-											<!-- Card -->
-											<div class="card mb-4">
-												<div class="card-header ">
-													<h4 class="card-title text-body text-center"><?php echo $class_group; ?> <?php echo $gender . " " . $last_name . " " . $first_name; ?></h4>
+												while($row = $result_render->fetch_assoc()) {
+												$trainee_id = $row['trainee_id'];
+												$first_name = $row['first_name'];
+												$last_name = $row['last_name'];
+												$gender = $row['gender'];
+												if ($gender == "Brother") {
+													$gender = "Bro";
+												}
+												else {
+													$gender = "Sis";
+												}
+												$class_group = $row['class_group'];
+												$summaries = $row['summaries'];
+												$words = $row['words'];
+												$levitical_service = $row['levitical_service'];
+												$is_grounded = $row['is_grounded'];
+										 	?>
+												<div class="col-sm-12 col-md-6 col-lg-3">
+													<!-- Card -->
+													<div class="card mb-4">
+														<div class="card-header ">
+															<h4 class="card-title text-body text-center"><?php echo $class_group; ?> <?php echo $gender . " " . $last_name . " " . $first_name; ?></h4>
+														</div>
+														<!--Card content-->
+														<div class="card-body">
+															<ul class="list-group list-group-flush">
+															    <li class="list-group-item text-body">Summary: <?php echo $summaries; ?></li>
+															    <li class="list-group-item text-body">Words: <?php echo $words; ?></li>
+															    <li class="list-group-item text-body">Levitical Service: <?php echo $levitical_service; ?></li>
+															    <li class="list-group-item text-body">Grounded: <?php echo $is_grounded; ?></li>
+															    <li class="list-group-item text-body"></li>
+															</ul>
+														</div>
+														<div class="card-footer">
+															<a href="trainee.php"><button class="btn btn-block btn-primary">Manage</button></a>
+														</div>
+													</div>
+												<!-- Card -->
 												</div>
-												<!--Card content-->
-												<div class="card-body">
-													  <ul class="list-group list-group-flush">
-													  	<?php while($row = $result_offense->fetch_assoc()) {
-																$offense_code = $row['offense_code']; 
-																$summaries = $row['summaries'];
-														?>
-													  	<li class="list-group-item text-body">
-													  		Offense: 
-																<?php echo $offense_code ?>
-													  	</li>
-													    <li class="list-group-item text-body">Summary: <?php echo $summaries; ?></li>
-													    <li class="list-group-item text-body">Words: </li>
-													    <li class="list-group-item text-body">Levitical Service: </li>
-													    <li class="list-group-item text-body">Grounded: </li>
-													    <li class="list-group-item text-body"></li>
-													    <?php } ?>
-													  </ul>
-												</div>
-												<div class="card-footer">
-													<a href="trainee.php"><button class="btn btn-block btn-primary">Manage</button></a>
-												</div>
-											</div>
-											<!-- Card -->
-											<?php } 
-												else if ($is_grounded == "Yes") {
-											?>
-
-											<!-- Card -->
-											<div class="card bg-warning mb-4">
-												<div class="card-header ">
-													<h4 class="card-title text-body text-center"><?php echo $class_group; ?> <?php echo $gender . " " . $last_name . " " . $first_name; ?></h4>
-												</div>
-												<!--Card content-->
-												<div class="card-body">
-													  <ul class="list-group list-group-flush">
-													    <li class="list-group-item text-body">Summary: </li>
-													    <li class="list-group-item text-body">Words: </li>
-													    <li class="list-group-item text-body">Levitical Service: </li>
-													    <li class="list-group-item text-body">Grounded: </li>
-													    <li class="list-group-item text-body"></li>
-													  </ul>
-												</div>
-												<div class="card-footer">
-													<a href="trainee.php"><button class="btn btn-block btn-primary">Manage</button></a>
-												</div>
-											</div>
-											<!-- Card -->
-
-										<?php } ?>
-											
-										</div>
-									<?php } ?>
+											<?php } ?>
 										<?php }
 										else { ?>
 											<div class="col-sm-12">
@@ -229,6 +184,7 @@
 											</div>
 										<?php } ?>
 									</div>
+								</div>
 										<?php if (ceil($total_pages_render / $num_results_on_page_render) > 0) { ?>
 											<nav aria-label="Page_render navigation">
 												<ul class="pagination pg-blue justify-content-center">

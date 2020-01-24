@@ -68,10 +68,6 @@
 							$offense_code = $row['offense_code'];
 							$offense_type = $row['offense_type'];
 							$offense_description = $row['offense_description'];
-
-							if ($offense_type == "One Sum") {
-								$summaries++;
-							}
 						 ?>
 					<tr>
 						<td>
