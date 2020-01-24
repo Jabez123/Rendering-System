@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 24, 2020 at 10:24 AM
+-- Generation Time: Jan 24, 2020 at 02:39 PM
 -- Server version: 10.1.38-MariaDB
 -- PHP Version: 7.1.26
 
@@ -50,7 +50,7 @@ TRUNCATE TABLE `admin_tb`;
 -- Dumping data for table `admin_tb`
 --
 
-INSERT IGNORE INTO `admin_tb` (`admin_id`, `username`, `password`) VALUES
+INSERT INTO `admin_tb` (`admin_id`, `username`, `password`) VALUES
 (1, 'admin', '$2y$10$vJ5FqJHMog0iRHsON65Vse7a8c7C1SjKU4KYIMatOipTVfWPAQsOW');
 
 -- --------------------------------------------------------
@@ -81,7 +81,7 @@ TRUNCATE TABLE `department_tb`;
 -- Dumping data for table `department_tb`
 --
 
-INSERT IGNORE INTO `department_tb` (`department_id`, `username`, `password`, `hashed_password`, `department_name`) VALUES
+INSERT INTO `department_tb` (`department_id`, `username`, `password`, `hashed_password`, `department_name`) VALUES
 (1, 'envi', 'qwer', '$2y$10$KNPdZOjie/KwHbxYKtFad.rx22KnqTBrL0.DMszupR3d6JQecqO/O', 'Environment'),
 (2, 'reg', '1234', '$2y$10$vbIilQt9kRfGpRsmKbW8HOtVO4vDpat.XLKT9fQk811lDGr6F6hwq', 'Registration'),
 (3, 'accom', '1234', '$2y$10$flypx3esj15YmGcVGUlULetHDPuEioHRj3fWxj3lSRxzv6dM7tD/C', 'Accommodation'),
@@ -98,12 +98,16 @@ CREATE TABLE IF NOT EXISTS `render_tb` (
   `trainee_id` int(11) NOT NULL,
   `department_id` int(11) NOT NULL,
   `rule_id` int(11) NOT NULL,
+  `is_grounded` int(11) NOT NULL,
+  `summaries` int(11) NOT NULL,
+  `words` int(11) NOT NULL,
+  `levitical_service` int(11) NOT NULL,
   `render_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`render_id`),
   KEY `department_id` (`department_id`),
   KEY `trainee_id` (`trainee_id`),
   KEY `rule_id` (`rule_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
 --
 -- RELATIONSHIPS FOR TABLE `render_tb`:
@@ -124,32 +128,10 @@ TRUNCATE TABLE `render_tb`;
 -- Dumping data for table `render_tb`
 --
 
-INSERT IGNORE INTO `render_tb` (`render_id`, `trainee_id`, `department_id`, `rule_id`, `render_date`) VALUES
-(1, 660012, 3, 1, '2020-01-24 08:47:55'),
-(2, 660012, 3, 1, '2020-01-24 08:48:20'),
-(3, 660012, 3, 1, '2020-01-24 08:49:40'),
-(4, 660012, 3, 1, '2020-01-24 08:49:45'),
-(5, 660012, 3, 1, '2020-01-24 08:52:11'),
-(6, 660012, 3, 1, '2020-01-24 08:52:41'),
-(7, 660012, 3, 1, '2020-01-24 08:53:09'),
-(8, 660012, 3, 1, '2020-01-24 09:05:32'),
-(9, 660012, 3, 3, '2020-01-24 09:06:03'),
-(10, 660012, 3, 1, '2020-01-24 09:08:52'),
-(11, 660012, 3, 3, '2020-01-24 09:09:23'),
-(12, 660012, 3, 1, '2020-01-24 09:10:58'),
-(13, 660012, 3, 1, '2020-01-24 09:11:06'),
-(14, 660012, 3, 3, '2020-01-24 09:11:15'),
-(15, 64101, 3, 1, '2020-01-24 09:11:38'),
-(16, 660012, 3, 1, '2020-01-24 09:20:35'),
-(17, 660012, 3, 3, '2020-01-24 09:20:40'),
-(18, 660012, 3, 1, '2020-01-24 09:20:44'),
-(19, 660012, 3, 3, '2020-01-24 09:20:53'),
-(20, 660012, 3, 3, '2020-01-24 09:20:58'),
-(21, 660012, 3, 3, '2020-01-24 09:21:03'),
-(22, 660012, 3, 1, '2020-01-24 09:21:07'),
-(23, 660012, 3, 1, '2020-01-24 09:21:11'),
-(24, 660012, 3, 3, '2020-01-24 09:21:15'),
-(25, 660012, 3, 3, '2020-01-24 09:22:04');
+INSERT INTO `render_tb` (`render_id`, `trainee_id`, `department_id`, `rule_id`, `is_grounded`, `summaries`, `words`, `levitical_service`, `render_date`) VALUES
+(1, 660012, 3, 3, 0, 1, 125, 0, '2020-01-24 13:37:45'),
+(2, 660012, 3, 3, 0, 1, 250, 0, '2020-01-24 13:38:01'),
+(3, 660012, 3, 4, 0, 1, 375, 0, '2020-01-24 13:38:28');
 
 -- --------------------------------------------------------
 
@@ -182,7 +164,7 @@ TRUNCATE TABLE `rules_tb`;
 -- Dumping data for table `rules_tb`
 --
 
-INSERT IGNORE INTO `rules_tb` (`rule_id`, `department_id`, `offense_code`, `offense_type`, `offense_description`) VALUES
+INSERT INTO `rules_tb` (`rule_id`, `department_id`, `offense_code`, `offense_type`, `offense_description`) VALUES
 (1, 3, 'A1', 'CONDUCT', 'Eating inside the quarters'),
 (3, 3, 'A2', 'CONDUCT', 'Entering the quarters during the break, sessions and study time'),
 (4, 3, 'A3', 'CONDUCT', 'Shouting inside the quarters');
@@ -204,10 +186,6 @@ CREATE TABLE IF NOT EXISTS `trainee_tb` (
   `room` varchar(10) NOT NULL,
   `team` varchar(10) NOT NULL,
   `status` varchar(100) NOT NULL,
-  `is_grounded` int(11) NOT NULL,
-  `summaries` int(11) NOT NULL,
-  `words` int(11) NOT NULL,
-  `levitical_service` int(11) NOT NULL,
   PRIMARY KEY (`trainee_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -224,11 +202,11 @@ TRUNCATE TABLE `trainee_tb`;
 -- Dumping data for table `trainee_tb`
 --
 
-INSERT IGNORE INTO `trainee_tb` (`trainee_id`, `first_name`, `last_name`, `id_name`, `gender`, `class`, `class_group`, `room`, `team`, `status`, `is_grounded`, `summaries`, `words`, `levitical_service`) VALUES
-(64101, 'Neshama', 'Aba-a', 'Neshama', 'Sister', 'FT3', 'FT3A', '', '13', 'Active', 0, 0, 0, 0),
-(64102, 'Precil', 'Abalde', 'Precil', 'Sister', 'FT3', 'FT3B', '', '12', 'Active', 0, 0, 0, 0),
-(660012, 'Jabez', 'Bondoc', 'Jabez', 'Brother', 'FT1', 'FT1C', 'B3', '7', 'Active', 0, 0, 0, 0),
-(661001, 'Grace', 'Abalde', 'Grace', 'Sister', 'FT1', 'FT1A', '', '14', 'Active', 0, 0, 0, 0);
+INSERT INTO `trainee_tb` (`trainee_id`, `first_name`, `last_name`, `id_name`, `gender`, `class`, `class_group`, `room`, `team`, `status`) VALUES
+(64101, 'Neshama', 'Aba-a', 'Neshama', 'Sister', 'FT3', 'FT3A', '', '13', 'Active'),
+(64102, 'Precil', 'Abalde', 'Precil', 'Sister', 'FT3', 'FT3B', '', '12', 'Active'),
+(660012, 'Jabez', 'Bondoc', 'Jabez', 'Brother', 'FT1', 'FT1C', 'B3', '7', 'Active'),
+(661001, 'Grace', 'Abalde', 'Grace', 'Sister', 'FT1', 'FT1A', '', '14', 'Active');
 
 --
 -- Constraints for dumped tables

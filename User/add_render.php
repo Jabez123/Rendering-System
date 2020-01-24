@@ -42,7 +42,7 @@
 		INNER JOIN trainee_tb ON trainee_tb.trainee_id = render_tb.trainee_id
 		INNER JOIN rules_tb ON rules_tb.rule_id = render_tb.rule_id
 		INNER JOIN department_tb ON department_tb.department_id = render_tb.department_id 
-		WHERE trainee_tb.trainee_id = $trainee_id AND rules_tb.offense_type = 'Conduct'";
+		WHERE trainee_tb.trainee_id = $trainee_id AND rules_tb.offense_type = 'CONDUCT'";
 
 		$result_conduct = mysqli_query($conn, $sql_conduct);
 
@@ -50,8 +50,19 @@
 			$total_conduct = $row['COUNT(rules_tb.offense_type)'];
 		}
 
+		$sql_miscellaneous = "SELECT COUNT(rules_tb.offense_type) FROM render_tb 
+		INNER JOIN trainee_tb ON trainee_tb.trainee_id = render_tb.trainee_id
+		INNER JOIN rules_tb ON rules_tb.rule_id = render_tb.rule_id
+		INNER JOIN department_tb ON department_tb.department_id = render_tb.department_id 
+		WHERE trainee_tb.trainee_id = $trainee_id AND rules_tb.offense_type = 'MISCELLNEOUS'";
 
-		$sql_summaries = "SELECT SUM(summaries) FROM trainee_tb WHERE trainee_id = $trainee_id";
+		$result_miscellaneous = mysqli_query($conn, $sql_miscellaneous);
+
+		while ($row = mysqli_fetch_assoc($result_miscellaneous)) {
+			$total_miscellaneous = $row['COUNT(rules_tb.offense_type)'];
+		}
+
+		$sql_summaries = "SELECT SUM(summaries) FROM render_tb WHERE trainee_id = $trainee_id";
 
 		$result_summaries = mysqli_query($conn, $sql_summaries);
 
@@ -59,7 +70,7 @@
 			$total_summaries = $row['SUM(summaries)'];
 		}
 
-		$sql_words = "SELECT words FROM trainee_tb WHERE trainee_id = $trainee_id";
+		$sql_words = "SELECT words FROM render_tb WHERE trainee_id = $trainee_id";
 
 		$result_words = mysqli_query($conn, $sql_words);
 
@@ -67,7 +78,7 @@
 			$total_words = $row['words'];
 		}
 
-		$sql_levitical_service = "SELECT SUM(levitical_service) FROM trainee_tb WHERE trainee_id = $trainee_id";
+		$sql_levitical_service = "SELECT SUM(levitical_service) FROM render_tb WHERE trainee_id = $trainee_id";
 
 		$result_levitical_service = mysqli_query($conn, $sql_levitical_service);
 
@@ -85,12 +96,9 @@
 
 	    			$conn->autocommit(FALSE);
 
-		    		$conn->query("UPDATE trainee_tb SET 
-		    			summaries = 1, 
-		    			is_grounded = 0, 
-		    			words = $total_words + 125 
-		    			WHERE trainee_id = $trainee_id");
-		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id) VALUES ($trainee_id, $department_id, $rule_id)");
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
+		    			summaries, is_grounded, words) 
+		    			VALUES ($trainee_id, $department_id, $rule_id, 1, 0, $total_words + 125)");
 
 		    		$conn->commit();
 
@@ -113,12 +121,9 @@
 
 	    			$conn->autocommit(FALSE);
 
-		    		$conn->query("UPDATE trainee_tb SET 
-		    			summaries = $total_summaries, 
-		    			is_grounded = 1, 
-		    			words = $total_words + 125
-		    			WHERE trainee_id = $trainee_id");
-		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id) VALUES ($trainee_id, $department_id, $rule_id)");
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
+		    		summaries, is_grounded, words) VALUES ($trainee_id, $department_id, 
+		    		$rule_id, $total_summaries, 1, $total_words + 125)");
 
 		    		$conn->commit();
 
@@ -143,13 +148,10 @@
 
 	    			$conn->autocommit(FALSE);
 
-		    		$conn->query("UPDATE trainee_tb SET 
-		    			summaries = $total_summaries, 
-		    			is_grounded = 1, 
-		    			words = $total_words + 125,
-		    			levitical_service = $levitical_service
-		    			WHERE trainee_id = $trainee_id");
-		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id) VALUES ($trainee_id, $department_id, $rule_id)");
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
+		    		summaries, is_grounded, words, levitical_service) 
+		    		VALUES ($trainee_id, $department_id, $rule_id, $total_summaries,
+		    		1, $total_words + 125, $levitical_service)");
 
 		    		$conn->commit();
 
@@ -174,13 +176,10 @@
 
 	    			$conn->autocommit(FALSE);
 
-		    		$conn->query("UPDATE trainee_tb SET 
-		    			summaries = $total_summaries, 
-		    			is_grounded = 1, 
-		    			words = $total_words + 125,
-		    			levitical_service = $levitical_service
-		    			WHERE trainee_id = $trainee_id");
-		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id) VALUES ($trainee_id, $department_id, $rule_id)");
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
+		    		summaries, is_grounded, words, levitical_service) 
+		    		VALUES ($trainee_id, $department_id, $rule_id, $total_summaries,
+		    		1, $total_words + 125, $levitical_service)");
 
 		    		$conn->commit();
 
@@ -205,13 +204,10 @@
 
 	    			$conn->autocommit(FALSE);
 
-		    		$conn->query("UPDATE trainee_tb SET 
-		    			summaries = $total_summaries, 
-		    			is_grounded = 1, 
-		    			words = $total_words + 125,
-		    			levitical_service = $levitical_service
-		    			WHERE trainee_id = $trainee_id");
-		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id) VALUES ($trainee_id, $department_id, $rule_id)");
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
+		    		summaries, is_grounded, words, levitical_service) 
+		    		VALUES ($trainee_id, $department_id, $rule_id, $total_summaries,
+		    		1, $total_words + 125, $levitical_service)");
 
 		    		$conn->commit();
 
@@ -236,13 +232,10 @@
 
 	    			$conn->autocommit(FALSE);
 
-		    		$conn->query("UPDATE trainee_tb SET 
-		    			summaries = $total_summaries, 
-		    			is_grounded = 1, 
-		    			words = $total_words + 125,
-		    			levitical_service = $levitical_service
-		    			WHERE trainee_id = $trainee_id");
-		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id) VALUES ($trainee_id, $department_id, $rule_id)");
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
+		    		summaries, is_grounded, words, levitical_service) 
+		    		VALUES ($trainee_id, $department_id, $rule_id, $total_summaries,
+		    		1, $total_words + 125, $levitical_service)");
 
 		    		$conn->commit();
 
@@ -267,13 +260,10 @@
 
 	    			$conn->autocommit(FALSE);
 
-		    		$conn->query("UPDATE trainee_tb SET 
-		    			summaries = $total_summaries, 
-		    			is_grounded = 1, 
-		    			words = $total_words + 125,
-		    			levitical_service = $levitical_service
-		    			WHERE trainee_id = $trainee_id");
-		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id) VALUES ($trainee_id, $department_id, $rule_id)");
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
+		    		summaries, is_grounded, words, levitical_service) 
+		    		VALUES ($trainee_id, $department_id, $rule_id, $total_summaries, 1,
+		    		$total_words + 125, $levitical_service)");
 
 		    		$conn->commit();
 
@@ -298,13 +288,10 @@
 
 	    			$conn->autocommit(FALSE);
 
-		    		$conn->query("UPDATE trainee_tb SET 
-		    			summaries = $total_summaries, 
-		    			is_grounded = 1, 
-		    			words = $total_words + 125,
-		    			levitical_service = $levitical_service
-		    			WHERE trainee_id = $trainee_id");
-		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id) VALUES ($trainee_id, $department_id, $rule_id)");
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
+		    		summaries, is_grounded, words, levitical_service) 
+		    		VALUES ($trainee_id, $department_id, $rule_id, $total_summaries, 1,
+		    		$total_words + 125, $levitical_service)");
 
 		    		$conn->commit();
 
@@ -330,13 +317,10 @@
 
 	    			$conn->autocommit(FALSE);
 
-		    		$conn->query("UPDATE trainee_tb SET 
-		    			summaries = $total_summaries, 
-		    			is_grounded = 1, 
-		    			words = $total_words,
-		    			levitical_service = $levitical_service
-		    			WHERE trainee_id = $trainee_id");
-		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id) VALUES ($trainee_id, $department_id, $rule_id)");
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
+		    		summaries, is_grounded, words, levitical_service) 
+		    		VALUES ($trainee_id, $department_id, $rule_id, $total_summaries, 1,
+		    		$total_words + 125, $levitical_service)");
 
 		    		$conn->commit();
 
@@ -344,6 +328,24 @@
 
 		    		header("Location: render.php");
 	    		}
+			}
+
+			if ($selected_offense_type == "MISCELLNEOUS") {
+				$total_miscellaneous += 1;
+
+				if ($total_miscellaneous <= 4) {
+					
+					$conn->autocommit(FALSE);
+
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
+		    		summaries, is_grounded, words, levitical_service) 
+		    		VALUES ($trainee_id, $department_id, $rule_id, $total_summaries, 1,
+		    		$total_words + 125, $levitical_service)");
+
+					$conn->commit();
+
+					$conn->close();
+				}
 			}
 	        
 	    }
