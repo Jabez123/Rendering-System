@@ -4,16 +4,35 @@ require_once("../config/connectServer.php");
 require_once("../config/connectDatabase.php");
 
 $previous_rule_id = $_REQUEST['id'];
+$type_name = $_REQUEST['type_name'];
 
 $sql_rules = "SELECT 
 	rules_tb.rule_id, department_tb.department_id, department_tb.department_name, 
-	rules_tb.offense_code, rules_tb.offense_type, 
+	rules_tb.offense_code, rules_tb.offense_type, rules_tb.offense,
 	rules_tb.offense_description FROM rules_tb INNER JOIN department_tb ON rules_tb.department_id = department_tb.department_id
-	WHERE rule_id= $previous_rule_id";
+	WHERE rule_id = $previous_rule_id";
 
 $result_rules = mysqli_query($conn, $sql_rules);
 
-$sql = "SELECT * FROM department_tb";
+$sql_selected_department = "SELECT 
+	department_tb.department_id FROM rules_tb INNER JOIN department_tb ON rules_tb.department_id = department_tb.department_id
+	WHERE rule_id = $previous_rule_id";
+
+$result_selected_department = mysqli_query($conn, $sql_selected_department);
+
+while ($row = mysqli_fetch_assoc($result_selected_department)) {
+	$selected_department_id = $row['department_id'];
+}
+
+$sql_selected_type = "SELECT type_name FROM type_tb WHERE type_name = '$type_name'";
+
+$result_selected_type = mysqli_query($conn, $sql_selected_type);
+
+$sql_types = "SELECT * FROM type_tb WHERE type_name <> '$type_name'";
+
+$result_types = mysqli_query($conn, $sql_types);
+
+$sql = "SELECT * FROM department_tb WHERE department_id <> $selected_department_id";
 
 $result = mysqli_query($conn, $sql);
  
@@ -24,6 +43,8 @@ $department_id_error = $offense_code_error = $offense_type_error = $offense_desc
  
 // Processing form data when form is submitted
 if($_SERVER["REQUEST_METHOD"] == "POST") {
+
+	$type_name = $_POST['type_name'];
 
 	// Validate department name
     if(empty(trim($_POST["department_id"]))){
@@ -44,18 +65,25 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     if(empty(trim($_POST["offense_description"]))){
         $offense_description_error = "Please enter a offense description.";
     }
+
+    $sql_offense = "SELECT offense FROM type_tb WHERE type_name = '$type_name'";
+
+    $result_offense = mysqli_query($conn, $sql_offense);
+    while ($row = mysqli_fetch_assoc($result_offense)) {
+    	$offense = $row['offense'];
+    }
     
     // Check input errors before inserting in database
     if(empty($department_id_error) && empty($offense_code_error) && empty($offense_type_error) && empty($offense_description_error)) {
         
         // Prepare an insert statement
         $sql = "UPDATE rules_tb SET
-    	department_id = ?, offense_code = ?, offense_type = ?, offense_description = ? WHERE rule_id = ?";
+    	department_id = ?, offense_code = ?, offense_type = ?, offense = ?, offense_description = ? WHERE rule_id = ?";
          
         if($stmt = mysqli_prepare($conn, $sql)) {
             // Bind variables to the prepared statement as parameters
             mysqli_stmt_bind_param($stmt, "isssi", 
-            	$param_department_id, $param_offense_code, $param_offense_type, $param_description, $param_rule_id);
+            	$param_department_id, $param_offense_code, $param_offense_type, $offense, $param_description, $param_rule_id);
             
             // Set parameters
             $param_rule_id = $previous_rule_id;
@@ -116,7 +144,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 							<div class="col-md-12">
 								<div class="md-form form-group mt-5 <?php echo (!empty($department_id_error)) ? 'has-error' : ''; ?>">
 									<p class="text-black-50" for="department_id">Department Name</p>
-									<select name="department_id" id="department_id" class="browser-default custom-select">
+									<select name="department_id" id="department_id" class="selectpicker" data-live-search="true" data-width="99%">
 										<option value="<?php echo $department_id ?>" selected>Current: <?php echo $department_name; ?></option>
 										<?php while($row = mysqli_fetch_assoc($result)) {
 											$department_id = $row['department_id'];
@@ -134,9 +162,20 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 									<span class="help-block text-danger"><?php echo $offense_code_error; ?></span>
 								</div>
 								<div class="md-form form-group mt-5 <?php echo (!empty($offense_type_error)) ? 'has-error' : ''; ?>">
-									<input class="form-control" type="text" name="offense_type" id="offense_type" value="<?php echo $offense_type ?>">
-									<label for="offense_type">Offense Type</label>
-									<span class="help-block text-danger"><?php echo $offense_type_error; ?></span>
+									<p class="text-black-50" for="offense_type">Offense Type</p>
+									<select name="offense_type" id="offense_type" class="selectpicker" data-live-search="true" data-width="99%">
+										<?php while ($row = mysqli_fetch_assoc($result_selected_type)) {
+											$type_name = $row['type_name'];
+										?>
+											<option selected value="<?php echo $type_name ?>">Current: <?php echo $type_name ?></option>
+										<?php } ?>
+									  	<?php while ($row = mysqli_fetch_assoc($result_types)) { 
+									  		$type_name = $row['type_name'];
+									  	?>
+									  	<option value="<?php echo $type_name ?>"><?php echo $type_name ?></option>
+									  	<?php } ?>
+									</select>
+									<p class="text-danger"><?php echo $offense_type_error; ?></p>
 								</div>
 								<div class="md-form form-group mt-5 <?php echo (!empty($offense_description)) ? 'has-error' : ''; ?>">
 									<input class="form-control" type="text" name="offense_description" id="offense_description" value="<?php echo $offense_description ?>">
