@@ -232,7 +232,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 									  <option <?php if ($class == "FT3") { ?> selected <?php } ?>  value="FT3">FT3</option>
 									  <option <?php if ($class == "FT4") { ?> selected <?php } ?>  value="FT4">FT4</option>
 									</select>
-									<p class="text-danger"><?php echo $gender_error; ?></p>
+									<p class="text-danger"><?php echo $class_error; ?></p>
 								</div>
 
 								<div class="md-form form-group mt-5 <?php echo (!empty($class_group_error)) ? 'has-error' : ''; ?>">
@@ -252,12 +252,18 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 								</div>
 								<div class="md-form form-group mt-5 <?php echo (!empty($status_error)) ? 'has-error' : ''; ?>">
 									<p class="text-black-50" for="status">Status</p>
-									<select name="status" id="status" class="browser-default custom-select">
-									  <option>Select Status</option>
-									  <option <?php if ($status == "Active") { ?> selected <?php } ?>  value="Active">Active</option>
-									  <option <?php if ($status == "Inactive") { ?> selected <?php } ?>  value="Inactive">Inactive</option>
-									</select>
-									<p class="text-danger"><?php echo $gender_error; ?></p>
+									<input type="hidden" name="status" value="">
+									<div class="custom-control custom-radio custom-control-inline" style="margin-left: 20px;">
+									  <input type="radio" class="custom-control-input" id="active" name="status" value="Active" 
+									  <?php if ($status == "Active") { ?> checked <?php } ?>>
+									  <label class="custom-control-label" for="active">Active</label>
+									</div>
+									<div class="custom-control custom-radio custom-control-inline" style="margin-left: 50px;">
+									   <input type="radio" class="custom-control-input" id="inactive" name="status" value="Inactive" 
+									   <?php if ($status == "Inactive") { ?> checked <?php } ?>>
+									  <label class="custom-control-label" for="inactive">Inactive</label>
+									</div>
+									<p class="text-danger"><?php echo $status_error; ?></p>
 								</div>
 							</div>
 						</div>

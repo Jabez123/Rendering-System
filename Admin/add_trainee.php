@@ -201,7 +201,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 							<div class="col-md-6">
 								<div class="md-form form-group mt-5 <?php echo (!empty($class_error)) ? 'has-error' : ''; ?>">
 									<p class="text-black-50" for="status">Class</p>
-									<select name="class" id="class" class="browser-default custom-select">
+									<select name="class" id="class" class="selectpicker" data-live-search="true" data-width="99%">
 									  <option selected>Select Class</option>
 									  <option value="FT1">FT1</option>
 									  <option value="FT2">FT2</option>
@@ -228,11 +228,15 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 								</div>
 								<div class="md-form form-group mt-5 <?php echo (!empty($status_error)) ? 'has-error' : ''; ?>">
 									<p class="text-black-50" for="status">Status</p>
-									<select name="status" id="status" class="browser-default custom-select">
-									  <option selected>Select Status</option>
-									  <option value="Active">Active</option>
-									  <option value="Inactive">Inactive</option>
-									</select>
+									<input type="hidden" name="status" value="">
+									<div class="custom-control custom-radio custom-control-inline" style="margin-left: 20px;">
+									  <input type="radio" class="custom-control-input" id="active" name="status" value="Active">
+									  <label class="custom-control-label" for="active">Active</label>
+									</div>
+									<div class="custom-control custom-radio custom-control-inline" style="margin-left: 50px;">
+									   <input type="radio" class="custom-control-input" id="inactive" name="status" value="Inactive">
+									  <label class="custom-control-label" for="inactive">Inactive</label>
+									</div>
 									<p class="text-danger"><?php echo $status_error; ?></p>
 								</div>
 							</div>
