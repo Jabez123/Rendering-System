@@ -21,6 +21,8 @@ if(!isset($_SESSION["loggedin_admin"]) || $_SESSION["loggedin_admin"] !== true){
 	<link rel="stylesheet" type="text/css" href="../dist/css/style.css">
 	<!-- MDBootstrap Datatables  -->
 	<link href="../dist/css/addons/datatables.min.css" rel="stylesheet">
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="../dist/css/bootstrap-select.min.css">
 </head>
 <body>
 	<header>
@@ -44,6 +46,9 @@ if(!isset($_SESSION["loggedin_admin"]) || $_SESSION["loggedin_admin"] !== true){
 						</li>
 						<li class="nav-item">
 							<a class="nav-link" href="rules.php">Rules</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="type.php">Types</a>
 						</li>
 					</ul>
 					<ul class="navbar-nav ml-auto">
