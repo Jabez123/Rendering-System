@@ -3,21 +3,23 @@
 	require_once("../config/connectServer.php");
 	require_once("../config/connectDatabase.php");
 
+	$date = date('m/d/Y h:i:s a', time());
+
 	$total_pages_render = $conn->query("SELECT * FROM render_tb")->num_rows;
 
 	$page_render = isset($_GET['page_render']) && is_numeric($_GET['page_render']) ? $_GET['page_render'] : 1;
 
 	$num_results_on_page_render = 8;
 
-	$sql_render = "SELECT trainee_tb.trainee_id, rules_tb.rule_id, trainee_tb.last_name, 
-	trainee_tb.first_name, trainee_tb.id_name, trainee_tb.gender, trainee_tb.class_group,
+	$sql_render = "SELECT trainee_tb.trainee_id, trainee_tb.last_name, trainee_tb.first_name, 
+	trainee_tb.id_name, trainee_tb.gender, trainee_tb.class_group,
 	rules_tb.offense_code, rules_tb.offense_type, rules_tb.offense_description, 
-	render_tb.render_id, render_tb.render_date, render_tb.summaries, render_tb.is_grounded, render_tb.words, render_tb.levitical_service
+	render_tb.render_id, render_tb.render_date, trainee_tb.summaries, trainee_tb.is_grounded, trainee_tb.words, trainee_tb.levitical_service
 	FROM render_tb 
 	INNER JOIN trainee_tb ON trainee_tb.trainee_id = render_tb.trainee_id
 	INNER JOIN rules_tb ON rules_tb.rule_id = render_tb.rule_id
 	INNER JOIN department_tb ON department_tb.department_id = render_tb.department_id
-	WHERE trainee_tb.status = 'Active' LIMIT ?, ?";
+	GROUP BY trainee_tb.first_name, trainee_tb.last_name LIMIT ?, ?";
 
 	if ($stmt_render = $conn->prepare($sql_render)) {
 		$calc_page_render = ($page_render - 1) * $num_results_on_page_render;
@@ -135,7 +137,7 @@
 												if ($gender == "Brother") {
 													$gender = "Bro";
 												}
-												else {
+												else if ($gender == "Sister") {
 													$gender = "Sis";
 												}
 												$class_group = $row['class_group'];
@@ -143,6 +145,25 @@
 												$words = $row['words'];
 												$levitical_service = $row['levitical_service'];
 												$is_grounded = $row['is_grounded'];
+												if ($is_grounded == 1) {
+													$is_grounded = "Yes";
+												}
+												else {
+													$is_grounded = "No";
+												}
+												$offense_code = $row['offense_code'];
+
+												$sql_offense = "SELECT trainee_tb.trainee_id, trainee_tb.last_name, trainee_tb.first_name, 
+													trainee_tb.id_name, trainee_tb.gender, trainee_tb.class_group,
+													rules_tb.offense_code, rules_tb.offense_type, rules_tb.offense_description, 
+													render_tb.render_id, render_tb.render_date, trainee_tb.summaries, render_tb.is_grounded, trainee_tb.words, trainee_tb.levitical_service
+													FROM render_tb 
+													INNER JOIN trainee_tb ON trainee_tb.trainee_id = render_tb.trainee_id
+													INNER JOIN rules_tb ON rules_tb.rule_id = render_tb.rule_id
+													INNER JOIN department_tb ON department_tb.department_id = render_tb.department_id 
+													WHERE trainee_tb.trainee_id = $trainee_id";
+												$result_offense = mysqli_query($conn, $sql_offense);
+
 										 	?>
 												<div class="col-sm-12 col-md-6 col-lg-3">
 													<!-- Card -->
@@ -153,11 +174,18 @@
 														<!--Card content-->
 														<div class="card-body">
 															<ul class="list-group list-group-flush">
+																<li class="list-group-item text-body">
+																	Offense:
+																<?php while ($row = mysqli_fetch_assoc($result_offense)) { 
+																	$offense_code = $row['offense_code'];
+																?>
+																	<?php echo $offense_code; ?>
+																<?php } ?>
+																</li>
 															    <li class="list-group-item text-body">Summary: <?php echo $summaries; ?></li>
 															    <li class="list-group-item text-body">Words: <?php echo $words; ?></li>
 															    <li class="list-group-item text-body">Levitical Service: <?php echo $levitical_service; ?></li>
 															    <li class="list-group-item text-body">Grounded: <?php echo $is_grounded; ?></li>
-															    <li class="list-group-item text-body"></li>
 															</ul>
 														</div>
 														<div class="card-footer">
@@ -171,12 +199,11 @@
 										else { ?>
 											<div class="col-sm-12">
 												<!-- Card -->
-											<div class="card bg-dark mb-4">
+											<div class="card bg-primary mb-4">
 												<!--Card content-->
 												<div class="card-body">
 													<center>
-														<p class="display-4 mt-3 font-weight-bold">No Data</p>
-														<a href="trainee.php"><button class="btn btn-primary">Go here</button></a>
+														<p class="display-4 mt-5 mb-5 font-weight-bold">No Renders</p>
 													</center>
 												</div>
 											</div>
