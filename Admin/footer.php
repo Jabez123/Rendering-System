@@ -34,6 +34,4 @@
 <script type="text/javascript" src="../dist/js/mdb.js"></script>
 <!-- MDBootstrap Datatables  -->
 <script type="text/javascript" src="../dist/js/addons/datatables.min.js"></script>
-<!-- Latest compiled and minified JavaScript -->
-<script src="../dist/js/bootstrap-select.min.js"></script>
 <script type="text/javascript" src="../dist/js/other.js"></script>
