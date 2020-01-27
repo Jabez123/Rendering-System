@@ -12,6 +12,8 @@
 	$render_id = $rule_id = $trainee_id = "";
 
 	$render_id_error = $rule_id_error = $trainee_id_error = $department_id_error = "";
+
+	$total_levitical_service = 0;
   ?>
 
 <?php 
@@ -62,28 +64,16 @@
 			$total_miscellaneous = $row['COUNT(rules_tb.offense_type)'];
 		}
 
-		$sql_summaries = "SELECT SUM(summaries) FROM render_tb WHERE trainee_id = $trainee_id";
+		$sql_render_code = "SELECT render_tb.render_code FROM render_tb 
+		INNER JOIN trainee_tb ON trainee_tb.trainee_id = render_tb.trainee_id
+		INNER JOIN rules_tb ON rules_tb.rule_id = render_tb.rule_id
+		INNER JOIN department_tb ON department_tb.department_id = render_tb.department_id 
+		WHERE trainee_tb.trainee_id = $trainee_id AND rules_tb.offense_type = '$selected_offense_type'";
 
-		$result_summaries = mysqli_query($conn, $sql_summaries);
+		$result_render_code = mysqli_query($conn, $sql_render_code);
 
-		while ($row = mysqli_fetch_assoc($result_summaries)) {
-			$total_summaries = $row['SUM(summaries)'];
-		}
-
-		$sql_words = "SELECT words FROM render_tb WHERE trainee_id = $trainee_id";
-
-		$result_words = mysqli_query($conn, $sql_words);
-
-		while ($row = mysqli_fetch_assoc($result_words)) {
-			$total_words = $row['words'];
-		}
-
-		$sql_levitical_service = "SELECT SUM(levitical_service) FROM render_tb WHERE trainee_id = $trainee_id";
-
-		$result_levitical_service = mysqli_query($conn, $sql_levitical_service);
-
-		while ($row = mysqli_fetch_assoc($result_levitical_service)) {
-			$total_levitical_service = $row['SUM(levitical_service)'];
+		while ($row = mysqli_fetch_assoc($result_render_code)) {
+			$current_render_code = $row['render_code'];
 		}
 
 		$sql_selected_trainee = "SELECT * FROM trainee_tb WHERE trainee_id = $trainee_id";
@@ -92,26 +82,146 @@
 
 		while ($row = mysqli_fetch_assoc($result_selected_trainee)) {
 			$selected_trainee = $row['trainee_id'];
+			$total_trainee_summaries = $row['summaries'];
+			$total_trainee_words = $row['words'];
+			$total_trainee_levitical_service = $row['levitical_service'];
+			$is_trainee_grounded = $row['is_grounded'];
+		}
+
+		$sql_render_code_latest = "SELECT MAX(render_tb.render_code) FROM render_tb 
+		INNER JOIN trainee_tb ON trainee_tb.trainee_id = render_tb.trainee_id
+		INNER JOIN rules_tb ON rules_tb.rule_id = render_tb.rule_id
+		INNER JOIN department_tb ON department_tb.department_id = render_tb.department_id 
+		WHERE trainee_tb.trainee_id = $trainee_id AND rules_tb.offense_type = '$selected_offense_type'";
+
+		$result_render_code_latest = mysqli_query($conn, $sql_render_code_latest);
+
+		while ($row = mysqli_fetch_assoc($result_render_code_latest)) {
+			$render_code_latest = $row['MAX(render_tb.render_code)'];
+		}
+
+		$sql_summaries_latest = "SELECT render_tb.summaries FROM render_tb 
+		INNER JOIN trainee_tb ON trainee_tb.trainee_id = render_tb.trainee_id
+		INNER JOIN rules_tb ON rules_tb.rule_id = render_tb.rule_id
+		INNER JOIN department_tb ON department_tb.department_id = render_tb.department_id 
+		WHERE trainee_tb.trainee_id = $trainee_id AND rules_tb.offense_type = '$selected_offense_type' AND render_tb.render_code = $render_code_latest";
+
+		$result_summaries_latest = mysqli_query($conn, $sql_summaries_latest);
+
+		while ($row = mysqli_fetch_assoc($result_summaries_latest)) {
+			if ($selected_offense_type == "CONDUCT") {
+				$latest_summaries_conduct = $row['summaries'];
+			}
+			else if ($selected_offense_type == "MISCELLANEOUS") {
+				$latest_summaries_miscellaneous = $row['summaries'];
+			}
+		}
+
+		$sql_words_latest = "SELECT render_tb.words FROM render_tb 
+		INNER JOIN trainee_tb ON trainee_tb.trainee_id = render_tb.trainee_id
+		INNER JOIN rules_tb ON rules_tb.rule_id = render_tb.rule_id
+		INNER JOIN department_tb ON department_tb.department_id = render_tb.department_id 
+		WHERE trainee_tb.trainee_id = $trainee_id AND rules_tb.offense_type = '$selected_offense_type' AND render_tb.render_code = $render_code_latest";
+
+		$result_words_latest = mysqli_query($conn, $sql_words_latest);
+
+		while ($row = mysqli_fetch_assoc($result_words_latest)) {
+			if ($selected_offense_type == "CONDUCT") {
+				$latest_words_conduct = $row['words'];
+			}
+			else if ($selected_offense_type == "MISCELLANEOUS") {
+				$latest_words_miscellaneous = $row['words'];
+			}
+		}
+
+		$sql_levitical_service_latest = "SELECT render_tb.levitical_service FROM render_tb 
+		INNER JOIN trainee_tb ON trainee_tb.trainee_id = render_tb.trainee_id
+		INNER JOIN rules_tb ON rules_tb.rule_id = render_tb.rule_id
+		INNER JOIN department_tb ON department_tb.department_id = render_tb.department_id 
+		WHERE trainee_tb.trainee_id = $trainee_id AND rules_tb.offense_type = '$selected_offense_type' AND render_tb.render_code = $render_code_latest";
+
+		$result_levitical_service_latest = mysqli_query($conn, $sql_levitical_service_latest);
+
+		while ($row = mysqli_fetch_assoc($result_levitical_service_latest)) {
+			if ($selected_offense_type == "CONDUCT") {
+				$latest_levitical_service_conduct = $row['levitical_service'];
+			}
+			else if ($selected_offense_type == "MISCELLANEOUS") {
+				$latest_levitical_service_miscellaneous = $row['levitical_service'];
+			}
 		}
 
 		// Check input errors before inserting in database
 	    if(empty($trainee_id_error) && empty($render_id_error) && empty($rule_id_error)) {
 
+	    	if ($is_trainee_grounded) {
+				$is_grounded = 1;
+			}
+			else {
+				$is_grounded = 0;
+			}
+
 	    	if ($selected_offense_type == "CONDUCT") {
 	    		$total_conduct += 1;
 
 	    		if ($total_conduct <= 4) {
-	    			$total_summaries = 0;
-					$total_levitical_service = 0;
-					$total_summaries = 1;
-					$total_words += 125;
+					
+					$render_code = $current_render_code + 1;
+
+					if ($latest_summaries_conduct == 0 && $latest_summaries_miscellaneous == 0) {
+						$total_trainee_summaries = 1;
+						$total_summaries = 1;
+						$total_words = + 125;
+						$total_trainee_words = + 125;
+					}
+
+					else if ($latest_summaries_conduct == 0 && $latest_summaries_miscellaneous >= 1) {
+						$total_summaries = 1 + $latest_summaries_miscellaneous;
+						$total_trainee_summaries = 1 + $latest_summaries_miscellaneous;
+
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
+
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
+
+						$total_words = $latest_words_conduct + 125 + $latest_words_miscellaneous;
+						$total_trainee_words = $latest_words_conduct + 125 + $latest_words_miscellaneous;
+					}
+
+					else if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous == 0) {
+						$total_summaries = 1;
+						$total_trainee_summaries = 1;
+						$total_words = $latest_words_conduct + 125;
+						$total_trainee_words = $latest_words_conduct + 125;
+					}
+
+					else if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous >= 1) {
+						$total_summaries += $latest_summaries_miscellaneous;
+						$total_trainee_summaries += $latest_summaries_miscellaneous;
+
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
+
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
+
+						$total_words = $latest_words_conduct + 125;
+						$total_trainee_words = $latest_words_conduct + 125;
+					}
 
 	    			$conn->autocommit(FALSE);
 
-		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
-		    			summaries, is_grounded, words) 
-		    			VALUES ($trainee_id, $department_id, $rule_id, $total_summaries, 0, $total_words)");
-		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 0, words = $total_words WHERE trainee_id = $selected_trainee");
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id, render_code,
+		    		summaries, is_grounded, words, levitical_service) 
+		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code, $total_summaries, 0, $total_words, $total_levitical_service)");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_trainee_summaries, 
+		    			is_grounded = 0, words = $total_trainee_words, levitical_service = $total_trainee_levitical_service
+		    			WHERE trainee_id = $selected_trainee");
 
 		    		$conn->commit();
 
@@ -121,23 +231,60 @@
 	    		}
 	    		
 	    		if ($total_conduct <= 7) {
-	    			$total_summaries++;
-	    			if ($total_summaries == 2) {
-	    				$total_summaries = 2;
-	    			}
 
-	    			if ($total_summaries >= 3) {
+	    			$render_code = $current_render_code + 1;
 
-	    				$total_summaries = 3;
+					if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous == 0) {
+						$total_summaries += 1;
+						$total_trainee_summaries += 1;
+						
+						if ($total_summaries == 2 || $total_trainee_summaries == 2) {
 
-	    			}
+							$total_summaries = 2 + $latest_summaries_miscellaneous;
+							$total_trainee_summaries = 2 + $latest_summaries_miscellaneous;
+						}
+
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
+
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
+
+						$total_words = $latest_words_conduct + 125;
+						$total_trainee_words = $latest_words_conduct + 125;
+					}
+					else if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous >= 1) {
+						$total_summaries = 1 + $latest_summaries_miscellaneous;
+						$total_trainee_summaries = 1 + $latest_summaries_miscellaneous;
+						
+						if ($total_summaries == 2 || $total_trainee_summaries == 2) {
+
+							$total_summaries = 2 + $latest_summaries_miscellaneous;
+							$total_trainee_summaries = 2 + $latest_summaries_miscellaneous;
+						}
+
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
+
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
+
+						$total_words = $latest_words_conduct + 125;
+						$total_trainee_words = $latest_words_conduct + 125;
+					}
 
 	    			$conn->autocommit(FALSE);
 
-		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
-		    		summaries, is_grounded, words) VALUES ($trainee_id, $department_id, 
-		    		$rule_id, $total_summaries, 1, $total_words + 125)");
-		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, words = $total_words + 125 WHERE trainee_id = $selected_trainee");
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id, render_code,
+		    		summaries, is_grounded, words, levitical_service) 
+		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code, $total_summaries, 1, $total_words, $total_levitical_service)");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_trainee_summaries, 
+		    			is_grounded = 1, words = $total_trainee_words, levitical_service = $total_trainee_levitical_service
+		    			WHERE trainee_id = $selected_trainee");
 
 		    		$conn->commit();
 
@@ -146,27 +293,56 @@
 		    		header("Location: render.php");
 	    		}
 
-	    		if ($total_conduct <= 9 && $total_words <= 875) {
-	    			if ($total_words >= 875) {
-	    				$total_words = 625;
+	    		if ($total_conduct <= 9 && $latest_words_conduct <= 875) {
+	    			if ($latest_words_conduct >= 875) {
+	    				$latest_words_conduct = 625;
 	    			}
-	    			
-	    			$total_summaries++;
-	    			$levitical_service = 0;
 
-	    			if ($total_summaries >= 3) {
+	    			$render_code = $current_render_code + 1;
 
-	    				$total_summaries = 3;
-	    				$levitical_service = 1;
-	    			}
+					if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous == 0) {
+						$total_summaries += 1;
+						$total_trainee_summaries += 1;
+						$total_levitical_service = 1;
+						$total_trainee_levitical_service = 1;
+
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
+
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
+
+						$total_words = $latest_words_conduct + 125;
+						$total_trainee_words = $latest_words_conduct + 125;
+					}
+					else if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous >= 1) {
+						$total_summaries = $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_trainee_summaries = $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_levitical_service = 1 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
+						$total_trainee_levitical_service = 1 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
+
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
+
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
+
+						$total_words = $latest_words_conduct + 125;
+						$total_trainee_words = $latest_words_conduct + 125;
+					}
 
 	    			$conn->autocommit(FALSE);
 
-		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id, render_code,
 		    		summaries, is_grounded, words, levitical_service) 
-		    		VALUES ($trainee_id, $department_id, $rule_id, $total_summaries,
-		    		1, $total_words + 125, $levitical_service)");
-		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, words = $total_words + 125 WHERE trainee_id = $selected_trainee");
+		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code, $total_summaries, 1, $total_words, $total_levitical_service)");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_trainee_summaries, 
+		    			is_grounded = 1, words = $total_trainee_words, levitical_service = $total_trainee_levitical_service
+		    			WHERE trainee_id = $selected_trainee");
 
 		    		$conn->commit();
 
@@ -175,27 +351,54 @@
 		    		header("Location: render.php");
 	    		}
 
-	    		if ($total_conduct <= 11 && $total_words <= 875) {
-	    			if ($total_words >= 875) {
-	    				$total_words = 625;
+	    		if ($total_conduct <= 11 && $latest_words_conduct <= 875) {
+	    			if ($latest_words_conduct >= 875) {
+	    				$latest_words_conduct = 625;
 	    			}
 
-	    			$total_summaries++;
-	    			$levitical_service = 0;
+	    			$render_code = $current_render_code + 1;
+	    			if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous == 0) {
+						$total_summaries += 1;
+						$total_trainee_summaries += 1;
+						$total_levitical_service = 2;
+						$total_trainee_levitical_service = 2;
+						
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
 
-	    			if ($total_summaries >= 3) {
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
 
-	    				$total_summaries = 3;
-	    				$levitical_service = 2;
-	    			}
+						$total_words = $latest_words_conduct + 125;
+						$total_trainee_words = $latest_words_conduct + 125;
+					}
+					else if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous >= 1) {
+						$total_summaries = $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_trainee_summaries = $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_levitical_service = 2 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
+						$total_trainee_levitical_service = 2 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
+
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
+
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
+
+						$total_words = $latest_words_conduct + 125;
+						$total_trainee_words = $latest_words_conduct + 125;
+					}
 
 	    			$conn->autocommit(FALSE);
 
-		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id, render_code,
 		    		summaries, is_grounded, words, levitical_service) 
-		    		VALUES ($trainee_id, $department_id, $rule_id, $total_summaries,
+		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code, $total_summaries,
 		    		1, $total_words + 125, $levitical_service)");
-		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, words = $total_words + 125 WHERE trainee_id = $selected_trainee");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_trainee_summaries, is_grounded = 1, words = $total_trainee_words WHERE trainee_id = $selected_trainee");
 
 		    		$conn->commit();
 
@@ -204,27 +407,55 @@
 		    		header("Location: render.php");
 	    		}
 
-	    		if ($total_conduct <= 13 && $total_words <= 875) {
-	    			if ($total_words >= 875) {
-	    				$total_words = 625;
+	    		if ($total_conduct <= 13 && $latest_words_conduct <= 875) {
+	    			if ($latest_words_conduct >= 875) {
+	    				$latest_words_conduct = 625;
 	    			}
 
-	    			$total_summaries++;
-	    			$levitical_service = 0;
+	    			$render_code = $current_render_code + 1;
 
-	    			if ($total_summaries >= 3) {
+	    			if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous == 0) {
+						$total_summaries += 1;
+						$total_trainee_summaries += 1;
+						$total_levitical_service = 3;
+						$total_trainee_levitical_service = 3;
+						
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
 
-	    				$total_summaries = 3;
-	    				$levitical_service = 3;
-	    			}
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
+
+						$total_words = $latest_words_conduct + 125;
+						$total_trainee_words = $latest_words_conduct + 125;
+					}
+					else if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous >= 1) {
+						$total_summaries = $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_trainee_summaries = $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_levitical_service = 3 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
+						$total_trainee_levitical_service = 3 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
+
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
+
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
+
+						$total_words = $latest_words_conduct + 125;
+						$total_trainee_words = $latest_words_conduct + 125;
+					}
 
 	    			$conn->autocommit(FALSE);
 
-		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id, render_code,
 		    		summaries, is_grounded, words, levitical_service) 
-		    		VALUES ($trainee_id, $department_id, $rule_id, $total_summaries,
+		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code, $total_summaries,
 		    		1, $total_words + 125, $levitical_service)");
-		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, words = $total_words + 125 WHERE trainee_id = $selected_trainee");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_trainee_summaries, is_grounded = 1, words = $total_trainee_words WHERE trainee_id = $selected_trainee");
 
 		    		$conn->commit();
 
@@ -233,27 +464,55 @@
 		    		header("Location: render.php");
 	    		}
 	    		
-	    		if ($total_conduct <= 15 && $total_words <= 875) {
-	    			if ($total_words >= 875) {
-	    				$total_words = 625;
+	    		if ($total_conduct <= 15 && $latest_words_conduct <= 875) {
+	    			if ($latest_words_conduct >= 875) {
+	    				$latest_words_conduct = 625;
 	    			}
 
-	    			$total_summaries++;
-	    			$levitical_service = 0;
+	    			$render_code = $current_render_code + 1;
+	    			
+	    			if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous == 0) {
+						$total_summaries += 1;
+						$total_trainee_summaries += 1;
+						$total_levitical_service = 4;
+						$total_trainee_levitical_service = 4;
+						
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
 
-	    			if ($total_summaries >= 3) {
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
 
-	    				$total_summaries = 3;
-	    				$levitical_service = 4;
-	    			}
+						$total_words = $latest_words_conduct + 125;
+						$total_trainee_words = $latest_words_conduct + 125;
+					}
+					else if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous >= 1) {
+						$total_summaries = $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_trainee_summaries = $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_levitical_service = 4 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
+						$total_trainee_levitical_service = 4 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
+
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
+
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
+
+						$total_words = $latest_words_conduct + 125;
+						$total_trainee_words = $latest_words_conduct + 125;
+					}
 
 	    			$conn->autocommit(FALSE);
 
-		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id, render_code,
 		    		summaries, is_grounded, words, levitical_service) 
-		    		VALUES ($trainee_id, $department_id, $rule_id, $total_summaries,
+		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code, $total_summaries,
 		    		1, $total_words + 125, $levitical_service)");
-		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, words = $total_words + 125 WHERE trainee_id = $selected_trainee");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_trainee_summaries, is_grounded = 1, words = $total_trainee_words WHERE trainee_id = $selected_trainee");
 
 		    		$conn->commit();
 
@@ -262,27 +521,55 @@
 		    		header("Location: render.php");
 	    		}
 
-	    		if ($total_conduct <= 17 && $total_words <= 875) {
-	    			if ($total_words >= 875) {
-	    				$total_words = 625;
+	    		if ($total_conduct <= 17 && $latest_words_conduct <= 875) {
+	    			if ($latest_words_conduct >= 875) {
+	    				$latest_words_conduct = 625;
 	    			}
 
-	    			$total_summaries++;
-	    			$levitical_service = 0;
+	    			$render_code = $current_render_code + 1;
+	    			
+	    			if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous == 0) {
+						$total_summaries += 1;
+						$total_trainee_summaries += 1;
+						$total_levitical_service = 5;
+						$total_trainee_levitical_service = 5;
+						
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
 
-	    			if ($total_summaries >= 3) {
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
 
-	    				$total_summaries = 3;
-	    				$levitical_service = 5;
-	    			}
+						$total_words = $latest_words_conduct + 125;
+						$total_trainee_words = $latest_words_conduct + 125;
+					}
+					else if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous >= 1) {
+						$total_summaries = $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_trainee_summaries = $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_levitical_service = 5 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
+						$total_trainee_levitical_service = 5 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
+
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
+
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
+
+						$total_words = $latest_words_conduct + 125;
+						$total_trainee_words = $latest_words_conduct + 125;
+					}
 
 	    			$conn->autocommit(FALSE);
 
-		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id, render_code,
 		    		summaries, is_grounded, words, levitical_service) 
-		    		VALUES ($trainee_id, $department_id, $rule_id, $total_summaries, 1,
+		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code, $total_summaries, 1,
 		    		$total_words + 125, $levitical_service)");
-		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, words = $total_words + 125 WHERE trainee_id = $selected_trainee");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_trainee_summaries, is_grounded = 1, words = $total_trainee_words WHERE trainee_id = $selected_trainee");
 
 		    		$conn->commit();
 
@@ -291,27 +578,55 @@
 		    		header("Location: render.php");
 	    		}
 
-	    		if ($total_conduct <= 19 && $total_words <= 875) {
-	    			if ($total_words >= 875) {
-	    				$total_words = 625;
+	    		if ($total_conduct <= 19 && $latest_words_conduct <= 875) {
+	    			if ($latest_words_conduct >= 875) {
+	    				$latest_words_conduct = 625;
 	    			}
 
-	    			$total_summaries++;
-	    			$levitical_service = 0;
+	    			$render_code = $current_render_code + 1;
+	    			
+	    			if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous == 0) {
+						$total_summaries += 1;
+						$total_trainee_summaries += 1;
+						$total_levitical_service = 6;
+						$total_trainee_levitical_service = 6;
+						
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
 
-	    			if ($total_summaries >= 3) {
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
 
-	    				$total_summaries = 3;
-	    				$levitical_service = 6;
-	    			}
+						$total_words = $latest_words_conduct + 125;
+						$total_trainee_words = $latest_words_conduct + 125;
+					}
+					else if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous >= 1) {
+						$total_summaries = $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_trainee_summaries = $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_levitical_service = 6 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
+						$total_trainee_levitical_service = 6 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
+
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
+
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
+
+						$total_words = $latest_words_conduct + 125;
+						$total_trainee_words = $latest_words_conduct + 125;
+					}
 
 	    			$conn->autocommit(FALSE);
 
-		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id, render_code,
 		    		summaries, is_grounded, words, levitical_service) 
-		    		VALUES ($trainee_id, $department_id, $rule_id, $total_summaries, 1,
+		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code, $total_summaries, 1,
 		    		$total_words + 125, $levitical_service)");
-		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, words = $total_words + 125 WHERE trainee_id = $selected_trainee");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_trainee_summaries, is_grounded = 1, words = $total_trainee_words WHERE trainee_id = $selected_trainee");
 
 		    		$conn->commit();
 
@@ -320,26 +635,54 @@
 		    		header("Location: render.php");
 	    		}
 
-	    		if ($total_conduct > 19 && $total_words <= 875) {
+	    		if ($total_conduct > 19 && $latest_words_conduct <= 875) {
 	    			$total_conduct = 20;
 	    			$total_words = 750;
 
-	    			$total_summaries++;
-	    			$levitical_service = 0;
+	    			$render_code = $current_render_code + 1;
+	    			
+	    			if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous == 0) {
+						$total_summaries += 1;
+						$total_trainee_summaries += 1;
+						$total_levitical_service = 7;
+						$total_trainee_levitical_service = 7;
+						
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
 
-	    			if ($total_summaries >= 3) {
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
 
-	    				$total_summaries = 3;
-	    				$levitical_service = 7;
-	    			}
+						$total_words = $latest_words_conduct + 125;
+						$total_trainee_words = $latest_words_conduct + 125;
+					}
+					else if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous >= 1) {
+						$total_summaries = $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_trainee_summaries = $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_levitical_service = 1 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
+						$total_trainee_levitical_service = 1 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
+
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
+
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 7;
+							$total_trainee_levitical_service += 7;
+						}
+
+						$total_words = $latest_words_conduct + 125;
+						$total_trainee_words = $latest_words_conduct + 125;
+					}
 
 	    			$conn->autocommit(FALSE);
 
-		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id, render_code,
 		    		summaries, is_grounded, words, levitical_service) 
-		    		VALUES ($trainee_id, $department_id, $rule_id, $total_summaries, 1,
+		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code, $total_summaries, 1,
 		    		$total_words, $levitical_service)");
-		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, words = $total_words + 125 WHERE trainee_id = $selected_trainee");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_trainee_summaries, is_grounded = 1, words = $total_trainee_words WHERE trainee_id = $selected_trainee");
 
 		    		$conn->commit();
 
@@ -355,13 +698,14 @@
 				if ($total_miscellaneous <= 4) {
 					$total_summaries = 0;
 					$total_words = 0;
+					$render_code = $current_render_code + 1;
 
 					$conn->autocommit(FALSE);
 
-		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
-		    		summaries, is_grounded, words) 
-		    		VALUES ($trainee_id, $department_id, $rule_id,
-		    		$total_summaries, 0, $total_words)");
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id, render_code,
+		    			summaries, is_grounded, words) 
+		    			VALUES ($trainee_id, $department_id, $rule_id, $render_code, $total_summaries, 0, $total_words)");
+
 		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 0, words = $total_words WHERE trainee_id = $selected_trainee");
 
 					$conn->commit();
@@ -373,6 +717,7 @@
 				if ($total_miscellaneous <= 7) {
 					$total_summaries = 3;
 					$total_words += 125;
+					$render_code = $current_render_code + 1;
 					if ($total_miscellaneous == 5) {
 						$total_summaries = 2;
 						$total_words = 625;
@@ -381,9 +726,9 @@
 
 					$conn->autocommit(FALSE);
 
-		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id, render_code,
 		    		summaries, is_grounded, words, levitical_service) 
-		    		VALUES ($trainee_id, $department_id, $rule_id,
+		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code,
 		    		$total_summaries, 0, $total_words, $total_levitical_service)");
 		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 0, words = $total_words WHERE trainee_id = $selected_trainee");
 
@@ -400,12 +745,13 @@
 	    			$total_words += 125;
 	    			$levitical_service = 1;
 	    			$total_summaries = 3;
+	    			$render_code = $current_render_code + 1;
 
 	    			$conn->autocommit(FALSE);
 
-		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id, render_code,
 		    		summaries, is_grounded, words, levitical_service) 
-		    		VALUES ($trainee_id, $department_id, $rule_id,
+		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code,
 		    		$total_summaries, 1, $total_words, $total_levitical_service)");
 		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, 
 		    			words = $total_words, levitical_service = $total_levitical_service WHERE trainee_id = $selected_trainee");
@@ -423,12 +769,13 @@
 	    			$total_words += 125;
 	    			$levitical_service = 2;
 	    			$total_summaries = 3;
+	    			$render_code = $current_render_code + 1;
 
 	    			$conn->autocommit(FALSE);
 
-		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id, render_code,
 		    		summaries, is_grounded, words, levitical_service) 
-		    		VALUES ($trainee_id, $department_id, $rule_id,
+		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code,
 		    		$total_summaries, 1, $total_words, $total_levitical_service)");
 		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, 
 		    			words = $total_words, levitical_service = $total_levitical_service WHERE trainee_id = $selected_trainee");
@@ -446,12 +793,13 @@
 	    			$total_words += 125;
 	    			$levitical_service = 3;
 	    			$total_summaries = 3;
+	    			$render_code = $current_render_code + 1;
 
 	    			$conn->autocommit(FALSE);
 
-		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id, render_code,
 		    		summaries, is_grounded, words, levitical_service) 
-		    		VALUES ($trainee_id, $department_id, $rule_id,
+		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code,
 		    		$total_summaries, 1, $total_words, $total_levitical_service)");
 		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, 
 		    			words = $total_words, levitical_service = $total_levitical_service WHERE trainee_id = $selected_trainee");
@@ -469,12 +817,13 @@
 	    			$total_words += 125;
 	    			$levitical_service = 4;
 	    			$total_summaries = 3;
+	    			$render_code = $current_render_code + 1;
 
 	    			$conn->autocommit(FALSE);
 
-		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id, render_code,
 		    		summaries, is_grounded, words, levitical_service) 
-		    		VALUES ($trainee_id, $department_id, $rule_id,
+		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code,
 		    		$total_summaries, 1, $total_words, $total_levitical_service)");
 		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, 
 		    			words = $total_words, levitical_service = $total_levitical_service WHERE trainee_id = $selected_trainee");
@@ -492,12 +841,13 @@
 	    			$total_words += 125;
 	    			$levitical_service = 5;
 	    			$total_summaries = 3;
+	    			$render_code = $current_render_code + 1;
 
 	    			$conn->autocommit(FALSE);
 
-		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id, render_code,
 		    		summaries, is_grounded, words, levitical_service) 
-		    		VALUES ($trainee_id, $department_id, $rule_id,
+		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code,
 		    		$total_summaries, 1, $total_words, $total_levitical_service)");
 		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, 
 		    			words = $total_words, levitical_service = $total_levitical_service WHERE trainee_id = $selected_trainee");
@@ -515,12 +865,13 @@
 	    			$total_words += 125;
 	    			$levitical_service = 6;
 	    			$total_summaries = 3;
+	    			$render_code = $current_render_code + 1;
 
 	    			$conn->autocommit(FALSE);
 
-		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id, render_code,
 		    		summaries, is_grounded, words, levitical_service) 
-		    		VALUES ($trainee_id, $department_id, $rule_id,
+		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code,
 		    		$total_summaries, 1, $total_words, $total_levitical_service)");
 		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, 
 		    			words = $total_words, levitical_service = $total_levitical_service WHERE trainee_id = $selected_trainee");
@@ -535,12 +886,13 @@
 	    			$total_words = 750;
 	    			$levitical_service = 2;
 	    			$total_summaries = 3;
+	    			$render_code = $current_render_code + 1;
 
 	    			$conn->autocommit(FALSE);
 
-		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
+		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id, render_code,
 		    		summaries, is_grounded, words, levitical_service) 
-		    		VALUES ($trainee_id, $department_id, $rule_id,
+		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code,
 		    		$total_summaries, 1, $total_words, $total_levitical_service)");
 		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, 
 		    			words = $total_words, levitical_service = $total_levitical_service WHERE trainee_id = $selected_trainee");
