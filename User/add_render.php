@@ -86,6 +86,14 @@
 			$total_levitical_service = $row['SUM(levitical_service)'];
 		}
 
+		$sql_selected_trainee = "SELECT * FROM trainee_tb WHERE trainee_id = $trainee_id";
+
+		$result_selected_trainee = mysqli_query($conn, $sql_selected_trainee);
+
+		while ($row = mysqli_fetch_assoc($result_selected_trainee)) {
+			$selected_trainee = $row['trainee_id'];
+		}
+
 		// Check input errors before inserting in database
 	    if(empty($trainee_id_error) && empty($render_id_error) && empty($rule_id_error)) {
 
@@ -94,7 +102,6 @@
 
 	    		if ($total_conduct <= 4) {
 	    			$total_summaries = 0;
-					$total_words = 0;
 					$total_levitical_service = 0;
 					$total_summaries = 1;
 					$total_words += 125;
@@ -103,7 +110,8 @@
 
 		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
 		    			summaries, is_grounded, words) 
-		    			VALUES ($trainee_id, $department_id, $rule_id, $summaries, 0, $total_words)");
+		    			VALUES ($trainee_id, $department_id, $rule_id, $total_summaries, 0, $total_words)");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 0, words = $total_words WHERE trainee_id = $selected_trainee");
 
 		    		$conn->commit();
 
@@ -129,6 +137,7 @@
 		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
 		    		summaries, is_grounded, words) VALUES ($trainee_id, $department_id, 
 		    		$rule_id, $total_summaries, 1, $total_words + 125)");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, words = $total_words + 125 WHERE trainee_id = $selected_trainee");
 
 		    		$conn->commit();
 
@@ -157,6 +166,7 @@
 		    		summaries, is_grounded, words, levitical_service) 
 		    		VALUES ($trainee_id, $department_id, $rule_id, $total_summaries,
 		    		1, $total_words + 125, $levitical_service)");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, words = $total_words + 125 WHERE trainee_id = $selected_trainee");
 
 		    		$conn->commit();
 
@@ -185,6 +195,7 @@
 		    		summaries, is_grounded, words, levitical_service) 
 		    		VALUES ($trainee_id, $department_id, $rule_id, $total_summaries,
 		    		1, $total_words + 125, $levitical_service)");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, words = $total_words + 125 WHERE trainee_id = $selected_trainee");
 
 		    		$conn->commit();
 
@@ -213,6 +224,7 @@
 		    		summaries, is_grounded, words, levitical_service) 
 		    		VALUES ($trainee_id, $department_id, $rule_id, $total_summaries,
 		    		1, $total_words + 125, $levitical_service)");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, words = $total_words + 125 WHERE trainee_id = $selected_trainee");
 
 		    		$conn->commit();
 
@@ -241,6 +253,7 @@
 		    		summaries, is_grounded, words, levitical_service) 
 		    		VALUES ($trainee_id, $department_id, $rule_id, $total_summaries,
 		    		1, $total_words + 125, $levitical_service)");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, words = $total_words + 125 WHERE trainee_id = $selected_trainee");
 
 		    		$conn->commit();
 
@@ -269,6 +282,7 @@
 		    		summaries, is_grounded, words, levitical_service) 
 		    		VALUES ($trainee_id, $department_id, $rule_id, $total_summaries, 1,
 		    		$total_words + 125, $levitical_service)");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, words = $total_words + 125 WHERE trainee_id = $selected_trainee");
 
 		    		$conn->commit();
 
@@ -297,6 +311,7 @@
 		    		summaries, is_grounded, words, levitical_service) 
 		    		VALUES ($trainee_id, $department_id, $rule_id, $total_summaries, 1,
 		    		$total_words + 125, $levitical_service)");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, words = $total_words + 125 WHERE trainee_id = $selected_trainee");
 
 		    		$conn->commit();
 
@@ -324,6 +339,7 @@
 		    		summaries, is_grounded, words, levitical_service) 
 		    		VALUES ($trainee_id, $department_id, $rule_id, $total_summaries, 1,
 		    		$total_words, $levitical_service)");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, words = $total_words + 125 WHERE trainee_id = $selected_trainee");
 
 		    		$conn->commit();
 
@@ -339,15 +355,14 @@
 				if ($total_miscellaneous <= 4) {
 					$total_summaries = 0;
 					$total_words = 0;
-					$total_levitical_service = 0;
-					$total_words += 125;
 
 					$conn->autocommit(FALSE);
 
 		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id,
-		    		summaries, is_grounded, words, levitical_service) 
+		    		summaries, is_grounded, words) 
 		    		VALUES ($trainee_id, $department_id, $rule_id,
-		    		$total_summaries, 0, $total_words, $total_levitical_service)");
+		    		$total_summaries, 0, $total_words)");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 0, words = $total_words WHERE trainee_id = $selected_trainee");
 
 					$conn->commit();
 
@@ -356,12 +371,13 @@
 				}
 
 				if ($total_miscellaneous <= 7) {
-					$total_summaries = 2;
-
-					if ($total_miscellaneous == 5) {
-						$total_summaries = 3;
-					}
+					$total_summaries = 3;
 					$total_words += 125;
+					if ($total_miscellaneous == 5) {
+						$total_summaries = 2;
+						$total_words = 625;
+					}
+					
 
 					$conn->autocommit(FALSE);
 
@@ -369,6 +385,7 @@
 		    		summaries, is_grounded, words, levitical_service) 
 		    		VALUES ($trainee_id, $department_id, $rule_id,
 		    		$total_summaries, 0, $total_words, $total_levitical_service)");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 0, words = $total_words WHERE trainee_id = $selected_trainee");
 
 					$conn->commit();
 
@@ -390,6 +407,8 @@
 		    		summaries, is_grounded, words, levitical_service) 
 		    		VALUES ($trainee_id, $department_id, $rule_id,
 		    		$total_summaries, 1, $total_words, $total_levitical_service)");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, 
+		    			words = $total_words, levitical_service = $total_levitical_service WHERE trainee_id = $selected_trainee");
 
 					$conn->commit();
 
@@ -411,6 +430,8 @@
 		    		summaries, is_grounded, words, levitical_service) 
 		    		VALUES ($trainee_id, $department_id, $rule_id,
 		    		$total_summaries, 1, $total_words, $total_levitical_service)");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, 
+		    			words = $total_words, levitical_service = $total_levitical_service WHERE trainee_id = $selected_trainee");
 
 					$conn->commit();
 
@@ -432,6 +453,8 @@
 		    		summaries, is_grounded, words, levitical_service) 
 		    		VALUES ($trainee_id, $department_id, $rule_id,
 		    		$total_summaries, 1, $total_words, $total_levitical_service)");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, 
+		    			words = $total_words, levitical_service = $total_levitical_service WHERE trainee_id = $selected_trainee");
 
 					$conn->commit();
 
@@ -453,6 +476,8 @@
 		    		summaries, is_grounded, words, levitical_service) 
 		    		VALUES ($trainee_id, $department_id, $rule_id,
 		    		$total_summaries, 1, $total_words, $total_levitical_service)");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, 
+		    			words = $total_words, levitical_service = $total_levitical_service WHERE trainee_id = $selected_trainee");
 
 					$conn->commit();
 
@@ -474,6 +499,8 @@
 		    		summaries, is_grounded, words, levitical_service) 
 		    		VALUES ($trainee_id, $department_id, $rule_id,
 		    		$total_summaries, 1, $total_words, $total_levitical_service)");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, 
+		    			words = $total_words, levitical_service = $total_levitical_service WHERE trainee_id = $selected_trainee");
 
 					$conn->commit();
 
@@ -495,6 +522,8 @@
 		    		summaries, is_grounded, words, levitical_service) 
 		    		VALUES ($trainee_id, $department_id, $rule_id,
 		    		$total_summaries, 1, $total_words, $total_levitical_service)");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, 
+		    			words = $total_words, levitical_service = $total_levitical_service WHERE trainee_id = $selected_trainee");
 
 					$conn->commit();
 
@@ -513,6 +542,8 @@
 		    		summaries, is_grounded, words, levitical_service) 
 		    		VALUES ($trainee_id, $department_id, $rule_id,
 		    		$total_summaries, 1, $total_words, $total_levitical_service)");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, 
+		    			words = $total_words, levitical_service = $total_levitical_service WHERE trainee_id = $selected_trainee");
 
 					$conn->commit();
 

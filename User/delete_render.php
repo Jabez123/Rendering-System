@@ -6,8 +6,6 @@ require_once("../config/connectDatabase.php");
 
 $render_id = $_REQUEST['id'];
 
-echo "From request: " . $render_id;
-
 // Prepare an update statement
         
         $sql = "DELETE FROM render_tb WHERE render_id = ?";
@@ -18,8 +16,6 @@ echo "From request: " . $render_id;
             
             // Set parameters
             $render_id = $render_id;
-
-            echo "From parameter: " . $render_id;
             // Attempt to execute the prepared statement
             if(mysqli_stmt_execute($stmt)){
                 // Redirect to login page
