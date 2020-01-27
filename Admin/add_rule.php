@@ -136,11 +136,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 									<p class="text-black-50" for="type_name">Offense Type</p>
 									<select name="type_name" id="type_name" class="selectpicker" data-live-search="true" data-width="99%">
 									  	<option value=" " selected>Select Offense Type</option>
-									  	<?php while ($row = mysqli_fetch_assoc($result_type)) { 
-									  		$type_name = $row['type_name'];
-									  	?>
-									  		<option value="<?php echo $type_name ?>"><?php echo $type_name ?></option>
-									  	<?php } ?>
+									  	<option value="CONDUCT">CONDUCT</option>
+									  	<option value="MISCELLANEOUS">MISCELLANEOUS</option>
+									  	<option value="GROUP">GROUP</option>
 									</select>
 									<p class="text-danger"><?php echo $type_name_error; ?></p>
 								</div>
