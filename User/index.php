@@ -60,8 +60,8 @@
 								<h4 class="card-title text-center text-black-50"> Renders</h4>
 								<!-- Material input -->
 								<div class="md-form">
-									<input type="text" id="form1" class="form-control">
-									<label for="form1">Search</label>
+									<input type="text" id="search" class="form-control">
+									<label for="search">Search Name</label>
 								</div>
 								<div class="text-center">
 									<button type="button" class="btn btn-primary">Search</button>
@@ -126,7 +126,7 @@
 												 </ul>
 											</nav>
 										<?php } ?>
-									<div class="row">
+									<div class="row" id="myData">
 										<?php if (mysqli_num_rows($result_render) > 0) { ?>
 											<?php 
 												while($row = $result_render->fetch_assoc()) {
@@ -280,6 +280,13 @@
 </main>
 
 <?php include("footer.php"); ?>
+<script>
+$('#search').keyup(function (){
+    $('.col-lg-3').removeClass('d-none');
+    var filter = $(this).val(); // get the value of the input, which we filter on
+    $('#myData').find('.col-lg-3 .card .card-header h4:not(:contains("'+filter+'"))').parent().parent().parent().addClass('d-none');
+})
+</script>
 
 </body>
 </html>
