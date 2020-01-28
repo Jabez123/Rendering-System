@@ -13,7 +13,7 @@
 
 	$render_id_error = $rule_id_error = $trainee_id_error = $department_id_error = "";
 
-	$total_levitical_service = 0;
+	$total_levitical_service = $total_summaries = $total_words = 0;
   ?>
 
 <?php 
@@ -154,12 +154,13 @@
 		// Check input errors before inserting in database
 	    if(empty($trainee_id_error) && empty($render_id_error) && empty($rule_id_error)) {
 
-	    	if ($is_trainee_grounded) {
-				$is_grounded = 1;
-			}
-			else {
-				$is_grounded = 0;
-			}
+	    	if (empty($latest_summaries_conduct)) {
+	    		$latest_summaries_conduct = 0;
+	    	}
+
+	    	if (empty($latest_summaries_miscellaneous)) {
+	    		$latest_summaries_miscellaneous = 0;
+	    	}
 
 	    	if ($selected_offense_type == "CONDUCT") {
 	    		$total_conduct += 1;
@@ -169,15 +170,38 @@
 					$render_code = $current_render_code + 1;
 
 					if ($latest_summaries_conduct == 0 && $latest_summaries_miscellaneous == 0) {
-						$total_trainee_summaries = 1;
+						$total_trainee_summaries += 1;
 						$total_summaries = 1;
 						$total_words = + 125;
-						$total_trainee_words = + 125;
+						$total_trainee_words += + 125;
 					}
 
 					else if ($latest_summaries_conduct == 0 && $latest_summaries_miscellaneous >= 1) {
 						$total_summaries = 1 + $latest_summaries_miscellaneous;
-						$total_trainee_summaries = 1 + $latest_summaries_miscellaneous;
+						$total_trainee_summaries += 1 + $latest_summaries_miscellaneous;
+
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
+
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
+
+						$total_words = 125 + $latest_words_miscellaneous;
+						$total_trainee_words += 125 + $latest_words_miscellaneous;
+					}
+
+					else if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous == 0) {
+						$total_summaries = 1 + $latest_summaries_conduct;
+						$total_trainee_summaries += 1 + $latest_summaries_conduct;
+						$total_words = $latest_words_conduct + 125;
+						$total_trainee_words += $latest_words_conduct + 125;
+					}
+
+					else if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous >= 1) {
+						$total_summaries = 1 + $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_trainee_summaries += 1 + $latest_summaries_conduct + $latest_summaries_miscellaneous;
 
 						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
 
@@ -188,30 +212,7 @@
 						}
 
 						$total_words = $latest_words_conduct + 125 + $latest_words_miscellaneous;
-						$total_trainee_words = $latest_words_conduct + 125 + $latest_words_miscellaneous;
-					}
-
-					else if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous == 0) {
-						$total_summaries = 1;
-						$total_trainee_summaries = 1;
-						$total_words = $latest_words_conduct + 125;
-						$total_trainee_words = $latest_words_conduct + 125;
-					}
-
-					else if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous >= 1) {
-						$total_summaries += $latest_summaries_miscellaneous;
-						$total_trainee_summaries += $latest_summaries_miscellaneous;
-
-						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
-
-							$total_summaries = 3;
-							$total_trainee_summaries = 3;
-							$total_levitical_service += 1;
-							$total_trainee_levitical_service += 1;
-						}
-
-						$total_words = $latest_words_conduct + 125;
-						$total_trainee_words = $latest_words_conduct + 125;
+						$total_trainee_words += $latest_words_conduct + 125 + $latest_words_miscellaneous;
 					}
 
 	    			$conn->autocommit(FALSE);
@@ -235,8 +236,8 @@
 	    			$render_code = $current_render_code + 1;
 
 					if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous == 0) {
-						$total_summaries += 1;
-						$total_trainee_summaries += 1;
+						$total_summaries = 1 + $latest_summaries_conduct;
+						$total_trainee_summaries += 1 + $latest_summaries_conduct;
 						
 						if ($total_summaries == 2 || $total_trainee_summaries == 2) {
 
@@ -253,11 +254,11 @@
 						}
 
 						$total_words = $latest_words_conduct + 125;
-						$total_trainee_words = $latest_words_conduct + 125;
+						$total_trainee_words += $latest_words_conduct + 125;
 					}
 					else if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous >= 1) {
-						$total_summaries = 1 + $latest_summaries_miscellaneous;
-						$total_trainee_summaries = 1 + $latest_summaries_miscellaneous;
+						$total_summaries = 1 + $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_trainee_summaries += 1 + $latest_summaries_conduct + $latest_summaries_miscellaneous;
 						
 						if ($total_summaries == 2 || $total_trainee_summaries == 2) {
 
@@ -273,8 +274,8 @@
 							$total_trainee_levitical_service += 1;
 						}
 
-						$total_words = $latest_words_conduct + 125;
-						$total_trainee_words = $latest_words_conduct + 125;
+						$total_words = $latest_words_conduct + 125 + $latest_words_miscellaneous;
+						$total_trainee_words += $latest_words_conduct + 125 + $latest_words_miscellaneous;
 					}
 
 	    			$conn->autocommit(FALSE);
@@ -301,10 +302,10 @@
 	    			$render_code = $current_render_code + 1;
 
 					if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous == 0) {
-						$total_summaries += 1;
-						$total_trainee_summaries += 1;
+						$total_summaries = 1 + $latest_summaries_conduct;
+						$total_trainee_summaries = 1 + $latest_summaries_conduct;
 						$total_levitical_service = 1;
-						$total_trainee_levitical_service = 1;
+						$total_trainee_levitical_service += 1;
 
 						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
 
@@ -315,13 +316,13 @@
 						}
 
 						$total_words = $latest_words_conduct + 125;
-						$total_trainee_words = $latest_words_conduct + 125;
+						$total_trainee_words += $latest_words_conduct + 125;
 					}
 					else if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous >= 1) {
-						$total_summaries = $latest_summaries_conduct + $latest_summaries_miscellaneous;
-						$total_trainee_summaries = $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_summaries = 1 + $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_trainee_summaries += 1 + $latest_summaries_conduct + $latest_summaries_miscellaneous;
 						$total_levitical_service = 1 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
-						$total_trainee_levitical_service = 1 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
+						$total_trainee_levitical_service += 1 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
 
 						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
 
@@ -331,8 +332,8 @@
 							$total_trainee_levitical_service += 1;
 						}
 
-						$total_words = $latest_words_conduct + 125;
-						$total_trainee_words = $latest_words_conduct + 125;
+						$total_words = $latest_words_conduct + 125 + $latest_words_miscellaneous;
+						$total_trainee_words += $latest_words_conduct + 125 + $latest_words_miscellaneous;
 					}
 
 	    			$conn->autocommit(FALSE);
@@ -358,10 +359,10 @@
 
 	    			$render_code = $current_render_code + 1;
 	    			if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous == 0) {
-						$total_summaries += 1;
-						$total_trainee_summaries += 1;
+						$total_summaries = 1 + $latest_summaries_conduct;
+						$total_trainee_summaries += 1 + $latest_summaries_conduct;
 						$total_levitical_service = 2;
-						$total_trainee_levitical_service = 2;
+						$total_trainee_levitical_service += 2;
 						
 						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
 
@@ -372,13 +373,13 @@
 						}
 
 						$total_words = $latest_words_conduct + 125;
-						$total_trainee_words = $latest_words_conduct + 125;
+						$total_trainee_words += $latest_words_conduct + 125;
 					}
 					else if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous >= 1) {
-						$total_summaries = $latest_summaries_conduct + $latest_summaries_miscellaneous;
-						$total_trainee_summaries = $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_summaries = 1 + $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_trainee_summaries += 1 + $latest_summaries_conduct + $latest_summaries_miscellaneous;
 						$total_levitical_service = 2 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
-						$total_trainee_levitical_service = 2 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
+						$total_trainee_levitical_service += 2 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
 
 						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
 
@@ -388,17 +389,18 @@
 							$total_trainee_levitical_service += 1;
 						}
 
-						$total_words = $latest_words_conduct + 125;
-						$total_trainee_words = $latest_words_conduct + 125;
+						$total_words = $latest_words_conduct + 125 + $latest_words_miscellaneous;
+						$total_trainee_words += $latest_words_conduct + 125 + $latest_words_miscellaneous;
 					}
 
 	    			$conn->autocommit(FALSE);
 
 		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id, render_code,
 		    		summaries, is_grounded, words, levitical_service) 
-		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code, $total_summaries,
-		    		1, $total_words + 125, $levitical_service)");
-		    		$conn->query("UPDATE trainee_tb SET summaries = $total_trainee_summaries, is_grounded = 1, words = $total_trainee_words WHERE trainee_id = $selected_trainee");
+		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code, $total_summaries, 1, $total_words, $total_levitical_service)");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_trainee_summaries, 
+		    			is_grounded = 1, words = $total_trainee_words, levitical_service = $total_trainee_levitical_service
+		    			WHERE trainee_id = $selected_trainee");
 
 		    		$conn->commit();
 
@@ -415,10 +417,10 @@
 	    			$render_code = $current_render_code + 1;
 
 	    			if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous == 0) {
-						$total_summaries += 1;
-						$total_trainee_summaries += 1;
+						$total_summaries = 1 + $latest_summaries_conduct;
+						$total_trainee_summaries += 1 + $latest_summaries_conduct;
 						$total_levitical_service = 3;
-						$total_trainee_levitical_service = 3;
+						$total_trainee_levitical_service += 3;
 						
 						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
 
@@ -429,13 +431,13 @@
 						}
 
 						$total_words = $latest_words_conduct + 125;
-						$total_trainee_words = $latest_words_conduct + 125;
+						$total_trainee_words += $latest_words_conduct + 125;
 					}
 					else if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous >= 1) {
-						$total_summaries = $latest_summaries_conduct + $latest_summaries_miscellaneous;
-						$total_trainee_summaries = $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_summaries = 1 + $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_trainee_summaries += 1 + $latest_summaries_conduct + $latest_summaries_miscellaneous;
 						$total_levitical_service = 3 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
-						$total_trainee_levitical_service = 3 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
+						$total_trainee_levitical_service += 3 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
 
 						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
 
@@ -445,17 +447,18 @@
 							$total_trainee_levitical_service += 1;
 						}
 
-						$total_words = $latest_words_conduct + 125;
-						$total_trainee_words = $latest_words_conduct + 125;
+						$total_words = $latest_words_conduct + 125 + $latest_words_miscellaneous;
+						$total_trainee_words += $latest_words_conduct + 125 + $latest_words_miscellaneous;
 					}
 
 	    			$conn->autocommit(FALSE);
 
 		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id, render_code,
 		    		summaries, is_grounded, words, levitical_service) 
-		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code, $total_summaries,
-		    		1, $total_words + 125, $levitical_service)");
-		    		$conn->query("UPDATE trainee_tb SET summaries = $total_trainee_summaries, is_grounded = 1, words = $total_trainee_words WHERE trainee_id = $selected_trainee");
+		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code, $total_summaries, 1, $total_words, $total_levitical_service)");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_trainee_summaries, 
+		    			is_grounded = 1, words = $total_trainee_words, levitical_service = $total_trainee_levitical_service
+		    			WHERE trainee_id = $selected_trainee");
 
 		    		$conn->commit();
 
@@ -472,10 +475,10 @@
 	    			$render_code = $current_render_code + 1;
 	    			
 	    			if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous == 0) {
-						$total_summaries += 1;
-						$total_trainee_summaries += 1;
+						$total_summaries = 1 + $latest_summaries_conduct;
+						$total_trainee_summaries += 1 + $latest_summaries_conduct;
 						$total_levitical_service = 4;
-						$total_trainee_levitical_service = 4;
+						$total_trainee_levitical_service += 4;
 						
 						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
 
@@ -486,13 +489,13 @@
 						}
 
 						$total_words = $latest_words_conduct + 125;
-						$total_trainee_words = $latest_words_conduct + 125;
+						$total_trainee_words += $latest_words_conduct + 125;
 					}
 					else if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous >= 1) {
-						$total_summaries = $latest_summaries_conduct + $latest_summaries_miscellaneous;
-						$total_trainee_summaries = $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_summaries = 1 + $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_trainee_summaries += 1 + $latest_summaries_conduct + $latest_summaries_miscellaneous;
 						$total_levitical_service = 4 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
-						$total_trainee_levitical_service = 4 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
+						$total_trainee_levitical_service += 4 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
 
 						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
 
@@ -502,17 +505,18 @@
 							$total_trainee_levitical_service += 1;
 						}
 
-						$total_words = $latest_words_conduct + 125;
-						$total_trainee_words = $latest_words_conduct + 125;
+						$total_words = $latest_words_conduct + 125 + $latest_words_miscellaneous;
+						$total_trainee_words += $latest_words_conduct + 125 + $latest_words_miscellaneous;
 					}
 
 	    			$conn->autocommit(FALSE);
 
 		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id, render_code,
 		    		summaries, is_grounded, words, levitical_service) 
-		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code, $total_summaries,
-		    		1, $total_words + 125, $levitical_service)");
-		    		$conn->query("UPDATE trainee_tb SET summaries = $total_trainee_summaries, is_grounded = 1, words = $total_trainee_words WHERE trainee_id = $selected_trainee");
+		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code, $total_summaries, 1, $total_words, $total_levitical_service)");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_trainee_summaries, 
+		    			is_grounded = 1, words = $total_trainee_words, levitical_service = $total_trainee_levitical_service
+		    			WHERE trainee_id = $selected_trainee");
 
 		    		$conn->commit();
 
@@ -529,10 +533,10 @@
 	    			$render_code = $current_render_code + 1;
 	    			
 	    			if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous == 0) {
-						$total_summaries += 1;
-						$total_trainee_summaries += 1;
+						$total_summaries = 1 + $latest_summaries_conduct;
+						$total_trainee_summaries += 1 + $latest_summaries_conduct;
 						$total_levitical_service = 5;
-						$total_trainee_levitical_service = 5;
+						$total_trainee_levitical_service += 5;
 						
 						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
 
@@ -543,13 +547,13 @@
 						}
 
 						$total_words = $latest_words_conduct + 125;
-						$total_trainee_words = $latest_words_conduct + 125;
+						$total_trainee_words += $latest_words_conduct + 125;
 					}
 					else if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous >= 1) {
-						$total_summaries = $latest_summaries_conduct + $latest_summaries_miscellaneous;
-						$total_trainee_summaries = $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_summaries = 1 + $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_trainee_summaries += 1 + $latest_summaries_conduct + $latest_summaries_miscellaneous;
 						$total_levitical_service = 5 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
-						$total_trainee_levitical_service = 5 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
+						$total_trainee_levitical_service += 5 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
 
 						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
 
@@ -559,17 +563,18 @@
 							$total_trainee_levitical_service += 1;
 						}
 
-						$total_words = $latest_words_conduct + 125;
-						$total_trainee_words = $latest_words_conduct + 125;
+						$total_words = $latest_words_conduct + 125 + $latest_words_miscellaneous;
+						$total_trainee_words += $latest_words_conduct + 125 + $latest_words_miscellaneous;
 					}
 
 	    			$conn->autocommit(FALSE);
 
 		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id, render_code,
 		    		summaries, is_grounded, words, levitical_service) 
-		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code, $total_summaries, 1,
-		    		$total_words + 125, $levitical_service)");
-		    		$conn->query("UPDATE trainee_tb SET summaries = $total_trainee_summaries, is_grounded = 1, words = $total_trainee_words WHERE trainee_id = $selected_trainee");
+		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code, $total_summaries, 1, $total_words, $total_levitical_service)");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_trainee_summaries, 
+		    			is_grounded = 1, words = $total_trainee_words, levitical_service = $total_trainee_levitical_service
+		    			WHERE trainee_id = $selected_trainee");
 
 		    		$conn->commit();
 
@@ -586,47 +591,48 @@
 	    			$render_code = $current_render_code + 1;
 	    			
 	    			if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous == 0) {
-						$total_summaries += 1;
-						$total_trainee_summaries += 1;
+						$total_summaries = 1 + $latest_summaries_conduct;
+						$total_trainee_summaries += 1 + $latest_summaries_conduct;
 						$total_levitical_service = 6;
-						$total_trainee_levitical_service = 6;
+						$total_trainee_levitical_service += 6;
 						
 						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
 
 							$total_summaries = 3;
-							$total_trainee_summaries = 3;
+							$total_trainee_summaries += 3;
 							$total_levitical_service += 1;
 							$total_trainee_levitical_service += 1;
 						}
 
 						$total_words = $latest_words_conduct + 125;
-						$total_trainee_words = $latest_words_conduct + 125;
+						$total_trainee_words += $latest_words_conduct + 125;
 					}
 					else if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous >= 1) {
-						$total_summaries = $latest_summaries_conduct + $latest_summaries_miscellaneous;
-						$total_trainee_summaries = $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_summaries = 1 + $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_trainee_summaries += 1 + $latest_summaries_conduct + $latest_summaries_miscellaneous;
 						$total_levitical_service = 6 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
-						$total_trainee_levitical_service = 6 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
+						$total_trainee_levitical_service += 6 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
 
 						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
 
 							$total_summaries = 3;
-							$total_trainee_summaries = 3;
+							$total_trainee_summaries += 3;
 							$total_levitical_service += 1;
 							$total_trainee_levitical_service += 1;
 						}
 
-						$total_words = $latest_words_conduct + 125;
-						$total_trainee_words = $latest_words_conduct + 125;
+						$total_words = $latest_words_conduct + 125 + $latest_words_miscellaneous;
+						$total_trainee_words += $latest_words_conduct + 125 + $latest_words_miscellaneous;
 					}
 
 	    			$conn->autocommit(FALSE);
 
 		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id, render_code,
 		    		summaries, is_grounded, words, levitical_service) 
-		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code, $total_summaries, 1,
-		    		$total_words + 125, $levitical_service)");
-		    		$conn->query("UPDATE trainee_tb SET summaries = $total_trainee_summaries, is_grounded = 1, words = $total_trainee_words WHERE trainee_id = $selected_trainee");
+		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code, $total_summaries, 1, $total_words, $total_levitical_service)");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_trainee_summaries, 
+		    			is_grounded = 1, words = $total_trainee_words, levitical_service = $total_trainee_levitical_service
+		    			WHERE trainee_id = $selected_trainee");
 
 		    		$conn->commit();
 
@@ -636,16 +642,14 @@
 	    		}
 
 	    		if ($total_conduct > 19 && $latest_words_conduct <= 875) {
-	    			$total_conduct = 20;
-	    			$total_words = 750;
 
 	    			$render_code = $current_render_code + 1;
 	    			
 	    			if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous == 0) {
-						$total_summaries += 1;
-						$total_trainee_summaries += 1;
+						$total_summaries = $latest_summaries_conduct;
+						$total_trainee_summaries = $total_trainee_summaries;
 						$total_levitical_service = 7;
-						$total_trainee_levitical_service = 7;
+						$total_trainee_levitical_service += 7;
 						
 						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
 
@@ -655,34 +659,35 @@
 							$total_trainee_levitical_service += 1;
 						}
 
-						$total_words = $latest_words_conduct + 125;
-						$total_trainee_words = $latest_words_conduct + 125;
+						$total_words = 750;
+						$total_trainee_words = 750;
 					}
 					else if ($latest_summaries_conduct >= 1 && $latest_summaries_miscellaneous >= 1) {
 						$total_summaries = $latest_summaries_conduct + $latest_summaries_miscellaneous;
-						$total_trainee_summaries = $latest_summaries_conduct + $latest_summaries_miscellaneous;
-						$total_levitical_service = 1 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
-						$total_trainee_levitical_service = 1 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
+						$total_trainee_summaries = $total_trainee_summaries + $latest_summaries_miscellaneous;
+						$total_levitical_service = 7 + $latest_levitical_service_miscellaneous;
+						$total_trainee_levitical_service += 7 + $latest_levitical_service_miscellaneous;
 
 						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
 
 							$total_summaries = 3;
 							$total_trainee_summaries = 3;
-							$total_levitical_service += 7;
-							$total_trainee_levitical_service += 7;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
 						}
 
-						$total_words = $latest_words_conduct + 125;
-						$total_trainee_words = $latest_words_conduct + 125;
+						$total_words = 750 + $latest_words_miscellaneous;
+						$total_trainee_words = 750 + $latest_words_miscellaneous;
 					}
 
 	    			$conn->autocommit(FALSE);
 
 		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id, render_code,
 		    		summaries, is_grounded, words, levitical_service) 
-		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code, $total_summaries, 1,
-		    		$total_words, $levitical_service)");
-		    		$conn->query("UPDATE trainee_tb SET summaries = $total_trainee_summaries, is_grounded = 1, words = $total_trainee_words WHERE trainee_id = $selected_trainee");
+		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code, $total_summaries, 1, $total_words, $total_levitical_service)");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_trainee_summaries, 
+		    			is_grounded = 1, words = $total_trainee_words, levitical_service = $total_trainee_levitical_service
+		    			WHERE trainee_id = $selected_trainee");
 
 		    		$conn->commit();
 
@@ -696,17 +701,63 @@
 				$total_miscellaneous += 1;
 
 				if ($total_miscellaneous <= 4) {
-					$total_summaries = 0;
-					$total_words = 0;
 					$render_code = $current_render_code + 1;
+
+					if ($latest_summaries_miscellaneous == 0 && $latest_summaries_conduct == 0) {
+						$total_trainee_summaries += 0;
+						$total_summaries = 0;
+						$total_words = 0;
+						$total_trainee_words += 0;
+					}
+
+					else if ($latest_summaries_miscellaneous == 0 && $latest_summaries_conduct >= 1) {
+						$total_summaries = 0 + $latest_summaries_conduct;
+						$total_trainee_summaries += 0 + $latest_summaries_conduct;
+
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
+
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
+
+						$total_words = $latest_words_conduct + 125 + $latest_words_miscellaneous;
+						$total_trainee_words += $latest_words_conduct + 125 + $latest_words_miscellaneous;
+					}
+
+					else if ($latest_summaries_miscellaneous >= 1 && $latest_summaries_conduct == 0) {
+						$total_summaries = 0;
+						$total_trainee_summaries += 0;
+						$total_words = 0;
+						$total_trainee_words += 0;
+					}
+
+					else if ($latest_summaries_miscellaneous >= 1 && $latest_summaries_conduct >= 1) {
+						$total_summaries += $latest_summaries_conduct;
+						$total_trainee_summaries += $latest_summaries_conduct;
+
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
+
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
+
+						$total_words = $latest_summaries_miscellaneous + 125;
+						$total_trainee_words += $latest_summaries_miscellaneous + 125;
+					}
 
 					$conn->autocommit(FALSE);
 
 		    		$conn->query("INSERT INTO render_tb (trainee_id, department_id, rule_id, render_code,
-		    			summaries, is_grounded, words) 
-		    			VALUES ($trainee_id, $department_id, $rule_id, $render_code, $total_summaries, 0, $total_words)");
+		    			summaries, is_grounded, words, levitical_service) 
+		    			VALUES ($trainee_id, $department_id, $rule_id, $render_code, $total_summaries, 0, $total_words, $total_levitical_service)");
 
-		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 0, words = $total_words WHERE trainee_id = $selected_trainee");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_trainee_summaries, 
+		    			is_grounded = 0, words = $total_trainee_words, levitical_service = $total_trainee_levitical_service
+		    			WHERE trainee_id = $selected_trainee");
 
 					$conn->commit();
 
@@ -715,12 +766,104 @@
 				}
 
 				if ($total_miscellaneous <= 7) {
-					$total_summaries = 3;
-					$total_words += 125;
 					$render_code = $current_render_code + 1;
 					if ($total_miscellaneous == 5) {
-						$total_summaries = 2;
-						$total_words = 625;
+
+						if ($latest_summaries_miscellaneous == 0 && $latest_summaries_conduct == 0) {
+							$total_summaries = 2;
+							$total_trainee_summaries += 2;
+							
+							if ($total_summaries == 2 || $total_trainee_summaries == 2) {
+
+								$total_summaries = 2;
+								$total_trainee_summaries = 2;
+							}
+
+							if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
+
+								$total_summaries = 3;
+								$total_trainee_summaries = 3;
+								$total_levitical_service += 1;
+								$total_trainee_levitical_service += 1;
+							}
+
+							$total_words = $latest_words_miscellaneous + 125;
+							$total_trainee_words += $latest_words_miscellaneous + 125;
+						}
+
+						else if ($latest_summaries_miscellaneous >= 1 && $latest_summaries_conduct == 0) {
+							$total_summaries = 1 + $latest_summaries_miscellaneous;
+							$total_trainee_summaries += 1 + $latest_summaries_miscellaneous;
+							
+							if ($total_summaries == 2 || $total_trainee_summaries == 2) {
+
+								$total_summaries = 2;
+								$total_trainee_summaries = 2;
+							}
+
+							if ($total_summaries > 3 || $total_trainee_summaries > 3) {
+
+								$total_summaries = 3;
+								$total_trainee_summaries = 3;
+								$total_levitical_service += 1;
+								$total_trainee_levitical_service += 1;
+							}
+
+							$total_words = $latest_words_miscellaneous + 125;
+							$total_trainee_words += $latest_words_miscellaneous + 125;
+						}
+						else if ($latest_summaries_miscellaneous >= 1 && $latest_summaries_conduct >= 1) {
+							$total_summaries = 2 + $latest_summaries_conduct + $latest_summaries_miscellaneous;
+							$total_trainee_summaries += 2 + $latest_summaries_conduct + $latest_summaries_miscellaneous;
+
+							if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
+
+								$total_summaries = 3;
+								$total_trainee_summaries = 3;
+								$total_levitical_service += 1;
+								$total_trainee_levitical_service += 1;
+							}
+
+							$total_words = $latest_words_miscellaneous + 125 + $latest_words_conduct;
+							$total_trainee_words += $latest_words_miscellaneous + 125 + $latest_words_conduct;
+						}
+					}
+
+					if ($latest_summaries_miscellaneous >= 1 && $latest_summaries_conduct == 0) {
+						$total_summaries += 3;
+						$total_trainee_summaries += 3;
+						
+						if ($total_summaries == 2 || $total_trainee_summaries == 2) {
+
+							$total_summaries = 2;
+							$total_trainee_summaries = 2;
+						}
+
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
+
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
+
+						$total_words = $latest_words_miscellaneous + 125;
+						$total_trainee_words += $latest_words_miscellaneous + 125;
+					}
+					else if ($latest_summaries_miscellaneous >= 1 && $latest_summaries_conduct >= 1) {
+						$total_summaries = 3 + $latest_summaries_conduct;
+						$total_trainee_summaries = 3 + $latest_summaries_conduct;
+
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
+
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
+
+						$total_words = $latest_words_conduct + 125 + $latest_words_miscellaneous;
+						$total_trainee_words += $latest_words_conduct + 125 + $latest_words_miscellaneous;
 					}
 					
 
@@ -730,7 +873,9 @@
 		    		summaries, is_grounded, words, levitical_service) 
 		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code,
 		    		$total_summaries, 0, $total_words, $total_levitical_service)");
-		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 0, words = $total_words WHERE trainee_id = $selected_trainee");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_trainee_summaries, is_grounded = 0, 
+		    			words = $total_trainee_words, levitical_service = $total_trainee_levitical_service
+		    			WHERE trainee_id = $selected_trainee");
 
 					$conn->commit();
 
@@ -739,13 +884,46 @@
 				}
 
 				if ($total_miscellaneous <= 9 && $total_words <= 875) {
-					if ($total_words >= 875) {
-	    				$total_words = 625;
+					if ($latest_words_miscellaneous >= 875) {
+	    				$latest_words_miscellaneous = 625;
 	    			}
-	    			$total_words += 125;
-	    			$levitical_service = 1;
-	    			$total_summaries = 3;
+
 	    			$render_code = $current_render_code + 1;
+
+					if ($latest_summaries_miscellaneous >= 1 && $latest_summaries_conduct == 0) {
+						$total_summaries = 1 + $latest_summaries_miscellaneous;
+						$total_trainee_summaries += 1 + $latest_summaries_miscellaneous;
+						$total_levitical_service = 1;
+						$total_trainee_levitical_service += 1;
+
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
+
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
+
+						$total_words = $latest_words_miscellaneous + 125;
+						$total_trainee_words += $latest_words_miscellaneous + 125;
+					}
+					else if ($latest_summaries_miscellaneous >= 1 && $latest_summaries_conduct >= 1) {
+						$total_summaries = 1 + $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_trainee_summaries += 1 + $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_levitical_service = 1 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
+						$total_trainee_levitical_service += 1 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
+
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
+
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
+
+						$total_words = $latest_words_conduct + 125 + $latest_words_miscellaneous;
+						$total_trainee_words += $latest_words_conduct + 125 + $latest_words_miscellaneous;
+					}
 
 	    			$conn->autocommit(FALSE);
 
@@ -763,13 +941,46 @@
 				}
 
 				if ($total_miscellaneous <= 11 && $total_words <= 875) {
-					if ($total_words >= 875) {
-	    				$total_words = 625;
+					if ($latest_words_miscellaneous >= 875) {
+	    				$latest_words_miscellaneous = 625;
 	    			}
-	    			$total_words += 125;
-	    			$levitical_service = 2;
-	    			$total_summaries = 3;
+
 	    			$render_code = $current_render_code + 1;
+
+					if ($latest_summaries_miscellaneous >= 1 && $latest_summaries_conduct == 0) {
+						$total_summaries = 1 + $latest_summaries_miscellaneous;
+						$total_trainee_summaries += 1 + $latest_summaries_miscellaneous;
+						$total_levitical_service = 2;
+						$total_trainee_levitical_service += 2;
+
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
+
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
+
+						$total_words = $latest_words_miscellaneous + 125;
+						$total_trainee_words += $latest_words_miscellaneous + 125;
+					}
+					else if ($latest_summaries_miscellaneous >= 1 && $latest_summaries_conduct >= 1) {
+						$total_summaries = 1 + $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_trainee_summaries += 1 + $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_levitical_service = 2 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
+						$total_trainee_levitical_service += 2 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
+
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
+
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
+
+						$total_words = $latest_words_conduct + 125 + $latest_words_miscellaneous;
+						$total_trainee_words += $latest_words_conduct + 125 + $latest_words_miscellaneous;
+					}
 
 	    			$conn->autocommit(FALSE);
 
@@ -777,8 +988,8 @@
 		    		summaries, is_grounded, words, levitical_service) 
 		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code,
 		    		$total_summaries, 1, $total_words, $total_levitical_service)");
-		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, 
-		    			words = $total_words, levitical_service = $total_levitical_service WHERE trainee_id = $selected_trainee");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_trainee_summaries, is_grounded = 1, 
+		    			words = $total_trainee_words, levitical_service = $total_trainee_levitical_service WHERE trainee_id = $selected_trainee");
 
 					$conn->commit();
 
@@ -787,13 +998,46 @@
 				}
 
 				if ($total_miscellaneous <= 13 && $total_words <= 875) {
-					if ($total_words >= 875) {
-	    				$total_words = 625;
+					if ($latest_words_miscellaneous >= 875) {
+	    				$latest_words_miscellaneous = 625;
 	    			}
-	    			$total_words += 125;
-	    			$levitical_service = 3;
-	    			$total_summaries = 3;
+
 	    			$render_code = $current_render_code + 1;
+
+					if ($latest_summaries_miscellaneous >= 1 && $latest_summaries_conduct == 0) {
+						$total_summaries = 1 + $latest_summaries_miscellaneous;
+						$total_trainee_summaries += 1 + $latest_summaries_miscellaneous;
+						$total_levitical_service = 3;
+						$total_trainee_levitical_service += 3;
+
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
+
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
+
+						$total_words = $latest_words_miscellaneous + 125;
+						$total_trainee_words += $latest_words_miscellaneous + 125;
+					}
+					else if ($latest_summaries_miscellaneous >= 1 && $latest_summaries_conduct >= 1) {
+						$total_summaries = 1 + $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_trainee_summaries += 1 + $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_levitical_service = 3 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
+						$total_trainee_levitical_service += 3 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
+
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
+
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
+
+						$total_words = $latest_words_conduct + 125 + $latest_words_miscellaneous;
+						$total_trainee_words += $latest_words_conduct + 125 + $latest_words_miscellaneous;
+					}
 
 	    			$conn->autocommit(FALSE);
 
@@ -801,8 +1045,8 @@
 		    		summaries, is_grounded, words, levitical_service) 
 		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code,
 		    		$total_summaries, 1, $total_words, $total_levitical_service)");
-		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, 
-		    			words = $total_words, levitical_service = $total_levitical_service WHERE trainee_id = $selected_trainee");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_trainee_summaries, is_grounded = 1, 
+		    			words = $total_trainee_words, levitical_service = $total_trainee_levitical_service WHERE trainee_id = $selected_trainee");
 
 					$conn->commit();
 
@@ -811,13 +1055,46 @@
 				}
 
 				if ($total_miscellaneous <= 15 && $total_words <= 875) {
-					if ($total_words >= 875) {
-	    				$total_words = 625;
+					if ($latest_words_miscellaneous >= 875) {
+	    				$latest_words_miscellaneous = 625;
 	    			}
-	    			$total_words += 125;
-	    			$levitical_service = 4;
-	    			$total_summaries = 3;
+
 	    			$render_code = $current_render_code + 1;
+
+					if ($latest_summaries_miscellaneous >= 1 && $latest_summaries_conduct == 0) {
+						$total_summaries = 1 + $latest_summaries_miscellaneous;
+						$total_trainee_summaries += 1 + $latest_summaries_miscellaneous;
+						$total_levitical_service = 4;
+						$total_trainee_levitical_service += 4;
+
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
+
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
+
+						$total_words = $latest_words_miscellaneous + 125;
+						$total_trainee_words += $latest_words_miscellaneous + 125;
+					}
+					else if ($latest_summaries_miscellaneous >= 1 && $latest_summaries_conduct >= 1) {
+						$total_summaries = 1 + $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_trainee_summaries += 1 + $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_levitical_service = 4 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
+						$total_trainee_levitical_service += 4 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
+
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
+
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
+
+						$total_words = $latest_words_conduct + 125 + $latest_words_miscellaneous;
+						$total_trainee_words += $latest_words_conduct + 125 + $latest_words_miscellaneous;
+					}
 
 	    			$conn->autocommit(FALSE);
 
@@ -825,8 +1102,8 @@
 		    		summaries, is_grounded, words, levitical_service) 
 		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code,
 		    		$total_summaries, 1, $total_words, $total_levitical_service)");
-		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, 
-		    			words = $total_words, levitical_service = $total_levitical_service WHERE trainee_id = $selected_trainee");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_trainee_summaries, is_grounded = 1, 
+		    			words = $total_trainee_words, levitical_service = $total_trainee_levitical_service WHERE trainee_id = $selected_trainee");
 
 					$conn->commit();
 
@@ -835,13 +1112,46 @@
 				}
 
 				if ($total_miscellaneous <= 17 && $total_words <= 875) {
-					if ($total_words >= 875) {
-	    				$total_words = 625;
+					if ($latest_words_miscellaneous >= 875) {
+	    				$latest_words_miscellaneous = 625;
 	    			}
-	    			$total_words += 125;
-	    			$levitical_service = 5;
-	    			$total_summaries = 3;
+
 	    			$render_code = $current_render_code + 1;
+
+					if ($latest_summaries_miscellaneous >= 1 && $latest_summaries_conduct == 0) {
+						$total_summaries = 1 + $latest_summaries_miscellaneous;
+						$total_trainee_summaries += 1 + $latest_summaries_miscellaneous;
+						$total_levitical_service = 5;
+						$total_trainee_levitical_service += 5;
+
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
+
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
+
+						$total_words = $latest_words_miscellaneous + 125;
+						$total_trainee_words += $latest_words_miscellaneous + 125;
+					}
+					else if ($latest_summaries_miscellaneous >= 1 && $latest_summaries_conduct >= 1) {
+						$total_summaries = 1 + $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_trainee_summaries += 1 + $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_levitical_service = 5 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
+						$total_trainee_levitical_service += 5 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
+
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
+
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
+
+						$total_words = $latest_words_conduct + 125 + $latest_words_miscellaneous;
+						$total_trainee_words += $latest_words_conduct + 125 + $latest_words_miscellaneous;
+					}
 
 	    			$conn->autocommit(FALSE);
 
@@ -849,8 +1159,8 @@
 		    		summaries, is_grounded, words, levitical_service) 
 		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code,
 		    		$total_summaries, 1, $total_words, $total_levitical_service)");
-		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, 
-		    			words = $total_words, levitical_service = $total_levitical_service WHERE trainee_id = $selected_trainee");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_trainee_summaries, is_grounded = 1, 
+		    			words = $total_trainee_words, levitical_service = $total_trainee_levitical_service WHERE trainee_id = $selected_trainee");
 
 					$conn->commit();
 
@@ -859,13 +1169,46 @@
 				}
 
 				if ($total_miscellaneous <= 19 && $total_words <= 875) {
-					if ($total_words >= 875) {
-	    				$total_words = 625;
+					if ($latest_words_miscellaneous >= 875) {
+	    				$latest_words_miscellaneous = 625;
 	    			}
-	    			$total_words += 125;
-	    			$levitical_service = 6;
-	    			$total_summaries = 3;
+
 	    			$render_code = $current_render_code + 1;
+
+					if ($latest_summaries_miscellaneous >= 1 && $latest_summaries_conduct == 0) {
+						$total_summaries = 1 + $latest_summaries_miscellaneous;
+						$total_trainee_summaries += 1 + $latest_summaries_miscellaneous;
+						$total_levitical_service = 6;
+						$total_trainee_levitical_service += 6;
+
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
+
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
+
+						$total_words = $latest_words_miscellaneous + 125;
+						$total_trainee_words += $latest_words_miscellaneous + 125;
+					}
+					else if ($latest_summaries_miscellaneous >= 1 && $latest_summaries_conduct >= 1) {
+						$total_summaries = 1 + $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_trainee_summaries += 1 + $latest_summaries_conduct + $latest_summaries_miscellaneous;
+						$total_levitical_service = 6 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
+						$total_trainee_levitical_service += 6 + $latest_levitical_service_conduct + $latest_levitical_service_miscellaneous;
+
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
+
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
+
+						$total_words = $latest_words_conduct + 125 + $latest_words_miscellaneous;
+						$total_trainee_words += $latest_words_conduct + 125 + $latest_words_miscellaneous;
+					}
 
 	    			$conn->autocommit(FALSE);
 
@@ -873,8 +1216,8 @@
 		    		summaries, is_grounded, words, levitical_service) 
 		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code,
 		    		$total_summaries, 1, $total_words, $total_levitical_service)");
-		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, 
-		    			words = $total_words, levitical_service = $total_levitical_service WHERE trainee_id = $selected_trainee");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_trainee_summaries, is_grounded = 1, 
+		    			words = $total_trainee_words, levitical_service = $total_trainee_levitical_service WHERE trainee_id = $selected_trainee");
 
 					$conn->commit();
 
@@ -883,10 +1226,46 @@
 				}
 
 				if ($total_conduct > 19 && $total_words <= 875) {
-	    			$total_words = 750;
-	    			$levitical_service = 2;
-	    			$total_summaries = 3;
+	    			if ($latest_words_miscellaneous >= 875) {
+	    				$latest_words_miscellaneous = 625;
+	    			}
+
 	    			$render_code = $current_render_code + 1;
+
+					if ($latest_summaries_miscellaneous >= 1 && $latest_summaries_conduct == 0) {
+						$total_summaries = $latest_summaries_miscellaneous;
+						$total_trainee_summaries = $total_trainee_summaries;
+						$total_levitical_service = 7;
+						$total_trainee_levitical_service = 7;
+
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
+
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
+
+						$total_words = 750;
+						$total_trainee_words = 750;
+					}
+					else if ($latest_summaries_miscellaneous >= 1 && $latest_summaries_conduct >= 1) {
+						$total_summaries = $latest_summaries_miscellaneous + $latest_summaries_conduct;
+						$total_trainee_summaries = $total_trainee_summaries + $latest_summaries_conduct;
+						$total_levitical_service = 7 + $latest_levitical_service_conduct;
+						$total_trainee_levitical_service = 7 + $latest_levitical_service_conduct;
+
+						if ($total_summaries >= 3 || $total_trainee_summaries >= 3) {
+
+							$total_summaries = 3;
+							$total_trainee_summaries = 3;
+							$total_levitical_service += 1;
+							$total_trainee_levitical_service += 1;
+						}
+
+						$total_words = 750 + $latest_words_conduct;
+						$total_trainee_words = 750 + $latest_words_conduct;
+					}
 
 	    			$conn->autocommit(FALSE);
 
@@ -894,8 +1273,8 @@
 		    		summaries, is_grounded, words, levitical_service) 
 		    		VALUES ($trainee_id, $department_id, $rule_id, $render_code,
 		    		$total_summaries, 1, $total_words, $total_levitical_service)");
-		    		$conn->query("UPDATE trainee_tb SET summaries = $total_summaries, is_grounded = 1, 
-		    			words = $total_words, levitical_service = $total_levitical_service WHERE trainee_id = $selected_trainee");
+		    		$conn->query("UPDATE trainee_tb SET summaries = $total_trainee_summaries, is_grounded = 1, 
+		    			words = $total_trainee_words, levitical_service = $total_trainee_levitical_service WHERE trainee_id = $selected_trainee");
 
 					$conn->commit();
 
