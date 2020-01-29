@@ -1349,7 +1349,15 @@
 							</div>
 						</div>
 						<div class="card-footer">
-							<button type="submit" class="btn btn-block btn-primary">Submit</button>
+							<div class="row">
+								<div class="col-md-4">
+									<button type="submit" class="btn btn-block btn-primary">Save</button>
+								</div>
+								<div class="col-sm-12 col-md-4"></div>
+								<div class="col-md-4">
+									<a href="render.php"><button type="button" class="btn btn-block btn-secondary">Go Back</button></a>
+								</div>
+							</div>
 						</div>
 					</form>
 				</div>
@@ -1360,6 +1368,11 @@
 </main>
 
 <?php include("footer.php"); ?>
+<script> 
+    window.onload = function() { 
+        document.getElementById("trainee_id").focus(); 
+    } 
+</script>
 
 </body>
 </html>

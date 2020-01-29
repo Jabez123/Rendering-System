@@ -168,3 +168,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 </main>
 
 <?php include("footer.php") ?>
+<script> 
+    window.onload = function() { 
+        document.getElementById("username").focus(); 
+    } 
+</script> 

@@ -102,21 +102,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta http-equiv="x-ua-compatible" content="ie=edge">
-	<title></title>
+	<title>Admin Login</title>
 	<link rel="stylesheet" type="text/css" href="../dist/css/all.css">
 	<link rel="stylesheet" type="text/css" href="../dist/css/bootstrap.css">
 	<link rel="stylesheet" type="text/css" href="../dist/css/mdb.css">
 	<link rel="stylesheet" type="text/css" href="../dist/css/style.css">
 </head>
-<body>
+<body class="special-color">
 	<main class="mt-5">
 		<div class="row">
 			<div class="col-md-4"></div>
 			<div class="col-md-4 col-sm-12">
 
-				<div class="card">
+				<div class="card bg-light">
 
-					<h5 class="card-header unique-color white-text text-center py-4">
+					<h5 class="card-header text-white stylish-color text-center py-4">
 						<strong>Login In</strong>
 					</h5>
 
@@ -167,6 +167,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	<script type="text/javascript" src="../dist/js/bootstrap.js"></script>
 	<script type="text/javascript" src="../dist/js/mdb.js"></script>
 	<script type="text/javascript" src="../dist/js/other.js"></script>
+	<script> 
+    window.onload = function() { 
+        document.getElementById("username").focus(); 
+    } 
+</script> 
 
 </body>
 </html>

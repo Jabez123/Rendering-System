@@ -25,6 +25,39 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     if(empty(trim($_POST["offense_code"]))){
         $offense_code_error = "Please enter a offense code.";
     }
+    else {
+    	// Prepare a select statement
+    	$sql = "SELECT offense_code FROM rules_tb WHERE offense_code = ?";
+
+    	if($stmt = mysqli_prepare($conn, $sql)){
+            // Bind variables to the prepared statement as parameters
+    		mysqli_stmt_bind_param($stmt, "s", $param_offense_code);
+
+            // Set parameters
+    		$param_offense_code = trim($_POST["offense_code"]);
+
+            // Attempt to execute the prepared statement
+    		if(mysqli_stmt_execute($stmt)){
+    			/* store result */
+    			mysqli_stmt_store_result($stmt);
+
+    			if(mysqli_stmt_num_rows($stmt) == 1){
+    				$offense_code_error = "This offense code already taken.";
+    			} else{
+    				$offense_code = trim($_POST["offense_code"]);
+    			}
+    		} else{
+    			echo "Oops! Something went wrong. Please try again later.";
+    		}
+    	}
+
+        // Close statement
+    	mysqli_stmt_close($stmt);
+    }
+
+    if (empty(trim($_POST["type_name"]))) {
+    	$offense_type_error = "Please enter a offense type.";
+    }
 
     // Validate offense description
     if(empty(trim($_POST["offense_description"]))){
@@ -49,7 +82,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
             
             // Set parameters
             $param_department_id = trim($_POST["department_id"]);
-            $param_offense_code = trim($_POST["offense_code"]);
+            $param_offense_code = trim(strtoupper($_POST["offense_code"]));
             $param_offense_type = trim($_POST["type_name"]);
             $param_description = trim($_POST["offense_description"]);
             
@@ -97,7 +130,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 							<div class="col-md-12">
 								<div class="md-form form-group mt-5 <?php echo (!empty($department_id_error)) ? 'has-error' : ''; ?>">
 									<p class="text-black-50" for="department_id">Department Name</p>
-									<select name="department_id" id="department_id" class="selectpicker" data-live-search="true" data-width="99%">
+									<select name="department_id" id="department_id" class="selectpicker" data-live-search-style="startsWith" data-live-search="true" data-width="99%">
 										<option value=" " selected>Select Department Name</option>
 										<?php while($row = mysqli_fetch_assoc($result)) {
 											$department_id = $row['department_id'];
@@ -116,7 +149,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 								</div>
 								<div class="md-form form-group mt-5 <?php echo (!empty($offense_type_error)) ? 'has-error' : ''; ?>">
 									<p class="text-black-50" for="type_name">Offense Type</p>
-									<select name="type_name" id="type_name" class="selectpicker" data-live-search="true" data-width="99%">
+									<select name="type_name" id="type_name" class="selectpicker" data-live-search-style="startsWith" data-live-search="true" data-width="99%">
 									  	<option value=" " selected>Select Offense Type</option>
 									  	<option value="CONDUCT">CONDUCT</option>
 									  	<option value="MISCELLANEOUS">MISCELLANEOUS</option>
@@ -154,3 +187,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 </main>
 
 <?php include("footer.php") ?>
+<script> 
+    window.onload = function() { 
+        document.getElementById("department_id").focus(); 
+    } 
+</script> 

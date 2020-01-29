@@ -104,6 +104,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
 
 <?php include("footer.php") ?>
+<script> 
+    window.onload = function() { 
+        document.getElementById("new_password").focus(); 
+    } 
+</script> 
 
 </body>
 </html>

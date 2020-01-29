@@ -36,7 +36,7 @@ $department_id_error = $offense_code_error = $offense_type_error = $offense_desc
 // Processing form data when form is submitted
 if($_SERVER["REQUEST_METHOD"] == "POST") {
 
-	$type_name = $_POST['type_name'];
+	$offense_type = $_POST['type_name'];
 
 	// Validate department name
     if(empty(trim($_POST["department_id"]))){
@@ -49,7 +49,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Validate offense type
-    if(empty(trim($_POST["offense_type"]))){
+    if(empty(trim($_POST["type_name"]))){
         $offense_type_error = "Please enter a offense type.";
     } 
 
@@ -58,11 +58,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         $offense_description_error = "Please enter a offense description.";
     }
 
-    $sql_offense = "SELECT offense FROM type_tb WHERE type_name = '$type_name'";
+    $sql_offense = "SELECT offense_type FROM rules_tb WHERE offense_type = '$offense_type'";
 
     $result_offense = mysqli_query($conn, $sql_offense);
     while ($row = mysqli_fetch_assoc($result_offense)) {
-    	$offense = $row['offense'];
+    	$offense_type = $row['offense_type'];
     }
     
     // Check input errors before inserting in database
@@ -80,8 +80,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
             // Set parameters
             $param_rule_id = $previous_rule_id;
             $param_department_id = trim($_POST["department_id"]);
-            $param_offense_code = trim($_POST["offense_code"]);
-            $param_offense_type = trim($_POST["offense_type"]);
+            $param_offense_code = trim(strtoupper($_POST["offense_code"]));
+            $param_offense_type = $offense_type;
             $param_description = trim($_POST["offense_description"]);
             
             // Attempt to execute the prepared statement
@@ -154,9 +154,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 									<span class="help-block text-danger"><?php echo $offense_code_error; ?></span>
 								</div>
 								<div class="md-form form-group mt-5 <?php echo (!empty($offense_type_error)) ? 'has-error' : ''; ?>">
-									<p class="text-black-50" for="offense_type">Offense Type</p>
-									<select name="offense_type" id="offense_type" class="selectpicker" data-live-search="true" data-width="99%">
-										<option value=" " selected="">Current: <?php echo $offense_type ?></option>
+									<p class="text-black-50" for="type_name">Offense Type</p>
+									<select name="type_name" id="type_name" class="selectpicker" data-live-search="true" data-width="99%">
+										<option value="<?php echo $offense_type ?>">Current: <?php echo $offense_type ?></option>
 									  	<?php if ($offense_type == "CONDUCT") { ?>
 									  	<option value="MISCELLANEOUS">MISCELLANEOUS</option>
 									  	<option value="GROUP">GROUP</option>
@@ -166,8 +166,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 									  	<?php } else if ($offense_type == "GROUP") { ?>
 									  		<option value="CONDUCT">CONDUCT</option>
 									  		<option value="MISCELLANEOUS">MISCELLANEOUS</option>
+									  	<?php } else { ?>
+									  		<option value="CONDUCT">CONDUCT</option>
+									  		<option value="MISCELLANEOUS">MISCELLANEOUS</option>
+									  		<option value="GROUP">GROUP</option>
 									  	<?php } ?>
-									</select>
 									</select>
 									<p class="text-danger"><?php echo $offense_type_error; ?></p>
 								</div>
@@ -202,3 +205,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 	</div>
 </main>
 <?php include("footer.php") ?>
+<script> 
+    window.onload = function() { 
+        document.getElementById("department_id").focus(); 
+    } 
+</script> 
