@@ -117,7 +117,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 				<div class="card">
 
 					<h5 class="card-header unique-color white-text text-center py-4">
-						<strong>Login In</strong>
+						<strong>Log In</strong>
 					</h5>
 					<div class="card-body">
 						<p class="text-center h3 red-text">Note: Only for Departments for now</p>
