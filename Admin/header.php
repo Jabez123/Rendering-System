@@ -14,7 +14,7 @@ if(!isset($_SESSION["loggedin_admin"]) || $_SESSION["loggedin_admin"] !== true){
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta http-equiv="x-ua-compatible" content="ie=edge">
-	<title></title>
+	<title>Admin</title>
 	<link rel="stylesheet" type="text/css" href="../dist/css/all.css">
 	<link rel="stylesheet" type="text/css" href="../dist/css/bootstrap.css">
 	<link rel="stylesheet" type="text/css" href="../dist/css/mdb.css">
@@ -26,7 +26,7 @@ if(!isset($_SESSION["loggedin_admin"]) || $_SESSION["loggedin_admin"] !== true){
 </head>
 <body>
 	<header>
-		<nav class="navbar navbar-expand-lg navbar-dark unique-color">
+		<nav class="navbar navbar-expand-lg navbar-dark unique-color-dark">
 			<div class="container">
 				<a class="navbar-brand" id="topSection" href="#">Rendering System</a>
 				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
@@ -55,12 +55,12 @@ if(!isset($_SESSION["loggedin_admin"]) || $_SESSION["loggedin_admin"] !== true){
 							</span>
 						</li>
 						<li class="nav-item dropdown">
-							<a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-333" data-toggle="dropdown"
+							<a class="nav-link dropdown-toggle" id="moreOption" data-toggle="dropdown"
 							aria-haspopup="true" aria-expanded="false">
 							<i class="fas fa-user"></i>
 							</a>
 							<div class="dropdown-menu dropdown-menu-left"
-								aria-labelledby="navbarDropdownMenuLink-333">
+								aria-labelledby="moreOption">
 								<a class="dropdown-item" href="change_password.php">Change Password</a>
 								<a class="dropdown-item" href="logout.php">Logout</a>
 							</div>

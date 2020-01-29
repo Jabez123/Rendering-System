@@ -6,7 +6,7 @@
 
 	$sql = "SELECT trainee_tb.trainee_id, rules_tb.rule_id, trainee_tb.last_name, trainee_tb.first_name, trainee_tb.id_name, 
 	rules_tb.offense_code, rules_tb.offense_type, rules_tb.offense_description, 
-	render_tb.render_id, render_tb.render_date
+	render_tb.render_id, render_tb.render_date, render_tb.render_code
 	FROM render_tb 
 	INNER JOIN trainee_tb ON trainee_tb.trainee_id = render_tb.trainee_id
 	INNER JOIN rules_tb ON rules_tb.rule_id = render_tb.rule_id
@@ -61,6 +61,7 @@
 							$render_id = $row['render_id'];
 							$trainee_id = $row['trainee_id'];
 							$rule_id = $row['rule_id'];
+							$render_code = $row['render_code'];
 							$first_name = $row['first_name'];
 							$last_name = $row['last_name'];
 							$id_name = $row['id_name'];
@@ -73,7 +74,7 @@
 						<td>
 							<div class="row">
 								<div class="col-sm-12 col-md-12 col-lg-6 mb-3">
-									<a href="edit_render.php?id_render=<?php echo $render_id; ?>&id_rule=<?php echo $rule_id ?>&id_trainee=<?php echo $trainee_id ?>">
+									<a href="edit_render.php?id_render=<?php echo $render_id; ?>&id_rule=<?php echo $rule_id ?>&id_trainee=<?php echo $trainee_id ?>&render_code=<?php echo $render_code ?>">
 										<button class="btn btn-block btn-primary">Edit</button></a>
 								</div>
 								<div class="col-sm-12 col-md-12 col-lg-6">
@@ -84,7 +85,8 @@
 						<td class="font-weight-bold"><?php echo $trainee_id; ?></td>
 						<td><?php echo date('m-d-Y h:i A', strtotime($render_date)); ?></td>
 						<td><?php echo $last_name; ?>, <?php echo $first_name; ?></td>
-						<td><?php echo $offense_code ?></td>
+						<td><?php echo $offense_type; ?> <?php echo $render_code ?></td>
+						<td><?php echo $offense_code; ?></td>
 						<td><?php echo $offense_type; ?></td>
 						<td><?php echo $offense_description; ?></td>
 					</tr>

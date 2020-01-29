@@ -61,7 +61,7 @@
 								<!-- Material input -->
 								<div class="md-form">
 									<input type="text" id="search" class="form-control">
-									<label for="search">Search Name</label>
+									<label for="search">Search Name (Case sensitive)</label>
 								</div>
 								<div class="text-center">
 									<button type="button" class="btn btn-primary">Search</button>
@@ -130,9 +130,11 @@
 										<?php if (mysqli_num_rows($result_render) > 0) { ?>
 											<?php 
 												while($row = $result_render->fetch_assoc()) {
+												$render_id = $row['render_id'];
 												$trainee_id = $row['trainee_id'];
 												$first_name = $row['first_name'];
 												$last_name = $row['last_name'];
+												$id_name = $row['id_name'];
 												$gender = $row['gender'];
 												if ($gender == "Brother") {
 													$gender = "Bro";
@@ -168,32 +170,25 @@
 												<div class="col-sm-12 col-md-6 col-lg-3">
 													<!-- Card -->
 													<div class="card mb-4">
-														<div class="card-header ">
-															<h4 class="card-title text-body text-center"><?php echo $class_group; ?> <?php echo $gender . " " . $last_name . " " . $first_name; ?></h4>
+														<div class="card-header unique-color">
+															<h4 class="card-title text-white text-center"><?php echo $class_group; ?> <?php echo $gender . " " . $last_name . " " . $first_name; ?></h4>
 														</div>
 														<!--Card content-->
 														<div class="card-body">
-															<ul class="list-group list-group-flush">
-																<li class="list-group-item text-body">
-																	Offense:
-																<?php while ($row = mysqli_fetch_assoc($result_offense)) { 
-																	$offense_code = $row['offense_code'];
-																?>
-																	<?php echo $offense_code; ?>
-																<?php } ?>
-																</li>
-															    <li class="list-group-item text-body">Summary: <?php echo $summaries; ?></li>
+															<ul class="list-group list-group-flush">															    <li class="list-group-item text-body">Summary: <?php echo $summaries; ?></li>
 															    <li class="list-group-item text-body">Words: <?php echo $words; ?></li>
 															    <li class="list-group-item text-body">Levitical Service: <?php echo $levitical_service; ?></li>
 															    <li class="list-group-item text-body">Grounded: <?php echo $is_grounded; ?></li>
 															</ul>
 														</div>
 														<div class="card-footer">
-															<a href="trainee.php"><button class="btn btn-block btn-primary">Manage</button></a>
+															<button class="btn btn-block btn-primary" data-toggle="modal" 
+															data-target="#modalOffense<?php echo $render_id; ?>">See offenses</button>
 														</div>
 													</div>
 												<!-- Card -->
 												</div>
+												<?php include("offense_modal.php"); ?>
 											<?php } ?>
 										<?php }
 										else { ?>

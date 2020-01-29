@@ -3,36 +3,33 @@
 	require_once("../config/connectServer.php");
 	require_once("../config/connectDatabase.php");
 
-	$total_pages_trainee = $conn->query("SELECT * FROM trainee_tb")->num_rows;
+	$date = date('m/d/Y h:i:s a', time());
 
-	$page_trainee = isset($_GET['page_trainee']) && is_numeric($_GET['page_trainee']) ? $_GET['page_trainee'] : 1;
+	$total_pages_render = $conn->query("SELECT * FROM render_tb")->num_rows;
 
-	$num_results_on_page_trainee = 8;
+	$page_render = isset($_GET['page_render']) && is_numeric($_GET['page_render']) ? $_GET['page_render'] : 1;
 
-	$sql_trainee = "SELECT * FROM trainee_tb LIMIT ?, ?";
+	$num_results_on_page_render = 8;
 
-	if ($stmt_trainee = $conn->prepare($sql_trainee)) {
-		$calc_page_trainee = ($page_trainee - 1) * $num_results_on_page_trainee;
-		$stmt_trainee->bind_param('ii', $calc_page_trainee, $num_results_on_page_trainee);
-		$stmt_trainee->execute();
+	$sql_render = "SELECT trainee_tb.trainee_id, trainee_tb.last_name, trainee_tb.first_name, 
+	trainee_tb.id_name, trainee_tb.gender, trainee_tb.class_group,
+	rules_tb.offense_code, rules_tb.offense_type, rules_tb.offense_description, 
+	render_tb.render_id, render_tb.render_date, trainee_tb.summaries, trainee_tb.is_grounded, trainee_tb.words, trainee_tb.levitical_service
+	FROM render_tb 
+	INNER JOIN trainee_tb ON trainee_tb.trainee_id = render_tb.trainee_id
+	INNER JOIN rules_tb ON rules_tb.rule_id = render_tb.rule_id
+	INNER JOIN department_tb ON department_tb.department_id = render_tb.department_id
+	GROUP BY trainee_tb.first_name, trainee_tb.last_name LIMIT ?, ?";
 
-		$result_trainee = $stmt_trainee->get_result();
+	if ($stmt_render = $conn->prepare($sql_render)) {
+		$calc_page_render = ($page_render - 1) * $num_results_on_page_render;
+		$stmt_render->bind_param('ii', $calc_page_render, $num_results_on_page_render);
+		$stmt_render->execute();
+
+		$result_render = $stmt_render->get_result();
 	}
-
-	$total_pages_department = $conn->query("SELECT * FROM department_tb")->num_rows;
-
-	$page_department = isset($_GET['page_department']) && is_numeric($_GET['page_department']) ? $_GET['page_department'] : 1;
-
-	$num_results_on_page_department = 8;
-
-	$sql_department = "SELECT * FROM department_tb LIMIT ?, ?";
-
-	if ($stmt_department = $conn->prepare($sql_department)) {
-		$calc_page_department = ($page_department - 1) * $num_results_on_page_department;
-		$stmt_department->bind_param('ii', $calc_page_department, $num_results_on_page_department);
-		$stmt_department->execute();
-
-		$result_department = $stmt_department->get_result();
+	else {
+		echo "Error: " . mysqli_Error($conn);
 	}
  ?>
 
@@ -42,7 +39,7 @@
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-md-2"></div>
-			<div class="col-sm-12 col-md-8 col-lg-12">
+			<div class="col-sm-12 col-md-12 col-lg-12">
 				<div class="card text-white bg-dark pt-3 pb-3">
 				  	<div class="card-body text-center">
 				    	<h1 class="card-title">Home</h1>
@@ -52,21 +49,7 @@
 			<div class="col-md-2"></div>
 		</div>
 	</div>
-	<ul class="nav nav-tabs mt-5" id="dashboardTab" role="tablist">
-		<li class="nav-item">
-			<a class="nav-link active" id="trainees-tab" data-toggle="tab" href="#trainees" role="tab" aria-controls="trainees"
-			aria-selected="true">Trainees Dashboard</a>
-		</li>
-		<li class="nav-item">
-			<a class="nav-link" id="department-tab" data-toggle="tab" href="#department" role="tab" aria-controls="department"
-			aria-selected="false">Department Overview</a>
-		</li>
-	</ul>
-	<div class="tab-content" id="dashboardTabContent">
-		<!-- Trainees Tab -->
-		<div class="tab-pane fade show active" id="trainees" role="tabpanel" aria-labelledby="trainees-tab">
-
-			<div class="container-fluid" style="margin-top: 80px;">
+	<div class="container-fluid" style="margin-top: 80px;">
 				<div class="row">
 					<div class="col-sm-12 col-md-12 col-lg-12">
 						<!-- Card Dark -->
@@ -74,69 +57,69 @@
 							<!-- Card content -->
 							<div class="card-body white-text rounded-bottom">
 								<!-- Title -->
-								<h4 class="card-title text-center text-black-50"> Trainees Dashboard</h4>
+								<h4 class="card-title text-center text-black-50"> Renders</h4>
 								<!-- Material input -->
 								<div class="md-form">
 									<input type="text" id="search" class="form-control">
-									<label for="search">Search</label>
+									<label for="search">Search Name</label>
 								</div>
 								<div class="text-center">
 									<button type="button" class="btn btn-primary">Search</button>
 								</div>
 								<!-- Body -->
 								<div class="mt-5">
-										<?php if (ceil($total_pages_trainee / $num_results_on_page_trainee) > 0) { ?>
+										<?php if (ceil($total_pages_render / $num_results_on_page_render) > 0) { ?>
 											<nav aria-label="Page navigation">
 												<ul class="pagination pg-blue justify-content-center">
-													<?php if ($page_trainee > 1) {?>
+													<?php if ($page_render > 1) {?>
 												    <li class="page-item ">
-												      <a class="page-link" href="index.php?page_trainee=<?php echo $page_trainee-1 ?>" tabindex="-1">Previous</a>
+												      <a class="page-link" href="index.php?page_render=<?php echo $page_render-1 ?>" tabindex="-1">Previous</a>
 												    </li>
 												    <?php } ?>
 
-												    <?php if ($page_trainee > 3) { ?>
+												    <?php if ($page_render > 3) { ?>
 												    <li class="page-item">
-												    	<a class="page-link" href="index.php?page_trainee=1">1 </a>
+												    	<a class="page-link" href="index.php?page_render=1">1 </a>
 												    </li>
 												    <?php } ?>
 
-												    <?php if ($page_trainee-2 > 0) { ?>
+												    <?php if ($page_render-2 > 0) { ?>
 												    <li class="page-item">
-												      <a class="page-link" href="index.php?page_trainee=<?php echo $page_trainee-2 ?>"><?php echo $page_trainee-2; ?> </a>
+												      <a class="page-link" href="index.php?page_render=<?php echo $page_render-2 ?>"><?php echo $page_render-2; ?> </a>
 												    </li>
 												    <?php } ?>
 
-												    <?php if ($page_trainee-1 > 0) { ?>
+												    <?php if ($page_render-1 > 0) { ?>
 												    <li class="page-item">
-												    	<a class="page-link" href="index.php?page_trainee=<?php echo $page_trainee-1 ?>"><?php echo $page_trainee-1; ?></a>
+												    	<a class="page-link" href="index.php?page_render=<?php echo $page_render-1 ?>"><?php echo $page_render-1; ?></a>
 												    </li>
 												    <?php } ?>
 
 												    <li class="page-item active">
-												    	<a class="page-link" href="index.php?page_trainee=<?php echo $page_trainee ?>"><?php echo $page_trainee ?> <span class="sr-only">(current)</span></a>
+												    	<a class="page-link" href="index.php?page_render=<?php echo $page_render ?>"><?php echo $page_render ?> <span class="sr-only">(current)</span></a>
 												    </li>
 
-												    <?php if ($page_trainee+1 < ceil($total_pages_trainee / $num_results_on_page_trainee)+1) { ?>
+												    <?php if ($page_render+1 < ceil($total_pages_render / $num_results_on_page_render)+1) { ?>
 														<li class="page-item">
-															<a class="page-link" href="index.php?page_trainee=<?php echo $page_trainee+1 ?>"><?php echo $page_trainee+1 ?></a>
+															<a class="page-link" href="index.php?page_render=<?php echo $page_render+1 ?>"><?php echo $page_render+1 ?></a>
 														</li>
 													<?php } ?>
 
-													<?php if ($page_trainee+2 < ceil($total_pages_trainee / $num_results_on_page_trainee)+1) { ?>
+													<?php if ($page_render+2 < ceil($total_pages_render / $num_results_on_page_render)+1) { ?>
 														<li class="page-item">
-															<a class="page-link" href="index.php?page_trainee=<?php echo $page_trainee+2 ?>"><?php echo $page_trainee+2 ?></a>
+															<a class="page-link" href="index.php?page_render=<?php echo $page_render+2 ?>"><?php echo $page_render+2 ?></a>
 														</li>
 													<?php } ?>
 
-													<?php if ($page_trainee < ceil($total_pages_trainee / $num_results_on_page_trainee)-2) { ?>
+													<?php if ($page_render < ceil($total_pages_render / $num_results_on_page_render)-2) { ?>
 														<li class="page-item">
-															<a class="page-link" href="index.php?page_trainee=<?php echo ceil($total_pages_trainee/ $num_results_on_page_trainee) ?>"><?php echo ceil($total_pages_trainee/ $num_results_on_page_trainee) ?></a>
+															<a class="page-link" href="index.php?page_render=<?php echo ceil($total_pages_render/ $num_results_on_page_render) ?>"><?php echo ceil($total_pages_render/ $num_results_on_page_render) ?></a>
 														</li>
 													<?php } ?>
 
-												    <?php if ($page_trainee < ceil($total_pages_trainee / $num_results_on_page_trainee)) { ?>
+												    <?php if ($page_render < ceil($total_pages_render / $num_results_on_page_render)) { ?>
 														<li class="page-item">
-															<a class="page-link" href="index.php?page_trainee=<?php echo $page_trainee+1 ?>">Next</a>
+															<a class="page-link" href="index.php?page_render=<?php echo $page_render+1 ?>">Next</a>
 														</li>
 													<?php } ?>
 
@@ -144,89 +127,78 @@
 											</nav>
 										<?php } ?>
 									<div class="row" id="myData">
-										<?php if (mysqli_num_rows($result_trainee) > 0) { ?>
-
-											<?php while($row = $result_trainee->fetch_assoc()) {
-											$trainee_id = $row['trainee_id'];
-											$first_name = $row['first_name'];
-											$last_name = $row['last_name'];
-											$id_name = $row['id_name'];
-											$gender = $row['gender'];
-											if ($gender == "Brother") {
-												$gender = "Bro";
-											}
-											else {
-												$gender = "Sis";
-											}
-											$class = $row['class'];
-											$class_group = $row['class_group'];
-											$room = $row['room'];
-											$team = $row['team'];
-											$status = $row['status'];
-										 ?>
-										<div class="col-sm-12 col-md-6 col-lg-3">
+										<?php if (mysqli_num_rows($result_render) > 0) { ?>
 											<?php 
-												if ($status == "Active") { 
-											?>
-											<!-- Card -->
-											<div class="card bg-dark mb-4">
-												<div class="card-header ">
-													<h4 class="card-title text-white text-center"><?php echo $gender . " " . $last_name . " " . $first_name; ?></h4>
-												</div>
-												<!--Card content-->
-												<div class="card-body">
-													  <ul class="list-group list-group-flush">
-													    <li class="list-group-item text-body">ID Name: <?php echo $id_name; ?></li>
-													    <li class="list-group-item text-body">Class: <?php echo $class; ?></li>
-													    <li class="list-group-item text-body">Group: <?php echo $class_group; ?></li>
-													    <li class="list-group-item text-body">Room: <?php echo $room; ?></li>
-													    <li class="list-group-item text-body">Team: <?php echo $team; ?></li>
-													  </ul>
-												</div>
-												<div class="card-footer">
-													<a href="trainee.php"><button class="btn btn-block btn-primary">Manage</button></a>
-												</div>
-											</div>
-											<!-- Card -->
-											<?php } 
-												else if ($status == "Inactive") {
-											?>
+												while($row = $result_render->fetch_assoc()) {
+												$trainee_id = $row['trainee_id'];
+												$render_id = $row['render_id'];
+												$first_name = $row['first_name'];
+												$last_name = $row['last_name'];
+												$id_name = $row['id_name'];
+												$gender = $row['gender'];
+												if ($gender == "Brother") {
+													$gender = "Bro";
+												}
+												else if ($gender == "Sister") {
+													$gender = "Sis";
+												}
+												$class_group = $row['class_group'];
+												$summaries = $row['summaries'];
+												$words = $row['words'];
+												$levitical_service = $row['levitical_service'];
+												$is_grounded = $row['is_grounded'];
+												if ($is_grounded == 1) {
+													$is_grounded = "Yes";
+												}
+												else {
+													$is_grounded = "No";
+												}
+												$offense_code = $row['offense_code'];
 
-											<!-- Card -->
-											<div class="card bg-danger mb-4">
-												<div class="card-header ">
-													<h4 class="card-title text-white text-center"><?php echo $gender . " " . $last_name . " " . $first_name; ?></h4>
-												</div>
-												<!--Card content-->
-												<div class="card-body">
-													  <ul class="list-group list-group-flush">
-													    <li class="list-group-item text-body">ID Name: <?php echo $id_name; ?></li>
-													    <li class="list-group-item text-body">Class: <?php echo $class; ?></li>
-													    <li class="list-group-item text-body">Group: <?php echo $class_group; ?></li>
-													    <li class="list-group-item text-body">Room: <?php echo $room; ?></li>
-													    <li class="list-group-item text-body">Team: <?php echo $team; ?></li>
-													  </ul>
-												</div>
-												<div class="card-footer">
-													<a href="trainee.php"><button class="btn btn-block btn-primary">Manage</button></a>
-												</div>
-											</div>
-											<!-- Card -->
+												$sql_offense = "SELECT trainee_tb.trainee_id, trainee_tb.last_name, trainee_tb.first_name, 
+													trainee_tb.id_name, trainee_tb.gender, trainee_tb.class_group,
+													rules_tb.offense_code, rules_tb.offense_type, rules_tb.offense_description, 
+													render_tb.render_id, render_tb.render_date, trainee_tb.summaries, render_tb.is_grounded, trainee_tb.words, trainee_tb.levitical_service
+													FROM render_tb 
+													INNER JOIN trainee_tb ON trainee_tb.trainee_id = render_tb.trainee_id
+													INNER JOIN rules_tb ON rules_tb.rule_id = render_tb.rule_id
+													INNER JOIN department_tb ON department_tb.department_id = render_tb.department_id 
+													WHERE trainee_tb.trainee_id = $trainee_id";
+												$result_offense = mysqli_query($conn, $sql_offense);
 
-										<?php } ?>
-											
-										</div>
-									<?php } ?>
+										 	?>
+												<div class="col-sm-12 col-md-6 col-lg-3">
+													<!-- Card -->
+													<div class="card mb-4">
+														<div class="card-header unique-color-dark">
+															<h4 class="card-title text-white text-center"><?php echo $class_group; ?> <?php echo $gender . " " . $last_name . " " . $first_name; ?></h4>
+														</div>
+														<!--Card content-->
+														<div class="card-body">
+															<ul class="list-group list-group-flush">															    <li class="list-group-item text-body">Summary: <?php echo $summaries; ?></li>
+															    <li class="list-group-item text-body">Words: <?php echo $words; ?></li>
+															    <li class="list-group-item text-body">Levitical Service: <?php echo $levitical_service; ?></li>
+															    <li class="list-group-item text-body">Grounded: <?php echo $is_grounded; ?></li>
+															</ul>
+														</div>
+														<div class="card-footer">
+															<button class="btn btn-block btn-primary" data-toggle="modal" 
+															data-target="#modalOffense<?php echo $render_id; ?>">See offenses</button>
+														</div>
+													</div>
+												<!-- Card -->
+												</div>
+												<?php include("offense_modal.php"); ?>
+											<?php } ?>
 										<?php }
 										else { ?>
 											<div class="col-sm-12">
 												<!-- Card -->
-											<div class="card bg-dark mb-4">
+											<div class="card bg-primary mb-4">
 												<!--Card content-->
 												<div class="card-body">
 													<center>
-														<p class="display-4 mt-3 font-weight-bold">No Data</p>
-														<a href="trainee.php"><button class="btn btn-primary">Go here</button></a>
+														<p class="display-4 mt-5 mb-5 font-weight-bold">No Renders</p>
 													</center>
 												</div>
 											</div>
@@ -234,58 +206,59 @@
 											</div>
 										<?php } ?>
 									</div>
-										<?php if (ceil($total_pages_trainee / $num_results_on_page_trainee) > 0) { ?>
-											<nav aria-label="Page_trainee navigation">
+								</div>
+										<?php if (ceil($total_pages_render / $num_results_on_page_render) > 0) { ?>
+											<nav aria-label="Page_render navigation">
 												<ul class="pagination pg-blue justify-content-center">
-													<?php if ($page_trainee > 1) {?>
+													<?php if ($page_render > 1) {?>
 												    <li class="page-item ">
-												      <a class="page-link" href="index.php?page_trainee=<?php echo $page_trainee-1 ?>" tabindex="-1">Previous</a>
+												      <a class="page-link" href="index.php?page_render=<?php echo $page_render-1 ?>" tabindex="-1">Previous</a>
 												    </li>
 												    <?php } ?>
 
-												    <?php if ($page_trainee > 3) { ?>
+												    <?php if ($page_render > 3) { ?>
 												    <li class="page-item">
-												    	<a class="page-link" href="index.php?page_trainee=1">1 </a>
+												    	<a class="page-link" href="index.php?page_render=1">1 </a>
 												    </li>
 												    <?php } ?>
 
-												    <?php if ($page_trainee-2 > 0) { ?>
+												    <?php if ($page_render-2 > 0) { ?>
 												    <li class="page-item">
-												      <a class="page-link" href="index.php?page_trainee=<?php echo $page_trainee-2 ?>"><?php echo $page_trainee-2; ?> </a>
+												      <a class="page-link" href="index.php?page_render=<?php echo $page_render-2 ?>"><?php echo $page_render-2; ?> </a>
 												    </li>
 												    <?php } ?>
 
-												    <?php if ($page_trainee-1 > 0) { ?>
+												    <?php if ($page_render-1 > 0) { ?>
 												    <li class="page-item">
-												    	<a class="page-link" href="index.php?page_trainee=<?php echo $page_trainee-1 ?>"><?php echo $page_trainee-1; ?></a>
+												    	<a class="page-link" href="index.php?page_render=<?php echo $page_render-1 ?>"><?php echo $page_render-1; ?></a>
 												    </li>
 												    <?php } ?>
 
 												    <li class="page-item active">
-												    	<a class="page-link" href="index.php?page_trainee=<?php echo $page_trainee ?>"><?php echo $page_trainee ?> <span class="sr-only">(current)</span></a>
+												    	<a class="page-link" href="index.php?page_render=<?php echo $page_render ?>"><?php echo $page_render ?> <span class="sr-only">(current)</span></a>
 												    </li>
 
-												    <?php if ($page_trainee+1 < ceil($total_pages_trainee / $num_results_on_page_trainee)+1) { ?>
+												    <?php if ($page_render+1 < ceil($total_pages_render / $num_results_on_page_render)+1) { ?>
 														<li class="page-item">
-															<a class="page-link" href="index.php?page_trainee=<?php echo $page_trainee+1 ?>"><?php echo $page_trainee+1 ?></a>
+															<a class="page-link" href="index.php?page_render=<?php echo $page_render+1 ?>"><?php echo $page_render+1 ?></a>
 														</li>
 													<?php } ?>
 
-													<?php if ($page_trainee+2 < ceil($total_pages_trainee / $num_results_on_page_trainee)+1) { ?>
+													<?php if ($page_render+2 < ceil($total_pages_render / $num_results_on_page_render)+1) { ?>
 														<li class="page-item">
-															<a class="page-link" href="index.php?page_trainee=<?php echo $page_trainee+2 ?>"><?php echo $page_trainee+2 ?></a>
+															<a class="page-link" href="index.php?page_render=<?php echo $page_render+2 ?>"><?php echo $page_render+2 ?></a>
 														</li>
 													<?php } ?>
 
-													<?php if ($page_trainee < ceil($total_pages_trainee / $num_results_on_page_trainee)-2) { ?>
+													<?php if ($page_render < ceil($total_pages_render / $num_results_on_page_render)-2) { ?>
 														<li class="page-item">
-															<a class="page-link" href="index.php?page_trainee=<?php echo ceil($total_pages_trainee/ $num_results_on_page_trainee) ?>"><?php echo ceil($total_pages_trainee/ $num_results_on_page_trainee) ?></a>
+															<a class="page-link" href="index.php?page_render=<?php echo ceil($total_pages_render/ $num_results_on_page_render) ?>"><?php echo ceil($total_pages_render/ $num_results_on_page_render) ?></a>
 														</li>
 													<?php } ?>
 
-												    <?php if ($page_trainee < ceil($total_pages_trainee / $num_results_on_page_trainee)) { ?>
+												    <?php if ($page_render < ceil($total_pages_render / $num_results_on_page_render)) { ?>
 														<li class="page-item">
-															<a class="page-link" href="index.php?page_trainee=<?php echo $page_trainee+1 ?>">Next</a>
+															<a class="page-link" href="index.php?page_render=<?php echo $page_render+1 ?>">Next</a>
 														</li>
 													<?php } ?>
 
@@ -299,204 +272,9 @@
 					</div>
 				</div>
 			</div>
-		</div>
-
-		<!-- Departments Tab -->
-		<div class="tab-pane fade show" id="department" role="tabpanel" aria-labelledby="department-tab">
-
-			<div class="container-fluid" style="margin-top: 80px;">
-				<div class="row">
-					<div class="col-sm-12 col-md-12 col-lg-12">
-						<!-- Card Dark -->
-						<div class="card">
-							<!-- Card content -->
-							<div class="card-body white-text rounded-bottom">
-								<!-- Title -->
-								<h4 class="card-title text-center text-black-50"> Department Overview</h4>
-								<!-- Material input -->
-								<div class="md-form">
-									<input type="text" id="form1" class="form-control">
-									<label for="form1">Search</label>
-								</div>
-								<div class="text-center">
-									<button type="button" class="btn btn-primary">Search</button>
-								</div>
-								<!-- Body -->
-								<div class="mt-5">
-										<?php if (ceil($total_pages_department / $num_results_on_page_department) > 0) { ?>
-											<nav aria-label="Page navigation">
-												<ul class="pagination pg-blue justify-content-center">
-													<?php if ($page_department > 1) {?>
-														<li class="page-item ">
-															<a class="page-link" href="index.php?page_department=<?php echo $page_department-1 ?>" tabindex="-1">Previous</a>
-														</li>
-													<?php } ?>
-
-													<?php if ($page_department > 3) { ?>
-														<li class="page-item">
-															<a class="page-link" href="index.php?page_department=1">1 </a>
-														</li>
-													<?php } ?>
-
-													<?php if ($page_department-2 > 0) { ?>
-														<li class="page-item">
-															<a class="page-link" href="index.php?page_department=<?php echo $page_department-2 ?>"><?php echo $page_department-2; ?> </a>
-														</li>
-													<?php } ?>
-
-													<?php if ($page_department-1 > 0) { ?>
-														<li class="page-item">
-															<a class="page-link" href="index.php?page_department=<?php echo $page_department-1 ?>"><?php echo $page_department-1; ?></a>
-														</li>
-													<?php } ?>
-
-													<li class="page-item active">
-														<a class="page-link" href="index.php?page_department=<?php echo $page_department ?>"><?php echo $page_department ?> <span class="sr-only">(current)</span></a>
-													</li>
-
-													<?php if ($page_department+1 < ceil($total_pages_department / $num_results_on_page_department)+1) { ?>
-														<li class="page-item">
-															<a class="page-link" href="index.php?page_department=<?php echo $page_department+1 ?>"><?php echo $page_department+1 ?></a>
-														</li>
-													<?php } ?>
-
-													<?php if ($page_department+2 < ceil($total_pages_department / $num_results_on_page_department)+1) { ?>
-														<li class="page-item">
-															<a class="page-link" href="index.php?page_department=<?php echo $page_department+2 ?>"><?php echo $page_department+2 ?></a>
-														</li>
-													<?php } ?>
-
-													<?php if ($page_department < ceil($total_pages_department / $num_results_on_page_department)-2) { ?>
-														<li class="page-item">
-															<a class="page-link" href="index.php?page_department=<?php echo ceil($total_pages_department/ $num_results_on_page_department) ?>"><?php echo ceil($total_pages_department/ $num_results_on_page_department) ?></a>
-														</li>
-													<?php } ?>
-
-													<?php if ($page_department < ceil($total_pages_department / $num_results_on_page_department)) { ?>
-														<li class="page-item">
-															<a class="page-link" href="index.php?page_department=<?php echo $page_department+1 ?>">Next</a>
-														</li>
-													<?php } ?>
-
-												</ul>
-											</nav>
-										<?php } ?>
-									<div class="row">
-										<?php if (mysqli_num_rows($result_department) > 0) { ?>
-
-											<?php while($row = $result_department->fetch_assoc()) {
-											$department_name = $row['department_name'];
-											$username = $row['username'];
-											$password = $row['password'];
-										 ?>
-										<div class="col-sm-12 col-md-6 col-lg-3">
-											<!-- Card -->
-											<div class="card bg-dark mb-4">
-												<div class="card-header ">
-													<h4 class="card-title text-white text-center"><?php echo $department_name; ?></h4>
-												</div>
-												<!--Card content-->
-												<div class="card-body">
-													  <ul class="list-group list-group-flush">
-													    <li class="list-group-item text-body">User Name: <?php echo $username; ?></li>
-													    <li class="list-group-item text-body">Password: <?php echo $password; ?></li>
-													  </ul>
-												</div>
-												<div class="card-footer">
-													<a href="department.php"><button class="btn btn-block btn-primary">Manage</button></a>
-												</div>
-											</div>
-											<!-- Card -->
-										</div>
-									<?php } ?>
-										<?php }
-										else { ?>
-											<div class="col-sm-12">
-												<!-- Card -->
-											<div class="card bg-dark mb-4">
-												<!--Card content-->
-												<div class="card-body">
-													<center>
-														<p class="display-4 mt-3 font-weight-bold">No Data</p>
-														<a href="department.php"><button class="btn btn-primary">Go here</button></a>
-													</center>
-												</div>
-											</div>
-											<!-- Card -->
-											</div>
-										<?php } ?>
-									</div>
-										<?php if (ceil($total_pages_department / $num_results_on_page_department) > 0) { ?>
-											<nav aria-label="Page navigation">
-												<ul class="pagination pg-blue justify-content-center">
-													<?php if ($page_department > 1) {?>
-														<li class="page-item ">
-															<a class="page-link" href="index.php?page_department=<?php echo $page_department-1 ?>" tabindex="-1">Previous</a>
-														</li>
-													<?php } ?>
-
-													<?php if ($page_department > 3) { ?>
-														<li class="page-item">
-															<a class="page-link" href="index.php?page_department=1">1 </a>
-														</li>
-													<?php } ?>
-
-													<?php if ($page_department-2 > 0) { ?>
-														<li class="page-item">
-															<a class="page-link" href="index.php?page_department=<?php echo $page_department-2 ?>"><?php echo $page_department-2; ?> </a>
-														</li>
-													<?php } ?>
-
-													<?php if ($page_department-1 > 0) { ?>
-														<li class="page-item">
-															<a class="page-link" href="index.php?page_department=<?php echo $page_department-1 ?>"><?php echo $page_department-1; ?></a>
-														</li>
-													<?php } ?>
-
-													<li class="page-item active">
-														<a class="page-link" href="index.php?page_department=<?php echo $page_department ?>"><?php echo $page_department ?> <span class="sr-only">(current)</span></a>
-													</li>
-
-													<?php if ($page_department+1 < ceil($total_pages_department / $num_results_on_page_department)+1) { ?>
-														<li class="page-item">
-															<a class="page-link" href="index.php?page_department=<?php echo $page_department+1 ?>"><?php echo $page_department+1 ?></a>
-														</li>
-													<?php } ?>
-
-													<?php if ($page_department+2 < ceil($total_pages_department / $num_results_on_page_department)+1) { ?>
-														<li class="page-item">
-															<a class="page-link" href="index.php?page_department=<?php echo $page_department+2 ?>"><?php echo $page_department+2 ?></a>
-														</li>
-													<?php } ?>
-
-													<?php if ($page_department < ceil($total_pages_department / $num_results_on_page_department)-2) { ?>
-														<li class="page-item">
-															<a class="page-link" href="index.php?page_department=<?php echo ceil($total_pages_department/ $num_results_on_page_department) ?>"><?php echo ceil($total_pages_department/ $num_results_on_page_department) ?></a>
-														</li>
-													<?php } ?>
-
-													<?php if ($page_department < ceil($total_pages_department / $num_results_on_page_department)) { ?>
-														<li class="page-item">
-															<a class="page-link" href="index.php?page_department=<?php echo $page_department+1 ?>">Next</a>
-														</li>
-													<?php } ?>
-
-												</ul>
-											</nav>
-										<?php } ?>
-								</div>
-							</div>
-						</div>
-						<!-- Card Dark -->
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 </main>
 
 <?php include("footer.php"); ?>
-
 <script>
 $('#search').keyup(function (){
     $('.col-lg-3').removeClass('d-none');
@@ -507,6 +285,3 @@ $('#search').keyup(function (){
 
 </body>
 </html>
-<?php 
-	$stmt_trainee->close();
- ?>
