@@ -73,10 +73,10 @@
 							<div class="row">
 								<div class="col-sm-12 col-md-12 col-lg-6 mb-3">
 									<a href="edit_trainee.php?id=<?php echo $trainee_id; ?>">
-										<button class="btn btn-block btn-primary">Edit</button></a>
+										<button class="btn btn-block btn-primary"><i class="fas fa-edit"></i></button></a>
 								</div>
 								<div class="col-sm-12 col-md-12 col-lg-6">
-									<button class="btn btn-block btn-danger" data-toggle="modal" data-target="#deleteModal<?php echo $trainee_id ?>">Delete</button>
+									<button class="btn btn-block btn-danger" data-toggle="modal" data-target="#deleteModal<?php echo $trainee_id ?>"><i class="fas fa-trash-alt"></i></button>
 								</div>
 							</div>
 						</td>

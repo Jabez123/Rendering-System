@@ -198,7 +198,7 @@
 												<!--Card content-->
 												<div class="card-body">
 													<center>
-														<p class="display-4 mt-5 mb-5 font-weight-bold">No Renders</p>
+														<p class="display-4 mt-5 mb-5 font-weight-bold">No Renders today <i class="fas fa-laugh-beam"></i></p>
 													</center>
 												</div>
 											</div>
