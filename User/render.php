@@ -48,6 +48,8 @@
 						</th>
 						<th class="th-sm">Name
 						</th>
+						<th class="th-sm">Render Code
+						</th>
 						<th class="th-sm">Offense Code
 						</th>
 						<th class="th-sm">Offense Type
@@ -75,10 +77,10 @@
 							<div class="row">
 								<div class="col-sm-12 col-md-12 col-lg-6 mb-3">
 									<a href="edit_render.php?id_render=<?php echo $render_id; ?>&id_rule=<?php echo $rule_id ?>&id_trainee=<?php echo $trainee_id ?>&render_code=<?php echo $render_code ?>">
-										<button class="btn btn-block btn-primary">Edit</button></a>
+										<button class="btn btn-block btn-primary"><i class="fas fa-edit"></i></button></a>
 								</div>
 								<div class="col-sm-12 col-md-12 col-lg-6">
-									<button class="btn btn-block btn-danger" data-toggle="modal" data-target="#deleteModal<?php echo $render_id ?>">Delete</button>
+									<button class="btn btn-block btn-danger" data-toggle="modal" data-target="#deleteModal<?php echo $render_id ?>"><i class="fas fa-trash-alt"></i></button>
 								</div>
 							</div>
 						</td>
@@ -102,6 +104,8 @@
 						<th class="th-sm">Date
 						</th>
 						<th class="th-sm">Name
+						</th>
+						<th class="th-sm">Render Code
 						</th>
 						<th class="th-sm">Offense Code
 						</th>
