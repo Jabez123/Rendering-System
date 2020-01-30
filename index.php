@@ -61,7 +61,7 @@
 								<!-- Material input -->
 								<div class="md-form">
 									<input type="text" id="search" class="form-control">
-									<label for="search">Search Name</label>
+									<label for="search">Search Name (Case Sensitive)</label>
 								</div>
 								<div class="text-center">
 									<button type="button" class="btn btn-primary">Search</button>
