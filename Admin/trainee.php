@@ -57,6 +57,7 @@
 				<tbody>
 					<?php while($row = mysqli_fetch_assoc($result)) {
 							$trainee_id = $row['trainee_id'];
+							$user_id =$row['user_id'];
 							$first_name = $row['first_name'];
 							$last_name = $row['last_name'];
 							$username = $row['username'];
@@ -74,7 +75,7 @@
 						<td>
 							<div class="row">
 								<div class="col-sm-12 col-md-12 col-lg-6 mb-3">
-									<a href="edit_trainee.php?id=<?php echo $trainee_id; ?>">
+									<a href="edit_trainee.php?id=<?php echo $trainee_id; ?>&user_id=<?php echo $user_id ?>">
 										<button class="btn btn-block btn-primary"><i class="fas fa-edit"></i></button></a>
 								</div>
 								<div class="col-sm-12 col-md-12 col-lg-6">
@@ -102,7 +103,11 @@
 						</th>
 						<th class="th-sm">Full Name
 						</th>
+						<th class="th-sm">Class
+						</th>
 						<th class="th-sm">ID Name / Username
+						</th>
+						<th class="th-sm">Password
 						</th>
 						<th class="th-sm">More Info
 						</th>

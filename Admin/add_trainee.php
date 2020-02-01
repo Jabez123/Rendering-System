@@ -218,8 +218,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 								</div>
 							</div>
 							<div class="col-md-6">
-								
-
 								<div class="md-form form-group mt-5 <?php echo (!empty($class_group_error)) ? 'has-error' : ''; ?>">
 									<input class="form-control" type="text" name="class_group" id="class_group" value=" ">
 									<label for="class_group">Class Group</label>

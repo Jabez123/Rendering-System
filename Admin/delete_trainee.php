@@ -5,35 +5,18 @@ require_once("../config/connectDatabase.php");
 
 
 $trainee_id = $_REQUEST['id'];
-
-echo "From request: " . $trainee_id;
+$user_id = $_REQUEST['user_id'];
 
 // Prepare an update statement
-        
-        $sql = "DELETE FROM trainee_tb WHERE trainee_id = ?";
-        if($stmt = mysqli_prepare($conn, $sql)) {
+        $sql_user = "DELETE FROM users_tb WHERE user_id = $user_id";
+        $sql_trainee = "DELETE FROM trainee_tb WHERE trainee_id = $trainee_id";
 
-            // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "i", $trainee_id);
-            
-            // Set parameters
-            $trainee_id = $trainee_id;
+        $conn->autocommit(FALSE);
+        $conn->query($sql_trainee) or die("Error Trainee: " . mysqli_error($conn));
+        $conn->query($sql_user) or die("Error User: " . mysqli_error($conn));
 
-            echo "From parameter: " . $trainee_id;
-            // Attempt to execute the prepared statement
-            if(mysqli_stmt_execute($stmt)){
-                // Redirect to login page
-                header("location: trainee.php");
-            } 
+        $conn->commit();
+        $conn->close();
 
-            else{
-                echo "Something went wrong. Please try again later.";
-                echo "Deleting Error: " . mysqli_error($conn);
-            }
-            // Close statement
-        mysqli_stmt_close($stmt);
-        }
-    
-    // Close connection
-    mysqli_close($conn);
+        header("Location: trainee.php");
  ?>
