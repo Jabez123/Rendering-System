@@ -16,7 +16,7 @@
         </div>
 
         <div class="modal-footer flex-center">
-          <a href="delete_department.php?id=<?php echo $department_id ?>"><button type="button" class="btn btn-outline-danger">Yes</button></a>
+          <a href="delete_department.php?id=<?php echo $department_id ?>&user_id=<?php echo $user_id ?>"><button type="button" class="btn btn-outline-danger">Yes</button></a>
           <a type="button" class="btn btn-danger waves-effect" data-dismiss="modal">No</a>
         </div>
       </div>

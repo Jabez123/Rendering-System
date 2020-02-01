@@ -5,9 +5,13 @@ require_once("../config/connectDatabase.php");
  
 // Define variables and initialize with empty values
 
-$previous_department_id = $_REQUEST['id'];
+$department_id = $_REQUEST['id'];
+$user_id = $_REQUEST['user_id'];
 
-$sql = "SELECT * FROM department_tb WHERE department_id= $previous_department_id";
+$sql = "SELECT users_tb.username, users_tb.password,
+    department_tb.department_id, department_tb.department_name FROM users_tb INNER JOIN
+    department_tb ON users_tb.user_id = department_tb.user_id
+    WHERE department_id = $department_id";
 
 $result = mysqli_query($conn, $sql);
 
@@ -20,21 +24,16 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     if(empty(trim($_POST["department_name"]))){
         $department_name_error = "Please enter a department name.";
     }
- 
-    // Validate username
-    if(empty(trim($_POST["username"]))){
-        $username_error = "Please enter a username.";
-    } 
-    else{
+    else {
         // Prepare a select statement
-        $sql = "SELECT id FROM department_tb WHERE username = ?";
+        $sql = "SELECT department_tb FROM department_name WHERE username = ?";
         
         if($stmt = mysqli_prepare($conn, $sql)){
             // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "s", $param_username);
+            mysqli_stmt_bind_param($stmt, "s", $param_department_name);
             
             // Set parameters
-            $param_username = trim($_POST["username"]);
+            $param_department_name = trim($_POST["department_name"]);
             
             // Attempt to execute the prepared statement
             if(mysqli_stmt_execute($stmt)){
@@ -42,17 +41,22 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                 mysqli_stmt_store_result($stmt);
                 
                 if(mysqli_stmt_num_rows($stmt) == 1){
-                    $username_error = "This username is already taken.";
+                    $department_name_error = "This department is already added.";
                 } else{
-                    $username = trim($_POST["username"]);
+                    $department_name = trim($_POST["department_name"]);
                 }
             } else{
                 echo "Oops! Something went wrong. Please try again later.";
             }
 
             // Close statement
-        	mysqli_stmt_close($stmt);
+            mysqli_stmt_close($stmt);
         }
+    }
+ 
+    // Validate username
+    if(empty(trim($_POST["username"]))){
+        $username_error = "Please enter a username.";
     }
 
     // Validate password
@@ -68,41 +72,29 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     // Check input errors before inserting in database
     if(empty($username_error) && empty($password_error) && empty($department_name_error)) {
         
+        $username = trim($_POST['username']);
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT); // Creates a password hash 
+        $password = trim($_POST["password"]);
+        $department_name = trim($_POST["department_name"]);
 
         // Prepare an update statement
-        $sql = "UPDATE department_tb SET
-    	username = ?, password = ?, hashed_password = ?, department_name = ?
-        WHERE department_id = ?";
-         
-        if($stmt = mysqli_prepare($conn, $sql)) {
-            // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "ssssi", 
-            	$param_username, $param_password, $param_hashed_password, $param_department_name, $param_department_id);
-            
-            // Set parameters
-            $param_department_id = $previous_department_id;
-            $param_username = trim($_POST["username"]);
-            $param_password = trim($_POST["password"]);
-            $param_hashed_password = password_hash($password, PASSWORD_DEFAULT); // Creates a password hash 
-            $param_department_name = trim($_POST["department_name"]);
-            
-            // Attempt to execute the prepared statement
-            if(mysqli_stmt_execute($stmt)){
-                // Redirect to login page
-                header("location: department.php");
-            } 
+        $sql_user = "UPDATE users_tb SET
+    	username = '$username', password = '$password', hashed_password = '$hashed_password'
+        WHERE user_id = $user_id";
 
-            else{
-                echo "Something went wrong. Please try again later.";
-                echo "Updating Error: " . mysqli_error($conn);
-            }
-            // Close statement
-        mysqli_stmt_close($stmt);
-        }
+        $sql_department = "UPDATE department_tb SET
+        department_name = '$department_name' WHERE department_id = $department_id";
+         
+        $conn->autocommit(FALSE);
+
+        $conn->query($sql_user) or die("Error User: " . mysqli_error($conn));
+        $conn->query($sql_department) or die("Error Department: " . mysqli_error($conn));
+
+        $conn->commit();
+        $conn->close();
+
+        header("Location: department.php");
     }
-    
-    // Close connection
-    mysqli_close($conn);
 }
 ?>
 
@@ -136,9 +128,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 								<div class="md-form form-group mt-5 <?php echo (!empty($password_error)) ? 'has-error' : ''; ?>">
 									<input class="form-control" type="password" name="password" id="password" value="<?php echo $password ?>">
 									<label for="password">Password</label>
-									<span class="help-block">Current Password: <?php echo $password; ?></span>
 									<span class="help-block text-danger"><?php echo $password_error; ?></span>
 								</div>
+                                <!-- Default checked -->
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="showPassword" onclick="myFunction()">
+                                    <label class="custom-control-label" for="showPassword">Show Password</label>
+                                </div>
 								<div class="md-form form-group mt-5 <?php echo (!empty($department_name_error)) ? 'has-error' : ''; ?>">
 									<input class="form-control" type="text" name="department_name" id="department_name" value="<?php echo $department_name ?>">
 									<label for="department_name">Department Name</label>

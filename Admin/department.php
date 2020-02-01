@@ -4,7 +4,9 @@
 	require_once("../config/connectServer.php");
 	require_once("../config/connectDatabase.php");
 
-	$sql = "SELECT * FROM department_tb";
+	$sql = "SELECT users_tb.user_id, users_tb.username, users_tb.password,
+	department_tb.department_id, department_tb.department_name FROM users_tb INNER JOIN
+	department_tb ON users_tb.user_id = department_tb.user_id";
 
 	$result = mysqli_query($conn, $sql);
  ?>
@@ -43,6 +45,7 @@
 				<tbody>
 					<?php while($row = mysqli_fetch_assoc($result)) {
 							$department_id = $row['department_id'];
+							$user_id = $row['user_id'];
 							$department_name = $row['department_name'];
 							$username = $row['username'];
 							$password = $row['password'];
@@ -51,7 +54,7 @@
 						<td>
 							<div class="row">
 								<div class="col-sm-12 col-md-12 col-lg-6 mb-3">
-									<a href="edit_department.php?id=<?php echo $department_id; ?>">
+									<a href="edit_department.php?id=<?php echo $department_id; ?>&user_id=<?php echo $user_id ?>">
 										<button class="btn btn-block btn-primary"><i class="fas fa-edit"></i></button></a>
 								</div>
 								<div class="col-sm-12 col-md-12 col-lg-6">

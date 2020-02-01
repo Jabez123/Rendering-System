@@ -5,35 +5,17 @@ require_once("../config/connectDatabase.php");
 
 
 $department_id = $_REQUEST['id'];
+$user_id = $_REQUEST['user_id'];
 
-echo "From request: " . $department_id;
+    $conn->autocommit(FALSE);
 
-// Prepare an update statement
-        
-        $sql = "DELETE FROM department_tb WHERE department_id = ?";
-        if($stmt = mysqli_prepare($conn, $sql)) {
+    $sql_user = "DELETE FROM users_tb WHERE user_id = $user_id";
+    $sql_department = "DELETE FROM department_tb WHERE department_id = $department_id";
 
-            // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "i", $department_id);
-            
-            // Set parameters
-            $department_id = $department_id;
+    $conn->query($sql_department) or die("Error Department: " . mysqli_error($conn));
+    $conn->query($sql_user) or die("Error User: " . mysqli_error($conn));
+    $conn->commit();
+    $conn->close();
 
-            echo "From parameter: " . $department_id;
-            // Attempt to execute the prepared statement
-            if(mysqli_stmt_execute($stmt)){
-                // Redirect to login page
-                header("location: department.php");
-            } 
-
-            else{
-                echo "Something went wrong. Please try again later.";
-                echo "Deleting Error: " . mysqli_error($conn);
-            }
-            // Close statement
-        mysqli_stmt_close($stmt);
-        }
-    
-    // Close connection
-    mysqli_close($conn);
+    header("Location: department.php");
  ?>

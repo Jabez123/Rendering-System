@@ -22,7 +22,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     } 
     else{
         // Prepare a select statement
-        $sql = "SELECT id FROM department_tb WHERE username = ?";
+        $sql = "SELECT user_id FROM users_tb WHERE username = ?";
         
         if($stmt = mysqli_prepare($conn, $sql)){
             // Bind variables to the prepared statement as parameters
@@ -73,38 +73,30 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Check input errors before inserting in database
     if(empty($username_error) && empty($password_error) && empty($confirm_password_error) && empty($department_name_error)) {
+
+        $username = trim($_POST["username"]);
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT); // Creates a password hash 
+            $password = trim($_POST["password"]);
+            $department_name = trim($_POST["department_name"]);
+            $user_level = 3;
         
         // Prepare an insert statement
-        $sql = "INSERT INTO department_tb (
-        username, password, hashed_password, department_name) 
-        VALUES (?, ?, ?, ?)";
-         
-        if($stmt = mysqli_prepare($conn, $sql)) {
-            // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "ssss", 
-            	$param_username, $param_password, $param_hashed_password, $param_department_name);
-            
-            // Set parameters
-            $param_username = trim($_POST["username"]);
-            $param_hashed_password = password_hash($hashed_password, PASSWORD_DEFAULT); // Creates a password hash 
-            $param_password = trim($_POST["password"]);
-            $param_department_name = trim($_POST["department_name"]);
-            
-            // Attempt to execute the prepared statement
-            if(mysqli_stmt_execute($stmt)){
-                // Redirect to login page
-                header("location: department.php");
-            } 
+        $sql = "INSERT INTO users_tb (
+        username, password, hashed_password, user_level)
+        VALUES ('$username', '$password', '$hashed_password', $user_level)";
+        $sql_insert_department = "INSERT INTO department_tb (user_id, department_name) 
+            VALUES ((SELECT user_id FROM users_tb WHERE username = '$username'), '$department_name');";
 
-            else{
-                echo "Something went wrong. Please try again later.";
-                echo "Error: " . mysqli_error($conn);
-            }
-            // Close statement
-        	mysqli_stmt_close($stmt);
-        }
+        $conn->autocommit(FALSE);
 
-        
+        $conn->query($sql) or die("Error user insert: " . mysqli_error($conn));
+        $conn->query($sql_insert_department) or die("Error department insert: " . mysqli_error($conn));
+
+        $conn->commit();
+
+        $conn->close();
+
+        header("Location: department.php");        
     }
     
     // Close connection
@@ -137,11 +129,19 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 									<label for="password">Password</label>
 									<span class="help-block text-danger"><?php echo $password_error; ?></span>
 								</div>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="showPassword" onclick="myFunction()">
+                                    <label class="custom-control-label" for="showPassword">Show Password</label>
+                                </div>
 								<div class="md-form form-group mt-5 <?php echo (!empty($confirm_password_error)) ? 'has-error' : ''; ?>">
 									<input class="form-control" type="password" name="confirm_password" id="confirm_password">
 									<label for="confirm_password">Confirm Password</label>
 									<span class="help-block text-danger"><?php echo $confirm_password_error; ?></span>
 								</div>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="showConfirmPassword" onclick="myFunction()">
+                                    <label class="custom-control-label" for="showConfirmPassword">Show Password</label>
+                                </div>
 								<div class="md-form form-group mt-5 <?php echo (!empty($department_name_error)) ? 'has-error' : ''; ?>">
 									<input class="form-control" type="text" name="department_name" id="department_name">
 									<label for="department_name">Department Name</label>
