@@ -3,7 +3,8 @@
 session_start();
 
 // Check if the user is logged in, if not then redirect him to login page
-if(!isset($_SESSION["loggedin_admin"]) || $_SESSION["loggedin_admin"] !== true){
+if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true 
+	&& $_SESSION["user_level"] != 1){
 	header("location: login.php");
 	exit;
 }
@@ -46,6 +47,9 @@ if(!isset($_SESSION["loggedin_admin"]) || $_SESSION["loggedin_admin"] !== true){
 						</li>
 						<li class="nav-item">
 							<a class="nav-link" href="rules.php">Rules</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="render.php">Renders</a>
 						</li>
 					</ul>
 					<ul class="navbar-nav ml-auto">

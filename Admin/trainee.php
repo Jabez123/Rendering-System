@@ -4,7 +4,12 @@
 	require_once("../config/connectDatabase.php");
 	require_once("../config/connectDatabase.php");
 
-	$sql = "SELECT * FROM trainee_tb";
+	$sql = "SELECT trainee_tb.trainee_id, trainee_tb.user_id, 
+	trainee_tb.first_name, trainee_tb.last_name, trainee_tb.gender, trainee_tb.class,
+	trainee_tb.class_group, trainee_tb.room, trainee_tb.team, 
+	trainee_tb.status, trainee_tb.locality, trainee_tb.region,
+	users_tb.username, users_tb.password
+	 FROM trainee_tb INNER JOIN users_tb ON trainee_tb.user_id = users_tb.user_id";
 
 	$result = mysqli_query($conn, $sql);
  ?>
@@ -39,19 +44,13 @@
 						</th>
 						<th class="th-sm">Full Name
 						</th>
-						<th class="th-sm">ID Name
-						</th>
-						<th class="th-sm">Gender
-						</th>
 						<th class="th-sm">Class
 						</th>
-						<th class="th-sm">Class Group
+						<th class="th-sm">ID Name / Username
 						</th>
-						<th class="th-sm">Room
+						<th class="th-sm">Password
 						</th>
-						<th class="th-sm">Team
-						</th>
-						<th class="th-sm">Status
+						<th class="th-sm">More Info
 						</th>
 					</tr>
 				</thead>
@@ -60,7 +59,8 @@
 							$trainee_id = $row['trainee_id'];
 							$first_name = $row['first_name'];
 							$last_name = $row['last_name'];
-							$id_name = $row['id_name'];
+							$username = $row['username'];
+							$password = $row['password'];
 							$gender = $row['gender'];
 							$class = $row['class'];
 							$class_group = $row['class_group'];
@@ -81,14 +81,11 @@
 							</div>
 						</td>
 						<td class="font-weight-bold"><?php echo $trainee_id;; ?></td>
-						<td><?php echo $last_name . ", " . $first_name; ?></td>
-						<td><?php echo $id_name; ?></td>
-						<td><?php echo $gender; ?></td>
-						<td><?php echo $class; ?></td>
-						<td><?php echo $class_group; ?></td>
-						<td><?php echo $room; ?></td>
-						<td><?php echo $team; ?></td>
-						<td><?php echo $status; ?></td>
+						<td><?php echo $gender ?>. <?php echo $last_name . ", " . $first_name; ?></td>
+						<td><?php echo $class ?></td>
+						<td><?php echo $username; ?></td>
+						<td><?php echo $password; ?></td>
+						<td><button class="btn btn-block btn-info">More Info</button></td>
 					</tr>
 					<?php include("delete_trainee_modal.php"); ?>
 					<?php } ?>
@@ -101,19 +98,9 @@
 						</th>
 						<th class="th-sm">Full Name
 						</th>
-						<th class="th-sm">ID Name
+						<th class="th-sm">ID Name / Username
 						</th>
-						<th class="th-sm">Gender
-						</th>
-						<th class="th-sm">Class
-						</th>
-						<th class="th-sm">Class Group
-						</th>
-						<th class="th-sm">Room
-						</th>
-						<th class="th-sm">Team
-						</th>
-						<th class="th-sm">Status
+						<th class="th-sm">More Info
 						</th>
 					</tr>
 				</tfoot>

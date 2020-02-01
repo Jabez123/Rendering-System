@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate credentials
 	if(empty($username_error) && empty($password_error)) {
         // Prepare a select statement
-		$sql = "SELECT department_id, username, hashed_password FROM department_tb WHERE department_tb.username = ?";
+		$sql = "SELECT user_id, username, hashed_password, user_level FROM users_tb WHERE users_tb.username = ?";
 		if($stmt = mysqli_prepare($conn, $sql)){
             // Bind variables to the prepared statement as parameters
 			mysqli_stmt_bind_param($stmt, "s", $param_username);
@@ -57,7 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 // Check if username exists, if yes then verify password
 				if(mysqli_stmt_num_rows($stmt) == 1){                    
                     // Bind result variables
-					mysqli_stmt_bind_result($stmt, $id, $username, $hashed_password);
+					mysqli_stmt_bind_result($stmt, $id, $username, $hashed_password, $user_level);
 					if(mysqli_stmt_fetch($stmt)){
 						if(password_verify($password, $hashed_password)){
                             // Password is correct, so start a new session
@@ -66,10 +66,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             // Store data in session variables
 							$_SESSION["loggedin"] = true;
 							$_SESSION["id"] = $id;
-							$_SESSION["username"] = $username;                         
+							$_SESSION["username"] = $username;   
+							$_SESSION["user_level"] = $user_level;                      
 
                             // Redirect user to index page
 							header("location: User\index.php");
+							if ($_SESSION["user_level"] == 1) {
+								header("Location: Admin/index.php");
+							}
+
+							if ($_SESSION["user_level"] == 2) {
+								header("Location: TA/index.php");
+							}
+
+							if ($_SESSION["user_level"] == 3) {
+								header("Location: Department/index.php");
+							}
+
+							if ($_SESSION["user_level"] == 4) {
+								header("Location: Trainee/index.php");
+							}
 						} else{
                             // Display an error message if password is not valid
 							$password_error = "The password you entered was not valid.";
