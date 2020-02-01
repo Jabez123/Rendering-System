@@ -34,7 +34,7 @@
 <div class="container-fluid">
 	<main class="mt-5">
 		<div class="text-center">
-			<a href="add_render.php"><button class="btn btn-default">Add Render</button></a>
+			<a href="select_department.php"><button class="btn btn-default">Add Render</button></a>
 		</div>
 		<div class="table-responsive">
 			<table id="dtTrainees" class="table table-sm table-striped table-bordered" cellspacing="0" width="100%">
