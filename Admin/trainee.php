@@ -67,6 +67,8 @@
 							$room = $row['room'];
 							$team = $row['team'];
 							$status = $row['status'];
+							$locality = $row['locality'];
+							$region = $row['region'];
 						 ?>
 					<tr>
 						<td>
@@ -85,8 +87,10 @@
 						<td><?php echo $class ?></td>
 						<td><?php echo $username; ?></td>
 						<td><?php echo $password; ?></td>
-						<td><button class="btn btn-block btn-info">More Info</button></td>
+						<td><button class="btn btn-block btn-info" data-toggle="modal" 
+							data-target="#modalInfo<?php echo $trainee_id ?>">More Info</button></td>
 					</tr>
+					<?php include("more_info_modal.php"); ?>
 					<?php include("delete_trainee_modal.php"); ?>
 					<?php } ?>
 				</tbody>

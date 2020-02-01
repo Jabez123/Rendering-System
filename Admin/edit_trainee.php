@@ -17,7 +17,7 @@ $result = mysqli_query($conn, $sql);
 
 $trainee_id_error = $first_name_error = $last_name_error = $id_name_error = "";
 $gender_error = $class_error = $class_group_error = $room_error = "";
-$team_error = $status_error = "";
+$team_error = $status_error = $locality_error = $region_error = "";
  
 // Processing form data when form is submitted
 if($_SERVER["REQUEST_METHOD"] == "POST") {
