@@ -26,7 +26,7 @@
 <div class="container">
 	<main class="mt-5">
 		<div class="text-center">
-			<a href="add_department.php"><button class="btn btn-default">Add Department</button></a>
+			<a href="add_department.php"><button id="add_department" class="btn btn-default">Add Department</button></a>
 		</div>
 		<div class="table-responsive">
 			<table id="dtTrainees" class="table table-striped table-bordered" cellspacing="0" width="100%">
@@ -91,5 +91,10 @@
 </main>
 
 <?php include("footer.php"); ?>
+<script> 
+    window.onload = function() { 
+        document.getElementById("add_department").focus(); 
+    } 
+</script>
 </body>
 </html>

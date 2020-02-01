@@ -154,6 +154,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 									  	<option value="CONDUCT">CONDUCT</option>
 									  	<option value="MISCELLANEOUS">MISCELLANEOUS</option>
 									  	<option value="GROUP">GROUP</option>
+                                        <option value="LATE ON SESSION">LATE ON SESSION</option>
+                                        <option value="ONE SUM">ONE SUM</option>
+                                        <option value="GROUNDED">GROUNDED</option>
 									</select>
 									<p class="text-danger"><?php echo $offense_type_error; ?></p>
 								</div>

@@ -158,19 +158,56 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 									<select name="type_name" id="type_name" class="selectpicker" data-live-search="true" data-width="99%">
 										<option value="<?php echo $offense_type ?>">Current: <?php echo $offense_type ?></option>
 									  	<?php if ($offense_type == "CONDUCT") { ?>
-									  	<option value="MISCELLANEOUS">MISCELLANEOUS</option>
-									  	<option value="GROUP">GROUP</option>
+										  	<option value="MISCELLANEOUS">MISCELLANEOUS</option>
+										  	<option value="GROUP">GROUP</option>
+	                                        <option value="LATE ON SESSION">LATE ON SESSION</option>
+	                                        <option value="ONE SUM">ONE SUM</option>
+	                                        <option value="GROUNDED">GROUNDED</option>
 									  	<?php } else if ($offense_type == "MISCELLANEOUS") { ?>
 									  		<option value="CONDUCT">CONDUCT</option>
-									  		<option value="GROUP">GROUP</option>
+										  	<option value="GROUP">GROUP</option>
+	                                        <option value="LATE ON SESSION">LATE ON SESSION</option>
+	                                        <option value="ONE SUM">ONE SUM</option>
+	                                        <option value="GROUNDED">GROUNDED</option>
 									  	<?php } else if ($offense_type == "GROUP") { ?>
 									  		<option value="CONDUCT">CONDUCT</option>
-									  		<option value="MISCELLANEOUS">MISCELLANEOUS</option>
+										  	<option value="MISCELLANEOUS">MISCELLANEOUS</option>
+	                                        <option value="LATE ON SESSION">LATE ON SESSION</option>
+	                                        <option value="ONE SUM">ONE SUM</option>
+	                                        <option value="GROUNDED">GROUNDED</option>
+									  	<?php } else if ($offense_type == "LATE ON SESSION") {?>
+									  		<option value="CONDUCT">CONDUCT</option>
+										  	<option value="MISCELLANEOUS">MISCELLANEOUS</option>
+										  	<option value="GROUP">GROUP</option>
+	                                        <option value="ONE SUM">ONE SUM</option>
+	                                        <option value="GROUNDED">GROUNDED</option>
+	                                    <?php } else if ($offense_type == "LATE ON SESSION") {?>
+									  		<option value="CONDUCT">CONDUCT</option>
+										  	<option value="MISCELLANEOUS">MISCELLANEOUS</option>
+										  	<option value="GROUP">GROUP</option>
+	                                        <option value="ONE SUM">ONE SUM</option>
+	                                        <option value="GROUNDED">GROUNDED</option>
+									  	<?php } else if ($offense_type == "ONE SUM") { ?>
+									  		<option value="CONDUCT">CONDUCT</option>
+										  	<option value="MISCELLANEOUS">MISCELLANEOUS</option>
+										  	<option value="GROUP">GROUP</option>
+	                                        <option value="LATE ON SESSION">LATE ON SESSION</option>
+	                                        <option value="GROUNDED">GROUNDED</option>
+									  	<?php } else if ($offense_type == "GROUNDED") { ?>
+									  		<option value="CONDUCT">CONDUCT</option>
+										  	<option value="MISCELLANEOUS">MISCELLANEOUS</option>
+										  	<option value="GROUP">GROUP</option>
+	                                        <option value="LATE ON SESSION">LATE ON SESSION</option>
+	                                        <option value="ONE SUM">ONE SUM</option>
 									  	<?php } else { ?>
 									  		<option value="CONDUCT">CONDUCT</option>
-									  		<option value="MISCELLANEOUS">MISCELLANEOUS</option>
-									  		<option value="GROUP">GROUP</option>
+										  	<option value="MISCELLANEOUS">MISCELLANEOUS</option>
+										  	<option value="GROUP">GROUP</option>
+	                                        <option value="LATE ON SESSION">LATE ON SESSION</option>
+	                                        <option value="ONE SUM">ONE SUM</option>
+	                                        <option value="GROUNDED">GROUNDED</option>
 									  	<?php } ?>
+
 									</select>
 									<p class="text-danger"><?php echo $offense_type_error; ?></p>
 								</div>

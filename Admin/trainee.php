@@ -32,7 +32,7 @@
 <div class="container-fluid">
 	<main class="mt-5">
 		<div class="text-center">
-			<a href="add_trainee.php"><button class="btn btn-default">Add Trainee</button></a>
+			<a href="add_trainee.php"><button id="add_trainee" class="btn btn-default">Add Trainee</button></a>
 		</div>
 		<div class="table-responsive">
 			<table id="dtTrainees" class="table table-sm table-striped table-bordered" cellspacing="0" width="100%">
@@ -119,5 +119,10 @@
 </div>
 
 <?php include("footer.php"); ?>
+<script> 
+    window.onload = function() { 
+        document.getElementById("add_trainee").focus(); 
+    } 
+</script>
 </body>
 </html>

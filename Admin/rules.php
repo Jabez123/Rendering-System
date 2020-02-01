@@ -30,7 +30,7 @@
 <div class="container-fluid">
 	<main class="mt-5">
 		<div class="text-center">
-			<a href="add_rule.php"><button class="btn btn-default">Add rule</button></a>
+			<a href="add_rule.php"><button id="add_rules" class="btn btn-default">Add rule</button></a>
 			
 		</div>
 		<div class="table-responsive">
@@ -97,5 +97,10 @@
 </div>
 
 <?php include("footer.php"); ?>
+<script> 
+    window.onload = function() { 
+        document.getElementById("add_rules").focus(); 
+    } 
+</script>
 </body>
 </html>
