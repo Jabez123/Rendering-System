@@ -22,7 +22,7 @@
 		if (empty($department_id_error)) {
 			$department_id = $_POST['department_id'];
 
-			header("Location: add_render.php?id=$department_id");
+			header("Location: select_offense.php?id=$department_id");
 		}
 	}
  ?>

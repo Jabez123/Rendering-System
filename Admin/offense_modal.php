@@ -1,5 +1,5 @@
 <!-- Central Modal Medium Info -->
-<div class="modal fade" id="modalOffense<?php echo $render_id ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+<div class="modal fade" id="modalOffense<?php echo $trainee_id ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
   aria-hidden="true">
   <div class="modal-dialog modal-notify modal-info" role="document">
     <!--Content-->
@@ -17,7 +17,7 @@
       <div class="modal-body">
         <ul class="list-group list-group-flush">
           
-          <?php while ($row = mysqli_fetch_assoc($result_offense)) { 
+          <?php while ($row = mysqli_fetch_assoc($result_offense_list)) { 
             $offense_code = $row['offense_code'];
             $offense_type = $row['offense_type'];
             $offense_description = $row['offense_description'];
