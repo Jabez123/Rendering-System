@@ -73,7 +73,7 @@
 		    	$conn->close();
 	    	}
 
-	    	if ($selected_offense_type == "CONDUCT") {
+	    	if ($selected_offense_type == "CONDUCT" || $selected_offense_type == "MISCELLANEOUS") {
 	    		header("Location: select_trainee.php?r_id=$rule_id&offense_code=$offense_code&d_id=$department_id&w_id=$week_id");
 	    	}
 
