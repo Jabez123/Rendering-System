@@ -148,7 +148,7 @@
 <?php include("footer.php"); ?>
 <script> 
     window.onload = function() { 
-        document.getElementById("trainee_id").focus(); 
+        document.getElementById("week").focus(); 
     } 
 </script>
 

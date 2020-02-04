@@ -1,5 +1,5 @@
 <form action="" method="post">
-  <div class="modal fade" id="deleteModal<?php echo $render_id ?>" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+  <div class="modal fade" id="deleteModal<?php echo $trainee_id ?>" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
   aria-hidden="true">
     <div class="modal-dialog modal-md modal-notify modal-danger" role="document">
       <!--Content-->
@@ -16,7 +16,7 @@
         </div>
 
         <div class="modal-footer flex-center">
-          <a href="delete_render.php?id=<?php echo $render_id ?>"><button type="button" class="btn btn-outline-danger">Yes</button></a>
+          <a href="delete_render.php?id=<?php echo $trainee_id ?>"><button type="button" class="btn btn-outline-danger">Yes</button></a>
           <a type="button" class="btn btn-danger waves-effect" data-dismiss="modal">No</a>
         </div>
       </div>

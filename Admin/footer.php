@@ -71,6 +71,7 @@
 <!-- Latest compiled and minified JavaScript -->
 <script src="../dist/js/bootstrap-select.min.js"></script>
 <script type="text/javascript" src="../dist/js/other.js"></script>
+<script type="text/javascript" src="../dist/js/admin.js"></script>
 <script type="text/javascript">
   var verses = [
     'Sample 1',

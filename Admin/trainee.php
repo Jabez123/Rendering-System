@@ -13,9 +13,6 @@
 
 	$result = mysqli_query($conn, $sql);
  ?>
-
-
-
 <div class="container-fluid mt-3">
 		<div class="row">
 			<div class="col-md-2"></div>
@@ -35,7 +32,7 @@
 			<a href="add_trainee.php"><button id="add_trainee" class="btn btn-default">Add Trainee</button></a>
 		</div>
 		<div class="table-responsive">
-			<table id="dtTrainees" class="table table-sm table-striped table-bordered" cellspacing="0" width="100%">
+			<table id="dtTable" class="table table-sm table-striped table-bordered" cellspacing="0" width="100%">
 				<thead>
 					<tr>
 						<th class="th-sm">Action

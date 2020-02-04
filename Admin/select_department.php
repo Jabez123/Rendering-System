@@ -84,5 +84,10 @@
 </div>
 
 <?php include("footer.php"); ?>
+<script> 
+    window.onload = function() { 
+        document.getElementById("department_id").focus(); 
+    } 
+</script>
 </body>
 </html>

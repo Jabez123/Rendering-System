@@ -34,7 +34,7 @@
 			
 		</div>
 		<div class="table-responsive">
-			<table id="dtTrainees" class="table table-sm table-striped table-bordered" cellspacing="0" width="100%">
+			<table id="dtTable" class="table table-sm table-striped table-bordered" cellspacing="0" width="100%">
 				<thead>
 					<tr>
 						<th class="th-sm">Action
