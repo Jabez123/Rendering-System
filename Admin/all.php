@@ -1,7 +1,6 @@
 <?php 
 	$sql = "SELECT DISTINCT trainee_tb.trainee_id, week_tb.week_num, 
-		trainee_tb.first_name, trainee_tb.last_name, trainee_tb.gender, trainee_tb.id_name,
-		rules_tb.offense_type, current_render_tb.render_num
+		trainee_tb.first_name, trainee_tb.last_name, trainee_tb.gender, trainee_tb.id_name
 		FROM current_render_tb 
 		INNER JOIN trainee_tb ON current_render_tb.trainee_id = trainee_tb.trainee_id 
 		INNER JOIN department_tb ON current_render_tb.department_id = department_tb.department_id
@@ -23,8 +22,6 @@
 						</th>
 						<th class="th-sm">Name
 						</th>
-						<th class="th-sm">Render Code
-						</th>
 						<th class="th-sm">See Offense
 						</th>
 					</tr>
@@ -37,7 +34,6 @@
 							$last_name = $row['last_name'];
 							$id_name = $row['id_name'];
 							$gender = $row['gender'];
-							$render_num = $row['render_num'];
 
 							if ($gender == "Brother") {
 								$gender = "Bro.";
@@ -45,10 +41,9 @@
 							else if ($gender == "Sister") {
 								$gender = "Sis.";
 							}
-							$offense_type = $row['offense_type'];
 
 							$sql_offense_list = "SELECT week_tb.week_num, trainee_tb.first_name, trainee_tb.last_name,
-							rules_tb.offense_code, rules_tb.offense_type, rules_tb.offense_description 
+							rules_tb.offense_code, rules_tb.offense_type, rules_tb.offense_description, current_render_tb.render_num
 							FROM current_render_tb 
 							INNER JOIN trainee_tb ON current_render_tb.trainee_id = trainee_tb.trainee_id
 							INNER JOIN rules_tb ON current_render_tb.rule_id = rules_tb.rule_id 
@@ -72,7 +67,6 @@
 						<td><?php echo $week_num; ?></td>
 						<td class="font-weight-bold"><?php echo $trainee_id; ?></td>
 						<td><?php echo $last_name; ?>, <?php echo $first_name; ?></td>
-						<td><?php echo $offense_type; ?> <?php echo $render_num ?></td>
 						<td><?php if (mysqli_num_rows($result_offense_list) == 0) { ?>
 							No Offenses
 							<?php } else { ?>
@@ -93,8 +87,6 @@
 						<th class="th-sm">Trainee ID
 						</th>
 						<th class="th-sm">Name
-						</th>
-						<th class="th-sm">Render Code
 						</th>
 						<th class="th-sm">See Offense
 						</th>

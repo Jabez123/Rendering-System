@@ -2,8 +2,8 @@
 	$sql = "SELECT trainee_tb.trainee_id, week_tb.week_num, 
 		trainee_tb.first_name, trainee_tb.last_name, trainee_tb.gender, trainee_tb.id_name,
 		rules_tb.offense_type,
-		trainee_render_tb.current_summaries, trainee_render_tb.words, trainee_render_tb.is_grounded,
-		trainee_render_tb.levitical_service
+		MAX(trainee_render_tb.current_summaries), MAX(trainee_render_tb.words), trainee_render_tb.is_grounded,
+		MAX(trainee_render_tb.levitical_service)
 		FROM trainee_render_tb 
 		INNER JOIN current_render_tb ON current_render_tb.c_render_id = trainee_render_tb.c_render_id
 		INNER JOIN trainee_tb ON current_render_tb.trainee_id = trainee_tb.trainee_id 
@@ -47,9 +47,9 @@
 							$id_name = $row['id_name'];
 							$gender = $row['gender'];
 							$is_grounded = $row['is_grounded'];
-							$current_summaries = $row['current_summaries'];
-							$words = $row['words'];
-							$levitical_service = $row['levitical_service'];
+							$current_summaries = $row['MAX(trainee_render_tb.current_summaries)'];
+							$words = $row['MAX(trainee_render_tb.words)'];
+							$levitical_service = $row['MAX(trainee_render_tb.levitical_service)'];
 
 							if ($gender == "Brother") {
 								$gender = "Bro.";
@@ -60,7 +60,7 @@
 							$offense_type = $row['offense_type'];
 
 							$sql_offense_list = "SELECT week_tb.week_num, trainee_tb.first_name, trainee_tb.last_name,
-							rules_tb.offense_code, rules_tb.offense_type, rules_tb.offense_description 
+							rules_tb.offense_code, rules_tb.offense_type, rules_tb.offense_description, current_render_tb.render_num 
 							FROM current_render_tb 
 							INNER JOIN trainee_tb ON current_render_tb.trainee_id = trainee_tb.trainee_id
 							INNER JOIN rules_tb ON current_render_tb.rule_id = rules_tb.rule_id 
