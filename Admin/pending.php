@@ -1,7 +1,6 @@
 <?php 
 	$sql = "SELECT DISTINCT trainee_tb.trainee_id, week_tb.week_num, 
-		trainee_tb.first_name, trainee_tb.last_name, trainee_tb.gender, trainee_tb.id_name,
-		rules_tb.offense_type
+		trainee_tb.first_name, trainee_tb.last_name, trainee_tb.gender, trainee_tb.id_name
 		FROM pending_render_tb 
 		INNER JOIN trainee_tb ON pending_render_tb.trainee_id = trainee_tb.trainee_id 
 		INNER JOIN department_tb ON pending_render_tb.department_id = department_tb.department_id
@@ -41,7 +40,6 @@
 							else if ($gender == "Sister") {
 								$gender = "Sis.";
 							}
-							$offense_type = $row['offense_type'];
 
 							$sql_offense_list = "SELECT pending_render_tb.p_render_id, week_tb.week_num, trainee_tb.first_name, trainee_tb.last_name,
 							rules_tb.offense_code, rules_tb.offense_type, rules_tb.offense_description, pending_render_tb.render_num

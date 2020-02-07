@@ -1,7 +1,7 @@
 <!-- Central Modal Medium Info -->
 <div class="modal fade" id="recordedModal<?php echo $trainee_id ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
   aria-hidden="true">
-   <div class="modal-dialog modal-notify modal-info modal-lg" role="document">
+  <div class="modal-dialog modal-notify modal-info modal-lg" role="document">
     <!--Content-->
     <div class="modal-content">
       <!--Header-->
@@ -19,12 +19,11 @@
           
           <?php while ($row = mysqli_fetch_assoc($result_offense_list)) { 
             $offense_code = $row['offense_code'];
-            $render_num = $row['render_num'];
             $offense_type = $row['offense_type'];
             $offense_description = $row['offense_description'];
           ?>
           <li class="list-group-item text-body">
-            <p><?php echo $offense_type ?> <?php echo $render_num ?> - <?php echo $offense_code; ?>: <?php echo $offense_type ?> - <?php echo $offense_description ?></p>
+            <p><?php echo $offense_code; ?>: <?php echo $offense_type ?> - <?php echo $offense_description ?></p>
           </li>
           <?php } ?>
         </ul>

@@ -26,10 +26,19 @@
 
 	$trainee_id_error = "";
 
+	// VARIABLES
+	$num_offense_type_conduct = $num_offense_type_miscellaneous = 0;
+	$is_grounded = $is_grounded_conduct = $is_grounded_miscellaneous = 0;
+	$total_summaries = $total_summaries_conduct = $total_summaries_miscellaneous = 0;
+	$current_summaries = $current_summaries_conduct = $current_summaries_miscellaneous = 0;
+	$words = $words_conduct = $words_miscellaneous = 0;
+	$levitical_service = $levitical_service_conduct = $levitical_service_miscellaneous = 0;
+
+
 	if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		$trainee_id = $_POST['trainee_id'];
 
-		$sql_current_render = "SELECT COUNT(rules_tb.offense_type),
+		$sql_current_render = "SELECT MAX(current_render_tb.c_render_id), COUNT(rules_tb.offense_type),
 		MAX(current_render_tb.is_grounded), MAX(current_render_tb.total_summaries), MAX(current_render_tb.current_summaries), MAX(current_render_tb.words), 
 		MAX(current_render_tb.levitical_service)
 		FROM current_render_tb INNER JOIN trainee_tb ON current_render_tb.trainee_id = trainee_tb.trainee_id 
@@ -41,6 +50,8 @@
         $result_current_render = mysqli_query($conn, $sql_current_render);
 
         while ($row = mysqli_fetch_assoc($result_current_render)) {
+        	$current_render_id = $row['MAX(current_render_tb.c_render_id)'];
+
         	if ($selected_offense_type == "CONDUCT") {
         		$num_offense_type_conduct = $row['COUNT(rules_tb.offense_type)'] + 1;
 	        	$is_grounded_conduct = $row['MAX(current_render_tb.is_grounded)'];
@@ -51,21 +62,26 @@
         	}
 
         	if ($selected_offense_type == "MISCELLANEOUS") {
+
         		$num_offense_type_miscellaneous = $row['COUNT(rules_tb.offense_type)'] + 1;
 	        	$is_grounded_miscellaneous = $row['MAX(current_render_tb.is_grounded)'];
 	        	$total_summaries_miscellaneous = $row['MAX(current_render_tb.total_summaries)'];
 	        	$current_summaries_miscellaneous = $row['MAX(current_render_tb.current_summaries)'];
 	        	$words_miscellaneous = $row['MAX(current_render_tb.words)'];
 	        	$levitical_service_miscellaneous = $row['MAX(current_render_tb.levitical_service)'];
-	        	$render_num_miscellaneous = $row['MAX(current_render_tb.render_num)'];
         	}
         }
 
-        if ($num_offense_type_conduct >= 5 && $num_offense_type_miscellaneous >= 5) {
-			$is_grounded_conduct = 1;
-			$current_summaries += 1;
-			$total_summaries += 1;
-			$words = 1000;
+        /*if ($num_offense_type_conduct >= 5 && $num_offense_type_miscellaneous >= 5) {
+			$is_grounded = 1;
+			$current_summaries = $current_summaries_conduct + $current_summaries_miscellaneous;
+			$total_summaries = $total_summaries_conduct + $total_summaries_miscellaneous;
+			$words = $words_conduct + $words_miscellaneous;
+
+
+			if ($words >= 1000) {
+				$words = 1000;
+			}
 
 			if ($total_summaries > 3) {
 				$make_levitical = 3 - $total_summaries;
@@ -73,30 +89,40 @@
 				$current_summaries = 3;
 			}
 
-			// INSERT TO CURRENT RENDERS
-			$sql_insert_current = "INSERT INTO current_render_tb
-			(trainee_id, department_id, rule_id, week_id,
-			is_grounded, total_summaries, current_summaries, words, levitical_service, render_num) VALUES
-			('$trainee_id', $department_id, $rule_id, $week_id,
-			$is_grounded, $total_summaries, $current_summaries, $words, $levitical_service, $num_offense_type)";
+			if ($selected_offense_type == "CONDUCT") {
 
-			// UPDATE OFFENSE TYPE NUM TO ALL SAME TRAINEE ID
-			$sql_update_current = "UPDATE current_render_tb SET render_num = $num_offense_type 
-			WHERE trainee_id = $trainee_id AND rule_id = $rule_id";
+				// INSERT TO CURRENT RENDERS
+				$sql_insert_current = "INSERT INTO current_render_tb
+				(trainee_id, department_id, rule_id, week_id,
+				is_grounded, total_summaries, current_summaries, words, levitical_service, render_num) VALUES
+				('$trainee_id', $department_id, $rule_id, $week_id,
+				$is_grounded, $total_summaries, $current_summaries, $words, $levitical_service, $num_offense_type_conduct)";
+			}
+
+			if ($selected_offense_type == "MISCELLANEOUS") {
+				
+				// INSERT TO CURRENT RENDERS
+				$sql_insert_current = "INSERT INTO current_render_tb
+				(trainee_id, department_id, rule_id, week_id,
+				is_grounded, total_summaries, current_summaries, words, levitical_service, render_num) VALUES
+				('$trainee_id', $department_id, $rule_id, $week_id,
+				$is_grounded, $total_summaries, $current_summaries, $words, $levitical_service, $num_offense_type_miscellaneous)";
+			}
 
 			// UPDATE TO TRAINEE RENDERS
-			$sql_update_trainee = "UPDATE trainee_render_tb SET is_grounded = $is_grounded, 
-			total_summaries = $total_summaries, current_summaries = $current_summaries, 
-			words = $words, levitical_service = $levitical_service WHERE t_render_id = MAX(t_render_id)";
+			$sql_insert_trainee = "INSERT INTO trainee_render_tb (c_render_id, is_grounded, 
+			total_summaries, current_summaries, words, levitical_service)
+			SELECT c_render_id, is_grounded, total_summaries, current_summaries, 
+			words, levitical_service FROM current_render_tb WHERE trainee_id = $trainee_id AND total_summaries <> 0";
 
 			$conn->autocommit(FALSE);
-			$conn->query($sql_update_current) or die("Error Update Current: " . mysqli_error($conn));
-			$conn->query($sql_update_trainee) or die("Error Update Trainee: " . mysqli_error($conn));
+			$conn->query($sql_insert_current) or die("Error Insert Current: " . mysqli_error($conn));
+			$conn->query($sql_insert_trainee) or die("Error Insert Trainee: " . mysqli_error($conn));
 			$conn->commit();
 			$conn->close();
 
 			header("Location: render.php");
-		}
+		}*/
 
 		if ($selected_offense_type == "CONDUCT" ) {
 
@@ -114,23 +140,16 @@
 				(trainee_id, department_id, rule_id, week_id,
 				is_grounded, total_summaries, current_summaries, words, levitical_service, render_num) VALUES
 				('$trainee_id', $department_id, $rule_id, $week_id,
-				$is_grounded_conduct, $total_summaries_conduct, $current_summaries_conduct, $words_conduct, $levitical_service_conduct, $num_offense_type_conduct)";
+				$is_grounded_conduct, $total_summaries_conduct, $current_summaries_conduct, $words_conduct, $levitical_service_conduct, 
+				$num_offense_type_conduct)";
 
 				// INSERT TO PENDING RENDERS
 				$sql_insert_pending = "INSERT INTO pending_render_tb(trainee_id, department_id, rule_id, week_id, render_num) 
 				VALUES ('$trainee_id', $department_id, $rule_id, $week_id, $num_offense_type_conduct)";
 
-				// UPDATE OFFENSE TYPE NUM TO ALL SAME TRAINEE ID
-				$sql_update_current = "UPDATE current_render_tb SET render_num = $num_offense_type_conduct WHERE trainee_id = $trainee_id AND rule_id = $rule_id";
-
-				// UPDATE OFFENSE TYPE NUM TO ALL SAME TRAINEE ID
-				$sql_update_pending = "UPDATE pending_render_tb SET render_num = $num_offense_type_conduct WHERE trainee_id = $trainee_id AND rule_id = $rule_id";
-
 				$conn->autocommit(FALSE);
 				$conn->query($sql_insert_current) or die("Error Current INSERT: " . mysqli_error($conn));
-				$conn->query($sql_update_current) or die("Error Current UPDATE: " . mysqli_error($conn));
 				$conn->query($sql_insert_pending) or die("Error Pending INSERT: " . mysqli_error($conn));
-				$conn->query($sql_update_pending) or die("Error Pending UPDATE: " . mysqli_error($conn));
 				$conn->commit();
 				$conn->close();
 
@@ -152,9 +171,6 @@
 				('$trainee_id', $department_id, $rule_id, $week_id,
 				$is_grounded_conduct, $total_summaries_conduct, $current_summaries_conduct, $words_conduct, $levitical_service_conduct, $num_offense_type_conduct)";
 
-				// UPDATE OFFENSE TYPE NUM TO ALL SAME TRAINEE ID
-				$sql_update_current = "UPDATE current_render_tb SET render_num = $num_offense_type_conduct WHERE trainee_id = $trainee_id AND rule_id = $rule_id";
-
 				// DELETE FROM PENDING RENDERS
 				$sql_delete_pending = "DELETE FROM pending_render_tb WHERE trainee_id = $trainee_id";
 
@@ -165,7 +181,6 @@
 				$conn->autocommit(FALSE);
 				$conn->query($sql_delete_pending) or die("5 Error Delete Pending: " . mysqli_error($conn));
 				$conn->query($sql_insert_current) or die("5 Error Insert Current: " . mysqli_error($conn));
-				$conn->query($sql_update_current) or die("5 Error Update Current: " . mysqli_error($conn));
 				$conn->query($sql_insert_trainee) or die("5 Error Insert trainee: " . mysqli_error($conn));
 				$conn->commit();
 				$conn->close();
@@ -196,9 +211,6 @@
 					('$trainee_id', $department_id, $rule_id, $week_id,
 					$is_grounded_conduct, $total_summaries_conduct, $current_summaries_conduct, $words_conduct, $levitical_service_conduct, $num_offense_type_conduct)";
 
-					// UPDATE OFFENSE TYPE NUM TO ALL SAME TRAINEE ID
-					$sql_update_current = "UPDATE current_render_tb SET render_num = $num_offense_type_conduct WHERE trainee_id = $trainee_id AND rule_id = $rule_id";
-
 					// INSERT TO TRAINEE RENDERS
 					$sql_insert_trainee = "INSERT INTO trainee_render_tb (c_render_id, is_grounded, total_summaries, current_summaries, words, levitical_service)
 					SELECT c_render_id, is_grounded, total_summaries, current_summaries, words, levitical_service FROM current_render_tb 
@@ -207,7 +219,6 @@
 
 					$conn->autocommit(FALSE);
 					$conn->query($sql_insert_current) or die("Even Error Current INSERT: " . mysqli_error($conn));
-					$conn->query($sql_update_current) or die("Even Error Current UPDATE: " . mysqli_error($conn));
 					$conn->query($sql_insert_trainee) or die("Even Error Trainee INSERT: " . mysqli_error($conn));
 					$conn->commit();
 					$conn->close();
@@ -227,9 +238,6 @@
 					('$trainee_id', $department_id, $rule_id, $week_id,
 					$is_grounded_conduct, $total_summaries_conduct, $current_summaries_conduct, $words_conduct, $levitical_service_conduct, $num_offense_type_conduct)";
 
-					// UPDATE OFFENSE TYPE NUM TO ALL SAME TRAINEE ID
-					$sql_update_current = "UPDATE current_render_tb SET render_num = $num_offense_type_conduct WHERE trainee_id = $trainee_id AND rule_id = $rule_id";
-
 					// INSERT TO TRAINEE RENDERS
 					$sql_insert_trainee = "INSERT INTO trainee_render_tb (c_render_id, is_grounded, total_summaries, current_summaries, words, levitical_service)
 					SELECT c_render_id, is_grounded, total_summaries, current_summaries, words, levitical_service FROM current_render_tb 
@@ -238,7 +246,6 @@
 
 					$conn->autocommit(FALSE);
 					$conn->query($sql_insert_current) or die("Odd Error Current INSERT: " . mysqli_error($conn));
-					$conn->query($sql_update_current) or die("Odd Error Current UPDATE: " . mysqli_error($conn));
 					$conn->query($sql_insert_trainee) or die("Odd Error Trainee INSERT: " . mysqli_error($conn));
 					$conn->commit();
 					$conn->close();
@@ -268,17 +275,9 @@
 				$sql_insert_pending = "INSERT INTO pending_render_tb(trainee_id, department_id, rule_id, week_id, render_num) 
 				VALUES ('$trainee_id', $department_id, $rule_id, $week_id, $num_offense_type_miscellaneous)";
 
-				// UPDATE OFFENSE TYPE NUM TO ALL SAME TRAINEE ID
-				$sql_update_current = "UPDATE current_render_tb SET render_num = $num_offense_type_miscellaneous WHERE trainee_id = $trainee_id AND rule_id = $rule_id";
-
-				// UPDATE OFFENSE TYPE NUM TO ALL SAME TRAINEE ID
-				$sql_update_pending = "UPDATE pending_render_tb SET render_num = $num_offense_type_miscellaneous WHERE trainee_id = $trainee_id AND rule_id = $rule_id";
-
 				$conn->autocommit(FALSE);
 				$conn->query($sql_insert_current) or die("Error Current INSERT: " . mysqli_error($conn));
-				$conn->query($sql_update_current) or die("Error Current UPDATE: " . mysqli_error($conn));
-				$conn->query($sql_insert_pending) or die("Error Pending INSERT: " . mysqli_error($conn));
-				$conn->query($sql_update_pending) or die("Error Pending UPDATE: " . mysqli_error($conn));
+				$conn->query($sql_insert_pending) or die("Error Current INSERT: " . mysqli_error($conn));
 				$conn->commit();
 				$conn->close();
 
@@ -299,9 +298,6 @@
 				('$trainee_id', $department_id, $rule_id, $week_id,
 				$is_grounded_miscellaneous, $total_summaries_miscellaneous, $current_summaries_miscellaneous, $words_miscellaneous, $levitical_service_miscellaneous, $num_offense_type_miscellaneous)";
 
-				// UPDATE OFFENSE TYPE NUM TO ALL SAME TRAINEE ID
-				$sql_update_current = "UPDATE current_render_tb SET render_num = $num_offense_type_miscellaneous WHERE trainee_id = $trainee_id AND rule_id = $rule_id";
-
 				// DELETE FROM PENDING RENDERS
 				$sql_delete_pending = "DELETE FROM pending_render_tb WHERE trainee_id = $trainee_id";
 
@@ -312,7 +308,6 @@
 				$conn->autocommit(FALSE);
 				$conn->query($sql_delete_pending) or die("5 Error Delete Pending: " . mysqli_error($conn));
 				$conn->query($sql_insert_current) or die("5 Error Insert Current: " . mysqli_error($conn));
-				$conn->query($sql_update_current) or die("5 Error Update Current: " . mysqli_error($conn));
 				$conn->query($sql_insert_trainee) or die("5 Error Insert trainee: " . mysqli_error($conn));
 				$conn->commit();
 				$conn->close();
@@ -343,9 +338,6 @@
 					('$trainee_id', $department_id, $rule_id, $week_id,
 					$is_grounded_miscellaneous, $total_summaries_miscellaneous, $current_summaries_miscellaneous, $words_miscellaneous, $levitical_service_miscellaneous, $num_offense_type_miscellaneous)";
 
-					// UPDATE OFFENSE TYPE NUM TO ALL SAME TRAINEE ID
-					$sql_update_current = "UPDATE current_render_tb SET render_num = $num_offense_type_miscellaneous WHERE trainee_id = $trainee_id AND rule_id = $rule_id";
-
 					// INSERT TO TRAINEE RENDERS
 					$sql_insert_trainee = "INSERT INTO trainee_render_tb (c_render_id, is_grounded, total_summaries, current_summaries, words, levitical_service)
 					SELECT c_render_id, is_grounded, total_summaries, current_summaries, words, levitical_service FROM current_render_tb 
@@ -354,7 +346,6 @@
 
 					$conn->autocommit(FALSE);
 					$conn->query($sql_insert_current) or die("Even Error Insert Current: " . mysqli_error($conn));
-					$conn->query($sql_update_current) or die("Even Error Update Current: " . mysqli_error($conn));
 					$conn->query($sql_insert_trainee) or die("Even Error Insert trainee: " . mysqli_error($conn));
 					$conn->commit();
 					$conn->close();
@@ -374,9 +365,6 @@
 					('$trainee_id', $department_id, $rule_id, $week_id,
 					$is_grounded_miscellaneous, $total_summaries_miscellaneous, $current_summaries_miscellaneous, $words_miscellaneous, $levitical_service_miscellaneous, $num_offense_type_miscellaneous)";
 
-					// UPDATE OFFENSE TYPE NUM TO ALL SAME TRAINEE ID
-					$sql_update_current = "UPDATE current_render_tb SET render_num = $num_offense_type_miscellaneous WHERE trainee_id = $trainee_id AND rule_id = $rule_id";
-
 					// INSERT TO TRAINEE RENDERS
 					$sql_insert_trainee = "INSERT INTO trainee_render_tb (c_render_id, is_grounded, total_summaries, current_summaries, words, levitical_service)
 					SELECT c_render_id, is_grounded, total_summaries, current_summaries, words, levitical_service FROM current_render_tb 
@@ -385,7 +373,6 @@
 
 					$conn->autocommit(FALSE);
 					$conn->query($sql_insert_current) or die("Even Error Insert Current: " . mysqli_error($conn));
-					$conn->query($sql_update_current) or die("Even Error Update Current: " . mysqli_error($conn));
 					$conn->query($sql_insert_trainee) or die("Even Error Insert trainee: " . mysqli_error($conn));
 					$conn->commit();
 					$conn->close();

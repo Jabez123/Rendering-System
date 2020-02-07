@@ -2,8 +2,8 @@
 	$sql = "SELECT trainee_tb.trainee_id, week_tb.week_num, 
 		trainee_tb.first_name, trainee_tb.last_name, trainee_tb.gender, trainee_tb.id_name,
 		rules_tb.offense_type,
-		MAX(trainee_render_tb.current_summaries), MAX(trainee_render_tb.words), trainee_render_tb.is_grounded,
-		MAX(trainee_render_tb.levitical_service)
+		trainee_render_tb.current_summaries, trainee_render_tb.words, trainee_render_tb.is_grounded,
+		trainee_render_tb.levitical_service, current_render_tb.render_num, rules_tb.offense_type
 		FROM trainee_render_tb 
 		INNER JOIN current_render_tb ON current_render_tb.c_render_id = trainee_render_tb.c_render_id
 		INNER JOIN trainee_tb ON current_render_tb.trainee_id = trainee_tb.trainee_id 
@@ -26,6 +26,8 @@
 						</th>
 						<th class="th-sm">Name
 						</th>
+						<th class="th-sm">No of Offense
+						</th>
 						<th class="th-sm">Grounded
 						</th>
 						<th class="th-sm">Summaries
@@ -46,10 +48,12 @@
 							$last_name = $row['last_name'];
 							$id_name = $row['id_name'];
 							$gender = $row['gender'];
+							$offense_type = $row['offense_type'];
+							$render_num = $row['render_num'];
 							$is_grounded = $row['is_grounded'];
-							$current_summaries = $row['MAX(trainee_render_tb.current_summaries)'];
-							$words = $row['MAX(trainee_render_tb.words)'];
-							$levitical_service = $row['MAX(trainee_render_tb.levitical_service)'];
+							$current_summaries = $row['current_summaries'];
+							$words = $row['words'];
+							$levitical_service = $row['levitical_service'];
 
 							if ($gender == "Brother") {
 								$gender = "Bro.";
@@ -60,7 +64,7 @@
 							$offense_type = $row['offense_type'];
 
 							$sql_offense_list = "SELECT week_tb.week_num, trainee_tb.first_name, trainee_tb.last_name,
-							rules_tb.offense_code, rules_tb.offense_type, rules_tb.offense_description, current_render_tb.render_num 
+							rules_tb.offense_code, rules_tb.offense_type, rules_tb.offense_description
 							FROM current_render_tb 
 							INNER JOIN trainee_tb ON current_render_tb.trainee_id = trainee_tb.trainee_id
 							INNER JOIN rules_tb ON current_render_tb.rule_id = rules_tb.rule_id 
@@ -84,6 +88,7 @@
 						<td><?php echo $week_num; ?></td>
 						<td class="font-weight-bold"><?php echo $trainee_id; ?></td>
 						<td><?php echo $last_name; ?>, <?php echo $first_name; ?></td>
+						<td><?php echo $offense_type ?> <?php echo $render_num ?></td>
 						<td><?php echo $is_grounded ?></td>
 						<td><?php echo $current_summaries ?></td>
 						<td><?php echo $words ?></td>
@@ -103,6 +108,8 @@
 						<th class="th-sm">Trainee ID
 						</th>
 						<th class="th-sm">Name
+						</th>
+						<th class="th-sm">No of Offense
 						</th>
 						<th class="th-sm">Grounded
 						</th>
