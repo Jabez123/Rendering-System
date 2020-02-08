@@ -9,7 +9,8 @@
 		INNER JOIN trainee_tb ON current_render_tb.trainee_id = trainee_tb.trainee_id 
 		INNER JOIN department_tb ON current_render_tb.department_id = department_tb.department_id
 		INNER JOIN rules_tb ON current_render_tb.rule_id = rules_tb.rule_id
-		INNER JOIN week_tb ON current_render_tb.week_id = week_tb.week_id";
+		INNER JOIN week_tb ON current_render_tb.week_id = week_tb.week_id
+		ORDER BY offense_type";
 
 	$result = mysqli_query($conn, $sql);
  ?>
@@ -69,7 +70,7 @@
 							INNER JOIN trainee_tb ON current_render_tb.trainee_id = trainee_tb.trainee_id
 							INNER JOIN rules_tb ON current_render_tb.rule_id = rules_tb.rule_id 
 							INNER JOIN week_tb ON current_render_tb.week_id = week_tb.week_id
-							WHERE trainee_tb.trainee_id = '$trainee_id'";
+							WHERE trainee_tb.trainee_id = '$trainee_id' ORDER BY offense_type";
 
 							$result_offense_list = mysqli_query($conn, $sql_offense_list);
 						 ?>
