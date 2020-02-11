@@ -193,16 +193,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 									<label class="custom-control-label" for="showPassword">Show Password</label>
 								</div>
 								<div class="md-form form-group mt-5 <?php echo (!empty($gender_error)) ? 'has-error' : ''; ?>">
-									<label class="text-black-50" for="gender">Gender</label>
-									<input type="hidden" name="gender" value="">
-									<div class="custom-control custom-radio custom-control-inline" style="margin-left: 100px;">
-									  <input type="radio" class="custom-control-input" id="brother" name="gender" value="Brother">
-									  <label class="custom-control-label" for="brother">Brother</label>
-									</div>
-									<div class="custom-control custom-radio custom-control-inline" style="margin-left: 50px;">
-									   <input type="radio" class="custom-control-input" id="sister" name="gender" value="Sister">
-									  <label class="custom-control-label" for="sister">Sister</label>
-									</div>
+									<p class="text-black-50" for="gender">Gender</p>
+									<select name="gender" id="gender" class="selectpicker" data-live-search="true" data-width="99%" onchange="copyText(event)">
+									  <option value=" " selected>Select Gender</option>
+									  <option value="Brother">Brother</option>
+									  <option value="Sister">Sister</option>
+									</select>
 									<p class="text-danger"><?php echo $gender_error; ?></p>
 								</div>
 								<div class="md-form form-group mt-5 <?php echo (!empty($class_error)) ? 'has-error' : ''; ?>">
@@ -237,7 +233,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 									<label class="text-black-50" for="status">Status</label>
 									<input type="hidden" name="status" value="">
 									<div class="custom-control custom-radio custom-control-inline" style="margin-left: 100px;">
-									  <input type="radio" class="custom-control-input" id="active" name="status" value="Active">
+									  <input type="radio" class="custom-control-input" id="active" name="status" checked value="Active">
 									  <label class="custom-control-label" for="active">Active</label>
 									</div>
 									<div class="custom-control custom-radio custom-control-inline" style="margin-left: 50px;">

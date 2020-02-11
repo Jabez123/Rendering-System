@@ -20,10 +20,11 @@
           <?php while ($row = mysqli_fetch_assoc($result_offense_list)) { 
             $offense_code = $row['offense_code'];
             $offense_type = $row['offense_type'];
+            $render_num = $row['render_num'];
             $offense_description = $row['offense_description'];
           ?>
           <li class="list-group-item text-body">
-            <p><?php echo $offense_code; ?>: <?php echo $offense_type ?> - <?php echo $offense_description ?></p>
+            <p><?php echo $offense_type ?> <?php echo $render_num ?>: <?php echo $offense_code; ?> - <?php echo $offense_description ?></p>
           </li>
           <?php } ?>
         </ul>

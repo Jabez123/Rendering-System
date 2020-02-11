@@ -49,6 +49,7 @@
 				$rule_id = $row['rule_id'];
 				$selected_offense_type = $row['offense_type'];
 				$offense_code = $row['offense_code'];
+				$offense_input = $row['offense_input'];
 			}
 
 			$sql_week = "SELECT * FROM week_tb WHERE week_num = $week";
@@ -73,8 +74,23 @@
 		    	$conn->close();
 	    	}
 
-	    	if ($selected_offense_type == "CONDUCT" || $selected_offense_type == "MISCELLANEOUS") {
+	    	if ($offense_input == "Individual") {
 	    		header("Location: select_trainee.php?r_id=$rule_id&offense_code=$offense_code&d_id=$department_id&w_id=$week_id");
+	    	}
+	    	else if ($offense_input == "Room Offense") {
+	    		header("Location: select_group.php?input=$offense_input&r_id=$rule_id&offense_code=$offense_code&d_id=$department_id&w_id=$week_id");
+	    	}
+
+	    	else if ($offense_input == "Team Offense") {
+	    		header("Location: select_group.php?input=$offense_input&r_id=$rule_id&offense_code=$offense_code&d_id=$department_id&w_id=$week_id");
+	    	}
+
+	    	else if ($offense_input == "Region Offense") {
+	    		header("Location: select_group.php?input=$offense_input&r_id=$rule_id&offense_code=$offense_code&d_id=$department_id&w_id=$week_id");
+	    	}
+
+	    	else if ($offense_input == "Class Offense") {
+	    		header("Location: select_group.php?input=$offense_input&r_id=$rule_id&offense_code=$offense_code&d_id=$department_id&w_id=$week_id");
 	    	}
 
 		}
@@ -106,14 +122,16 @@
 						</div>
 						<div class="card-body">
 							<div class="md-form form-group mt-5 <?php echo (!empty($week_error)) ? 'has-error' : ''; ?>">
-								<input class="form-control" type="number" name="week" id="week">
+								<input class="form-control" type="number" name="week" id="week" min="1" max="18">
 								<label for="week">Week</label>
 								<span class="help-block text-danger"><?php echo $week_error; ?></span>
 							</div>
 							<div class="md-form form-group mt-5 <?php echo (!empty($rule_id_error)) ? 'has-error' : ''; ?>">
 								<p class="text-black-50" for="rule_id">Offense Code</p>
-								<select name="rule_id" id="rule_id" class="selectpicker" data-live-search="true" data-width="99%" onchange="">
-								  	<option value=" " selected>Select Offense</option>
+
+								<select name="rule_id" id="rule_id" class="selectpicker" data-live-search="true" data-width="99%" onChange="greatest_showman()" required="">
+
+								  	<option value="" disabled="" selected>Select Offense</option>
 								  	<?php while($row = mysqli_fetch_assoc($result_rule)) { 
 								  		$rule_id = $row['rule_id'];
 								  		$offense_code = $row['offense_code'];
@@ -121,11 +139,41 @@
 								  		$offense_description = $row['offense_description'];
 								  	?>
 								  	<option value="<?php echo $rule_id ?>"><?php echo $offense_code; ?>: <?php echo $offense_type; ?> - <?php echo $offense_description; ?></option>
-								  	<?php } ?>
+								  	<?php } ?>								  	
 								</select>
+
+								<select name="rule_id2" id="rule_id2" class="selectpicker" data-live-search="true" data-width="99%" onchange="" style='display:none' required="">
+
+								  	<option value="" disabled="" selected>Select Offense</option>
+								  	<?php while($row = mysqli_fetch_assoc($result_rule)) { 
+								  		$rule_id = $row['rule_id'];
+								  		$offense_code = $row['offense_code'];
+								  		$offense_type = $row['offense_type'];
+								  		$offense_description = $row['offense_description'];
+								  	?>
+								  	<option value="<?php echo $rule_id ?>"><?php echo $offense_code; ?>: <?php echo $offense_type; ?> - <?php echo $offense_description; ?></option>
+								  	<?php } ?>								  	
+								</select>
+
+								<script type="text/javascript">
+									function greatest_showman()
+									{
+										var main_select = document.getElementById("rule_id");
+										var select2 = document.getElementById("rule_id2");
+
+										var desired_box = main_select.options[main_select.selectedIndex].value;
+										  if(desired_box >= 0) 
+										  {
+    										
+ 										    select_2.style.display = '';
+ 										  }
+										
+									}
+								</script>
+
 								<p class="text-danger"><?php echo $rule_id_error; ?></p>
 							</div>
-						</div>
+							</div>
 						<div class="card-footer">
 							<div class="row">
 								<div class="col-md-4">

@@ -1,16 +1,11 @@
 <?php 
 	$sql = "SELECT trainee_tb.trainee_id, week_tb.week_num, 
 		trainee_tb.first_name, trainee_tb.last_name, trainee_tb.gender, trainee_tb.id_name,
-		rules_tb.offense_type,
 		trainee_render_tb.current_summaries, trainee_render_tb.words, trainee_render_tb.is_grounded,
-		trainee_render_tb.levitical_service, current_render_tb.render_num, rules_tb.offense_type
+		trainee_render_tb.levitical_service
 		FROM trainee_render_tb 
-		INNER JOIN current_render_tb ON current_render_tb.c_render_id = trainee_render_tb.c_render_id
-		INNER JOIN trainee_tb ON current_render_tb.trainee_id = trainee_tb.trainee_id 
-		INNER JOIN department_tb ON current_render_tb.department_id = department_tb.department_id
-		INNER JOIN rules_tb ON current_render_tb.rule_id = rules_tb.rule_id
-		INNER JOIN week_tb ON current_render_tb.week_id = week_tb.week_id
-		ORDER BY offense_type";
+		INNER JOIN trainee_tb ON trainee_render_tb.trainee_id = trainee_tb.trainee_id 
+		INNER JOIN week_tb ON trainee_render_tb.week_id = week_tb.week_id";
 
 	$result = mysqli_query($conn, $sql);
  ?>
@@ -26,8 +21,6 @@
 						<th class="th-sm">Trainee ID
 						</th>
 						<th class="th-sm">Name
-						</th>
-						<th class="th-sm">No of Offense
 						</th>
 						<th class="th-sm">Grounded
 						</th>
@@ -49,9 +42,14 @@
 							$last_name = $row['last_name'];
 							$id_name = $row['id_name'];
 							$gender = $row['gender'];
-							$offense_type = $row['offense_type'];
-							$render_num = $row['render_num'];
 							$is_grounded = $row['is_grounded'];
+
+							if ($is_grounded == 1) {
+								$is_grounded = "Grounded";
+							}
+							else {
+								$is_grounded = "Not Grounded";
+							}
 							$current_summaries = $row['current_summaries'];
 							$words = $row['words'];
 							$levitical_service = $row['levitical_service'];
@@ -62,10 +60,9 @@
 							else if ($gender == "Sister") {
 								$gender = "Sis.";
 							}
-							$offense_type = $row['offense_type'];
 
 							$sql_offense_list = "SELECT week_tb.week_num, trainee_tb.first_name, trainee_tb.last_name,
-							rules_tb.offense_code, rules_tb.offense_type, rules_tb.offense_description
+							rules_tb.offense_code, rules_tb.offense_type, rules_tb.offense_description, current_render_tb.render_num
 							FROM current_render_tb 
 							INNER JOIN trainee_tb ON current_render_tb.trainee_id = trainee_tb.trainee_id
 							INNER JOIN rules_tb ON current_render_tb.rule_id = rules_tb.rule_id 
@@ -77,11 +74,11 @@
 					<tr>
 						<td>
 							<div class="row">
-								<div class="col-sm-12 col-md-12 col-lg-6 mb-3">
+								<div class="col-sm-12 col-md-6 mb-3">
 									<a href="edit_render.php?id_rule=<?php echo $rule_id ?>&id_trainee=<?php echo $trainee_id ?>&render_code=<?php echo $render_code ?>">
 										<button class="btn btn-block btn-primary"><i class="fas fa-edit"></i></button></a>
 								</div>
-								<div class="col-sm-12 col-md-12 col-lg-6">
+								<div class="col-sm-12 col-md-6">
 									<button class="btn btn-block btn-danger" data-toggle="modal" data-target="#deleteModal<?php echo $trainee_id ?>"><i class="fas fa-trash-alt"></i></button>
 								</div>
 							</div>
@@ -89,7 +86,6 @@
 						<td><?php echo $week_num; ?></td>
 						<td class="font-weight-bold"><?php echo $trainee_id; ?></td>
 						<td><?php echo $last_name; ?>, <?php echo $first_name; ?></td>
-						<td><?php echo $offense_type ?> <?php echo $render_num ?></td>
 						<td><?php echo $is_grounded ?></td>
 						<td><?php echo $current_summaries ?></td>
 						<td><?php echo $words ?></td>
@@ -109,8 +105,6 @@
 						<th class="th-sm">Trainee ID
 						</th>
 						<th class="th-sm">Name
-						</th>
-						<th class="th-sm">No of Offense
 						</th>
 						<th class="th-sm">Grounded
 						</th>

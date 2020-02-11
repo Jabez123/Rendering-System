@@ -1,5 +1,5 @@
 <!-- Central Modal Medium Info -->
-<div class="modal fade" id="modalOffense<?php echo $trainee_id ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+<div class="modal fade" id="modalOffense<?php echo $render_id ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
   aria-hidden="true">
   <div class="modal-dialog modal-notify modal-info" role="document">
     <!--Content-->

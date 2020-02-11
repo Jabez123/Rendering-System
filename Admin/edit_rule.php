@@ -8,7 +8,7 @@ $type_name = $_REQUEST['type_name'];
 
 $sql_rules = "SELECT 
 	rules_tb.rule_id, department_tb.department_id, department_tb.department_name, 
-	rules_tb.offense_code, rules_tb.offense_type, 
+	rules_tb.offense_code, rules_tb.offense_type, rules_tb.offense_input,
 	rules_tb.offense_description FROM rules_tb INNER JOIN department_tb ON rules_tb.department_id = department_tb.department_id
 	WHERE rule_id = $previous_rule_id";
 
@@ -29,9 +29,9 @@ $sql = "SELECT * FROM department_tb WHERE department_id <> $selected_department_
 $result = mysqli_query($conn, $sql);
  
 // Define variables and initialize with empty values
-$department_id = $offense_code = $offense_type = $offense_description = "";
+$department_id = $offense_code = $offense_type = $offense_description = $offense_input = "";
 
-$department_id_error = $offense_code_error = $offense_type_error = $offense_description_error = "";
+$department_id_error = $offense_code_error = $offense_type_error = $offense_description_error = $offense_input_error = "";
  
 // Processing form data when form is submitted
 if($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -41,6 +41,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 	// Validate department name
     if(empty(trim($_POST["department_id"]))){
         $department_id_error = "Please enter a department name.";
+    }
+
+    // Validate offense input
+    if (empty(trim($_POST['offense_input']))) {
+    	$offense_input_error = "Please select a offense input.";
     }
  
     // Validate offense code
@@ -70,12 +75,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         
         // Prepare an insert statement
         $sql = "UPDATE rules_tb SET
-    	department_id = ?, offense_code = ?, offense_type = ?, offense_description = ? WHERE rule_id = ?";
+    	department_id = ?, offense_code = ?, offense_type = ?, offense_description = ?, offense_input = ? WHERE rule_id = ?";
          
         if($stmt = mysqli_prepare($conn, $sql)) {
             // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "isssi", 
-            	$param_department_id, $param_offense_code, $param_offense_type, $param_description, $param_rule_id);
+            mysqli_stmt_bind_param($stmt, "issssi", 
+            	$param_department_id, $param_offense_code, $param_offense_type, $param_description, $param_offense_input,
+            	 $param_rule_id);
             
             // Set parameters
             $param_rule_id = $previous_rule_id;
@@ -83,6 +89,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
             $param_offense_code = trim(strtoupper($_POST["offense_code"]));
             $param_offense_type = $offense_type;
             $param_description = trim($_POST["offense_description"]);
+            $param_offense_input = trim($_POST['offense_input']);
             
             // Attempt to execute the prepared statement
             if(mysqli_stmt_execute($stmt)){
@@ -132,6 +139,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 									$offense_code = $row['offense_code'];
 									$offense_type = $row['offense_type'];
 									$offense_description = $row['offense_description'];
+									$offense_input = $row['offense_input'];
 							 ?>
 							<div class="col-md-12">
 								<div class="md-form form-group mt-5 <?php echo (!empty($department_id_error)) ? 'has-error' : ''; ?>">
@@ -216,6 +224,178 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 									<label for="offense_description">Description</label>
 									<span class="help-block text-danger"><?php echo $offense_description_error; ?></span>
 								</div>
+								<div class="md-form form-group mt-5 <?php echo (!empty($offense_input)) ? 'has-error' : ''; ?>">
+                                    <p class="text-black-50">Offense Input</p>
+                                    <?php if ($offense_input == "Individual" || $offense_input == "") { ?>
+                                    	<div class="custom-control custom-radio custom-control-inline ml-4">
+	                                        <input type="hidden" name="offense_input" value="Individual">
+	                                        <input type="radio" class="custom-control-input" id="individual" name="selection" checked onclick="hideGroup()">
+	                                        <label class="custom-control-label" for="individual">Individual</label>
+	                                    </div>
+
+	                                    <div class="custom-control custom-radio custom-control-inline" style="margin-left: 100px;">
+	                                        <input type="radio" class="custom-control-input" id="group" name="selection" onclick="showGroup()">
+	                                        <label class="custom-control-label" for="group">Group</label>
+	                                    </div>
+	                                    <p class="text-danger"><?php echo $offense_input_error; ?></p>
+	                                    <div id="input" class="md-form form-group mt-5" style="display: none;">
+		                                    <div class="custom-control custom-radio custom-control-inline ml-4">
+		                                        <input type="radio" class="custom-control-input" id="room" name="offense_input" value="Room Offense">
+		                                        <label class="custom-control-label" for="room">Room</label>
+		                                    </div>
+
+		                                    <div class="custom-control custom-radio custom-control-inline" style="margin-left: 100px;">
+		                                        <input type="radio" class="custom-control-input" id="team" name="offense_input" value="Team Offense">
+		                                        <label class="custom-control-label" for="team">Team</label>
+		                                    </div>
+
+		                                    <div class="custom-control custom-radio custom-control-inline" style="margin-left: 100px;">
+		                                        <input type="radio" class="custom-control-input" id="region" name="offense_input" value="Region Offense">
+		                                        <label class="custom-control-label" for="region">Region</label>
+		                                    </div>
+
+		                                    <div class="custom-control custom-radio custom-control-inline" style="margin-left: 100px;">
+		                                        <input type="radio" class="custom-control-input" id="class" name="offense_input" value="Class Offense">
+		                                        <label class="custom-control-label" for="class">Class</label>
+		                                    </div>
+		                                </div>
+                                    <?php } else if ($offense_input == "Room Offense") { ?>
+                                    	<div class="custom-control custom-radio custom-control-inline ml-4">
+	                                        <input type="hidden" name="offense_input" value="Individual">
+	                                        <input type="radio" class="custom-control-input" id="individual" name="selection" onclick="hideGroup()">
+	                                        <label class="custom-control-label" for="individual">Individual</label>
+	                                    </div>
+
+	                                    <div class="custom-control custom-radio custom-control-inline" style="margin-left: 100px;">
+	                                        <input type="radio" class="custom-control-input" id="group" name="selection" checked onclick="showGroup()">
+	                                        <label class="custom-control-label" for="group">Group</label>
+	                                    </div>
+	                                    <p class="text-danger"><?php echo $offense_input_error; ?></p>
+		                                </div>
+		                                <div id="input" class="md-form form-group mt-5" style="display: none;">
+		                                    <div class="custom-control custom-radio custom-control-inline ml-4">
+		                                        <input type="radio" class="custom-control-input" id="room" name="offense_input" checked value="Room Offense">
+		                                        <label class="custom-control-label" for="room">Room</label>
+		                                    </div>
+
+		                                    <div class="custom-control custom-radio custom-control-inline" style="margin-left: 100px;">
+		                                        <input type="radio" class="custom-control-input" id="team" name="offense_input" value="Team Offense">
+		                                        <label class="custom-control-label" for="team">Team</label>
+		                                    </div>
+
+		                                    <div class="custom-control custom-radio custom-control-inline" style="margin-left: 100px;">
+		                                        <input type="radio" class="custom-control-input" id="region" name="offense_input" value="Region Offense">
+		                                        <label class="custom-control-label" for="region">Region</label>
+		                                    </div>
+
+		                                    <div class="custom-control custom-radio custom-control-inline" style="margin-left: 100px;">
+		                                        <input type="radio" class="custom-control-input" id="class" name="offense_input" value="Class Offense">
+		                                        <label class="custom-control-label" for="class">Class</label>
+		                                    </div>
+		                                </div>
+                                <?php } else if ($offense_input == "Team Offense") { ?>
+                                	<div class="custom-control custom-radio custom-control-inline ml-4">
+	                                        <input type="hidden" name="offense_input" value="Individual">
+	                                        <input type="radio" class="custom-control-input" id="individual" name="selection" onclick="hideGroup()">
+	                                        <label class="custom-control-label" for="individual">Individual</label>
+	                                    </div>
+
+	                                    <div class="custom-control custom-radio custom-control-inline" style="margin-left: 100px;">
+	                                        <input type="radio" class="custom-control-input" id="group" name="selection" checked onclick="showGroup()">
+	                                        <label class="custom-control-label" for="group">Group</label>
+	                                    </div>
+	                                    <p class="text-danger"><?php echo $offense_input_error; ?></p>
+		                                </div>
+		                                <div id="input" class="md-form form-group mt-5" style="display: none;">
+		                                    <div class="custom-control custom-radio custom-control-inline ml-4">
+		                                        <input type="radio" class="custom-control-input" id="room" name="offense_input" value="Room Offense">
+		                                        <label class="custom-control-label" for="room">Room</label>
+		                                    </div>
+
+		                                    <div class="custom-control custom-radio custom-control-inline" style="margin-left: 100px;">
+		                                        <input type="radio" class="custom-control-input" id="team" name="offense_input" checked value="Team Offense">
+		                                        <label class="custom-control-label" for="team">Team</label>
+		                                    </div>
+
+		                                    <div class="custom-control custom-radio custom-control-inline" style="margin-left: 100px;">
+		                                        <input type="radio" class="custom-control-input" id="region" name="offense_input" value="Region Offense">
+		                                        <label class="custom-control-label" for="region">Region</label>
+		                                    </div>
+
+		                                    <div class="custom-control custom-radio custom-control-inline" style="margin-left: 100px;">
+		                                        <input type="radio" class="custom-control-input" id="class" name="offense_input" value="Class Offense">
+		                                        <label class="custom-control-label" for="class">Class</label>
+		                                    </div>
+		                                </div>
+                                <?php } else if ($offense_input == "Class Offense") { ?>
+                                	<div class="custom-control custom-radio custom-control-inline ml-4">
+	                                        <input type="hidden" name="offense_input" value="Individual">
+	                                        <input type="radio" class="custom-control-input" id="individual" name="selection" onclick="hideGroup()">
+	                                        <label class="custom-control-label" for="individual">Individual</label>
+	                                    </div>
+
+	                                    <div class="custom-control custom-radio custom-control-inline" style="margin-left: 100px;">
+	                                        <input type="radio" class="custom-control-input" id="group" name="selection" checked onclick="showGroup()">
+	                                        <label class="custom-control-label" for="group">Group</label>
+	                                    </div>
+	                                    <p class="text-danger"><?php echo $offense_input_error; ?></p>
+		                                </div>
+		                                <div id="input" class="md-form form-group mt-5" style="display: none;">
+		                                    <div class="custom-control custom-radio custom-control-inline ml-4">
+		                                        <input type="radio" class="custom-control-input" id="room" name="offense_input" checked value="Room Offense">
+		                                        <label class="custom-control-label" for="room">Room</label>
+		                                    </div>
+
+		                                    <div class="custom-control custom-radio custom-control-inline" style="margin-left: 100px;">
+		                                        <input type="radio" class="custom-control-input" id="team" name="offense_input" value="Team Offense">
+		                                        <label class="custom-control-label" for="team">Team</label>
+		                                    </div>
+
+		                                    <div class="custom-control custom-radio custom-control-inline" style="margin-left: 100px;">
+		                                        <input type="radio" class="custom-control-input" id="region" name="offense_input" value="Region Offense">
+		                                        <label class="custom-control-label" for="region">Region</label>
+		                                    </div>
+
+		                                    <div class="custom-control custom-radio custom-control-inline" style="margin-left: 100px;">
+		                                        <input type="radio" class="custom-control-input" id="class" name="offense_input" checked value="Class Offense">
+		                                        <label class="custom-control-label" for="class">Class</label>
+		                                    </div>
+		                                </div>
+                                <?php } else if ($offense_input == "Region Offense") { ?>
+                                    	<div class="custom-control custom-radio custom-control-inline ml-4">
+	                                        <input type="hidden" name="offense_input" value="Individual">
+	                                        <input type="radio" class="custom-control-input" id="individual" name="selection" onclick="hideGroup()">
+	                                        <label class="custom-control-label" for="individual">Individual</label>
+	                                    </div>
+
+	                                    <div class="custom-control custom-radio custom-control-inline" style="margin-left: 100px;">
+	                                        <input type="radio" class="custom-control-input" id="group" name="selection" checked onclick="showGroup()">
+	                                        <label class="custom-control-label" for="group">Group</label>
+	                                    </div>
+	                                    <p class="text-danger"><?php echo $offense_input_error; ?></p>
+		                                </div>
+		                                <div id="input" class="md-form form-group mt-5" style="display: none;">
+		                                    <div class="custom-control custom-radio custom-control-inline ml-4">
+		                                        <input type="radio" class="custom-control-input" id="room" name="offense_input" checked value="Room Offense">
+		                                        <label class="custom-control-label" for="room">Room</label>
+		                                    </div>
+
+		                                    <div class="custom-control custom-radio custom-control-inline" style="margin-left: 100px;">
+		                                        <input type="radio" class="custom-control-input" id="team" name="offense_input" value="Team Offense">
+		                                        <label class="custom-control-label" for="team">Team</label>
+		                                    </div>
+
+		                                    <div class="custom-control custom-radio custom-control-inline" style="margin-left: 100px;">
+		                                        <input type="radio" class="custom-control-input" id="region" name="offense_input" value="Region Offense">
+		                                        <label class="custom-control-label" for="region">Region</label>
+		                                    </div>
+
+		                                    <div class="custom-control custom-radio custom-control-inline" style="margin-left: 100px;">
+		                                        <input type="radio" class="custom-control-input" id="class" name="offense_input" value="Class Offense">
+		                                        <label class="custom-control-label" for="class">Class</label>
+		                                    </div>
+		                                </div>
+                                <?php } ?>
 							</div>
 							<?php } ?>
 							</div>
@@ -246,4 +426,18 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     window.onload = function() { 
         document.getElementById("department_id").focus(); 
     } 
-</script> 
+</script>
+
+<script type="text/javascript">
+    function showGroup() {
+        document.getElementById("input").style.display = "inline-block";
+    }
+
+    function hideGroup() {
+        document.getElementById("input").style.display = "none";
+        document.getElementById("room").checked = false;
+        document.getElementById("team").checked = false;
+        document.getElementById("region").checked = false;
+        document.getElementById("class").checked = false;
+    }
+</script>

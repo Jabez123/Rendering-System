@@ -4,9 +4,9 @@ require_once("../config/connectServer.php");
 require_once("../config/connectDatabase.php");
  
 // Define variables and initialize with empty values
-$department_id = $offense_code = $offense_type = $offense_description = "";
+$department_id = $offense_code = $offense_type = $offense_description = $offense_input = "";
 
-$department_id_error = $offense_code_error = $offense_type_error = $offense_description_error = "";
+$department_id_error = $offense_code_error = $offense_type_error = $offense_description_error = $offense_input_error = "";
 $sql = "SELECT * FROM department_tb";
 
 $result = mysqli_query($conn, $sql);
@@ -63,6 +63,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     if(empty(trim($_POST["offense_description"]))){
         $offense_description_error = "Please enter a offense description.";
     }
+
+    if (empty(trim($_POST['offense_input']))) {
+        $offense_input_error = "Please select an offense input";
+    }
     
     // Check input errors before inserting in database
     if(empty($department_id_error) && empty($offense_code_error) 
@@ -72,19 +76,20 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Prepare an insert statement
         $sql = "INSERT INTO rules_tb (
-        department_id, offense_code, offense_type, offense_description) 
-        VALUES (?, ?, ?, ?)";
+        department_id, offense_code, offense_type, offense_description, offense_input) 
+        VALUES (?, ?, ?, ?, ?)";
          
         if($stmt = mysqli_prepare($conn, $sql)) {
             // Bind variables to the prepared statement as parameters
             mysqli_stmt_bind_param($stmt, "isss", 
-            	$param_department_id, $param_offense_code, $param_offense_type, $param_description);
+            	$param_department_id, $param_offense_code, $param_offense_type, $param_description, $param_offense_input);
             
             // Set parameters
             $param_department_id = trim($_POST["department_id"]);
             $param_offense_code = trim(strtoupper($_POST["offense_code"]));
             $param_offense_type = trim($_POST["type_name"]);
             $param_description = trim($_POST["offense_description"]);
+            $param_offense_input = trim($_POST['offense_input']);
             
             // Attempt to execute the prepared statement
             if(mysqli_stmt_execute($stmt)){
@@ -160,6 +165,41 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 									</select>
 									<p class="text-danger"><?php echo $offense_type_error; ?></p>
 								</div>
+                                <div class="md-form form-group mt-5 <?php echo (!empty($offense_input)) ? 'has-error' : ''; ?>">
+                                    <p class="text-black-50">Offense Input</p>
+                                    <div class="custom-control custom-radio custom-control-inline ml-4">
+                                        <input type="hidden" name="offense_input" value="Individual">
+                                        <input type="radio" class="custom-control-input" id="individual" name="selection" checked onclick="hideGroup()">
+                                        <label class="custom-control-label" for="individual">Individual</label>
+                                    </div>
+
+                                    <div class="custom-control custom-radio custom-control-inline" style="margin-left: 100px;">
+                                        <input type="radio" class="custom-control-input" id="group" name="selection" onclick="showGroup()">
+                                        <label class="custom-control-label" for="group">Group</label>
+                                    </div>
+                                    <p class="text-danger"><?php echo $offense_input_error; ?></p>
+                                </div>
+                                <div id="input" class="md-form form-group mt-5" style="display: none;">
+                                    <div class="custom-control custom-radio custom-control-inline ml-4">
+                                        <input type="radio" class="custom-control-input" id="room" name="offense_input" value="Room Offense">
+                                        <label class="custom-control-label" for="room">Room</label>
+                                    </div>
+
+                                    <div class="custom-control custom-radio custom-control-inline" style="margin-left: 100px;">
+                                        <input type="radio" class="custom-control-input" id="team" name="offense_input" value="Team Offense">
+                                        <label class="custom-control-label" for="team">Team</label>
+                                    </div>
+
+                                    <div class="custom-control custom-radio custom-control-inline" style="margin-left: 100px;">
+                                        <input type="radio" class="custom-control-input" id="region" name="offense_input" value="Region Offense">
+                                        <label class="custom-control-label" for="region">Region</label>
+                                    </div>
+
+                                    <div class="custom-control custom-radio custom-control-inline" style="margin-left: 100px;">
+                                        <input type="radio" class="custom-control-input" id="class" name="offense_input" value="Class Offense">
+                                        <label class="custom-control-label" for="class">Class</label>
+                                    </div>
+                                </div>
 								<div class="md-form form-group mt-5 <?php echo (!empty($offense_description)) ? 'has-error' : ''; ?>">
 									<input class="form-control" type="text" name="offense_description" id="offense_description">
 									<label for="offense_description">Description</label>
@@ -195,3 +235,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         document.getElementById("department_id").focus(); 
     } 
 </script> 
+<script type="text/javascript">
+    function showGroup() {
+        document.getElementById("input").style.display = "inline-block";
+    }
+
+    function hideGroup() {
+        document.getElementById("input").style.display = "none";
+    }
+</script>

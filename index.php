@@ -5,20 +5,20 @@
 
 	$date = date('m/d/Y h:i:s a', time());
 
-	$total_pages_render = $conn->query("SELECT * FROM render_tb")->num_rows;
+	$total_pages_render = $conn->query("SELECT * FROM trainee_render_tb")->num_rows;
 
 	$page_render = isset($_GET['page_render']) && is_numeric($_GET['page_render']) ? $_GET['page_render'] : 1;
 
 	$num_results_on_page_render = 8;
 
-	$sql_render = "SELECT trainee_tb.trainee_id, trainee_tb.last_name, trainee_tb.first_name, 
-	trainee_tb.id_name, trainee_tb.gender, trainee_tb.class_group,
-	rules_tb.offense_code, rules_tb.offense_type, rules_tb.offense_description, 
-	render_tb.render_id, render_tb.render_date, trainee_tb.summaries, trainee_tb.is_grounded, trainee_tb.words, trainee_tb.levitical_service
-	FROM render_tb 
-	INNER JOIN trainee_tb ON trainee_tb.trainee_id = render_tb.trainee_id
-	INNER JOIN rules_tb ON rules_tb.rule_id = render_tb.rule_id
-	INNER JOIN department_tb ON department_tb.department_id = render_tb.department_id
+	$sql_render = "SELECT trainee_tb.trainee_id, trainee_tb.class_group, week_tb.week_num, 
+		trainee_tb.first_name, trainee_tb.last_name, trainee_tb.gender, trainee_tb.id_name,
+		trainee_render_tb.current_summaries, trainee_render_tb.words, trainee_render_tb.is_grounded,
+		trainee_render_tb.levitical_service, current_render_tb.c_render_id
+		FROM trainee_render_tb 
+		INNER JOIN trainee_tb ON trainee_render_tb.trainee_id = trainee_tb.trainee_id 
+		INNER JOIN week_tb ON trainee_render_tb.week_id = week_tb.week_id 
+		INNER JOIN current_render_tb ON trainee_tb.trainee_id = current_render_tb.trainee_id
 	GROUP BY trainee_tb.first_name, trainee_tb.last_name LIMIT ?, ?";
 
 	if ($stmt_render = $conn->prepare($sql_render)) {
@@ -130,7 +130,7 @@
 										<?php if (mysqli_num_rows($result_render) > 0) { ?>
 											<?php 
 												while($row = $result_render->fetch_assoc()) {
-												$render_id = $row['render_id'];
+												$render_id = $row['c_render_id'];
 												$trainee_id = $row['trainee_id'];
 												$first_name = $row['first_name'];
 												$last_name = $row['last_name'];
@@ -143,7 +143,7 @@
 													$gender = "Sis";
 												}
 												$class_group = $row['class_group'];
-												$summaries = $row['summaries'];
+												$summaries = $row['current_summaries'];
 												$words = $row['words'];
 												$levitical_service = $row['levitical_service'];
 												$is_grounded = $row['is_grounded'];
@@ -153,16 +153,14 @@
 												else {
 													$is_grounded = "No";
 												}
-												$offense_code = $row['offense_code'];
 
 												$sql_offense = "SELECT trainee_tb.trainee_id, trainee_tb.last_name, trainee_tb.first_name, 
 													trainee_tb.id_name, trainee_tb.gender, trainee_tb.class_group,
-													rules_tb.offense_code, rules_tb.offense_type, rules_tb.offense_description, 
-													render_tb.render_id, render_tb.render_date, trainee_tb.summaries, render_tb.is_grounded, trainee_tb.words, trainee_tb.levitical_service
-													FROM render_tb 
-													INNER JOIN trainee_tb ON trainee_tb.trainee_id = render_tb.trainee_id
-													INNER JOIN rules_tb ON rules_tb.rule_id = render_tb.rule_id
-													INNER JOIN department_tb ON department_tb.department_id = render_tb.department_id 
+													rules_tb.offense_code, rules_tb.offense_type, rules_tb.offense_description
+													FROM current_render_tb 
+													INNER JOIN trainee_tb ON trainee_tb.trainee_id = current_render_tb.trainee_id
+													INNER JOIN rules_tb ON rules_tb.rule_id = current_render_tb.rule_id
+													INNER JOIN department_tb ON department_tb.department_id = current_render_tb.department_id 
 													WHERE trainee_tb.trainee_id = $trainee_id";
 												$result_offense = mysqli_query($conn, $sql_offense);
 
@@ -198,7 +196,7 @@
 												<!--Card content-->
 												<div class="card-body">
 													<center>
-														<p class="display-4 mt-5 mb-5 font-weight-bold">No Renders today <i class="fas fa-laugh-beam"></i></p>
+														<p class="display-4 mt-5 mb-5 font-weight-bold">No Renders This Week <i class="fas fa-laugh-beam"></i></p>
 													</center>
 												</div>
 											</div>

@@ -52,8 +52,8 @@
 						</div>
 						<div class="card-body">
 							<div class="md-form form-group mt-5 <?php echo (!empty($department_id_error)) ? 'has-error' : ''; ?>">
-								<select name="department_id" id="department_id" class="selectpicker" data-live-search="true" data-width="99%" onchange="copyText(event)">
-								  <option value=" " selected>Select Department</option>
+								<select name="department_id" id="department_id" class="selectpicker" data-live-search="true" data-width="99%" onchange="copyText(event)" required>
+								  <option value="" disabled selected>Select your option</option>
 								  <?php while ($row = mysqli_fetch_assoc($result)) {
 								  		$department_name = $row['department_name'];
 								  		$department_id = $row['department_id'];
@@ -61,13 +61,24 @@
 								  <option value="<?php echo $department_id ?>"><?php echo $department_name ?></option>
 								<?php } ?>
 								</select>
+
 								<p class="text-danger"><?php echo $department_id_error; ?></p>
 							</div>
 						</div>
 						<div class="card-footer">
 							<div class="row">
 								<div class="col-md-4">
-									<button type="submit" class="btn btn-block btn-primary">Submit</button>
+									<input type="submit"class="btn btn-block btn-primary" value="Submit" ></input>
+										<!--<script type="text/javascript">
+											function test()
+											{
+												if("department_id" == null)
+								 				{
+								 					
+								 				}
+											}
+										</script> -->
+									
 								</div>
 								<div class="col-md-4"></div>
 								<div class="col-md-4">
